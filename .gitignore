@@ -7,15 +7,47 @@ __pycache__/
 venv/
 env/
 ENV/
-.env
+.venv/
+pip-log.txt
+pip-delete-this-directory.txt
+.pytest_cache/
+*.egg-info/
+dist/
+build/
 
-# Data
+# Environment & Secrets (CRITICAL - Never commit these!)
+.env
+.env.local
+.env.*.local
+*secret*
+*secrets*
+*credential*
+*credentials*
+*.key
+*.pem
+*_token
+*_tokens
+*.token
+api_keys.txt
+config.local.*
+
+# API Keys & Tokens
+google_api_key*
+openai_api_key*
+anthropic_api_key*
+
+# Data (Large files that shouldn't be in Git)
 data/raw/*
 data/processed/*
 !data/raw/.gitkeep
 !data/processed/.gitkeep
+!data/raw/README.md
+!data/processed/README.md
+*.csv
+*.jsonl
+*.parquet
 
-# Results
+# Results (Experiment outputs)
 results/raw/*
 results/metrics/*
 results/analysis/*
@@ -24,20 +56,40 @@ results/visualizations/*
 !results/metrics/.gitkeep
 !results/analysis/.gitkeep
 !results/visualizations/.gitkeep
+!results/**/*.md
 
-# Notebooks
+# Rate Limiter State (persists API usage)
+.rate_limiter_state.json
+results/.rate_limiter_state.json
+
+# Notebooks (Only commit when explicitly needed)
 .ipynb_checkpoints/
 notebooks/*.ipynb
+!notebooks/README.md
 
-# IDE
+# IDE & Editor
 .vscode/
 .idea/
 *.swp
+*.swo
+*~
 .DS_Store
+.AppleDouble
+.LSOverride
 
 # Logs
 *.log
+logs/
+*.log.*
 
-# Rate limiter state
-.rate_limiter_state.json
+# Temporary files
+*.tmp
+*.temp
+*.bak
+*.backup
+.cache/
+
+# OS
+Thumbs.db
+Desktop.ini
 
