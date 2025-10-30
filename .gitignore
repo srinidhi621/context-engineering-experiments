@@ -1,0 +1,43 @@
+# Python
+__pycache__/
+*.py[cod]
+*$py.class
+*.so
+.Python
+venv/
+env/
+ENV/
+.env
+
+# Data
+data/raw/*
+data/processed/*
+!data/raw/.gitkeep
+!data/processed/.gitkeep
+
+# Results
+results/raw/*
+results/metrics/*
+results/analysis/*
+results/visualizations/*
+!results/raw/.gitkeep
+!results/metrics/.gitkeep
+!results/analysis/.gitkeep
+!results/visualizations/.gitkeep
+
+# Notebooks
+.ipynb_checkpoints/
+notebooks/*.ipynb
+
+# IDE
+.vscode/
+.idea/
+*.swp
+.DS_Store
+
+# Logs
+*.log
+
+# Rate limiter state
+.rate_limiter_state.json
+
