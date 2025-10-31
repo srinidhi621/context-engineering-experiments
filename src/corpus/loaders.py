@@ -1,11 +1,12 @@
-"""Corpus loading utilities for GitHub and Project Gutenberg"""
+"""Corpus loading utilities for Hugging Face Hub and Project Gutenberg"""
 
 import os
 from datetime import datetime
 from typing import List, Dict, Optional
 from pathlib import Path
 
-from github import Github, GithubException, Auth
+from huggingface_hub import HfApi, hf_hub_download, list_models, list_datasets
+from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 from gutenbergpy import textget
 import tiktoken
 from dotenv import load_dotenv
@@ -34,163 +35,344 @@ def count_tokens(text: str, model: str = "gpt-4") -> int:
         return len(encoding.encode(text))
 
 
-def load_github_file(
-    repo_name: str, 
-    file_path: str, 
+def load_hf_model_card(
+    model_id: str, 
     after_date: str = "2024-08-01"
 ) -> Optional[Dict]:
     """
-    Load single file from GitHub repository.
+    Load model card (README) from Hugging Face Hub.
     
     Args:
-        repo_name: Repository name in format "owner/repo" (e.g., "pytorch/pytorch")
-        file_path: Path to file in repo (e.g., "README.md" or "docs/optimizer.md")
+        model_id: Model ID (e.g., "meta-llama/Llama-3.2-3B", "openai/whisper-large-v3")
         after_date: ISO date string, only fetch if modified after this date
     
     Returns:
-        Dict with 'content', 'url', 'last_modified', 'tokens', 'path'
-        Returns None if file doesn't meet criteria or on error
+        Dict with 'content', 'url', 'last_modified', 'tokens', 'model_id'
+        Returns None if model doesn't meet criteria or on error
     """
-    github_token = os.getenv("GITHUB_TOKEN")
-    if not github_token:
-        raise ValueError("GITHUB_TOKEN not found in environment variables")
-    
     try:
-        # Initialize GitHub client
-        auth = Auth.Token(github_token)
-        g = Github(auth=auth)
-        repo = g.get_repo(repo_name)
+        api = HfApi()
         
-        # Get file content
-        file_content = repo.get_contents(file_path)
-        
-        if isinstance(file_content, list):
-            # If it's a directory, return None
-            return None
-        
-        # Get last commit for this file to check modification date
-        commits = repo.get_commits(path=file_path)
-        if commits.totalCount == 0:
-            return None
-        
-        last_commit = commits[0]
-        last_modified = last_commit.commit.author.date
+        # Get model info
+        model_info = api.model_info(model_id, files_metadata=False)
         
         # Check if modified after target date
-        cutoff_date = datetime.fromisoformat(after_date)
-        if last_modified.replace(tzinfo=None) < cutoff_date:
+        cutoff_date = datetime.fromisoformat(after_date).replace(tzinfo=None)
+        last_modified = model_info.lastModified.replace(tzinfo=None)
+        
+        if last_modified < cutoff_date:
             return None
         
-        # Decode content
-        content = file_content.decoded_content.decode('utf-8')
+        # Download model card (README.md)
+        try:
+            readme_path = hf_hub_download(
+                repo_id=model_id,
+                filename="README.md",
+                repo_type="model"
+            )
+            
+            with open(readme_path, 'r', encoding='utf-8') as f:
+                content = f.read()
+        except Exception as e:
+            # Some models may not have a README
+            print(f"  No README for {model_id}: {e}")
+            return None
         
         # Count tokens
         tokens = count_tokens(content)
         
+        # Only include if meaningful content
+        if tokens < 50:
+            return None
+        
         return {
             "content": content,
-            "url": file_content.html_url,
-            "last_modified": last_modified.isoformat(),
+            "url": f"https://huggingface.co/{model_id}",
+            "last_modified": model_info.lastModified.isoformat(),
             "tokens": tokens,
-            "path": file_path,
-            "repo": repo_name,
-            "sha": file_content.sha
+            "model_id": model_id,
+            "type": "model_card",
+            "tags": model_info.tags[:10] if model_info.tags else []
         }
     
-    except GithubException as e:
-        print(f"GitHub API error for {repo_name}/{file_path}: {e}")
+    except RepositoryNotFoundError:
+        print(f"  Model not found: {model_id}")
         return None
     except Exception as e:
-        print(f"Error loading {repo_name}/{file_path}: {e}")
+        print(f"  Error loading {model_id}: {e}")
         return None
 
 
-def load_github_docs(
-    repo_name: str, 
-    path: str = "docs/", 
+def load_hf_curated_models(
     after_date: str = "2024-08-01",
-    max_tokens: int = 50000,
-    extensions: List[str] = [".md", ".rst", ".txt"]
+    max_tokens: int = 50000
 ) -> List[Dict]:
     """
-    Load documentation from GitHub repository.
+    Load model cards from curated list of well-documented, popular models.
+    
+    These models are known to have comprehensive documentation and are
+    regularly updated. Much faster than scanning all recent models.
     
     Args:
-        repo_name: Repository name in format "owner/repo"
-        path: Path to documentation folder (default: "docs/")
         after_date: ISO date string, only fetch if modified after
         max_tokens: Maximum total tokens to collect
-        extensions: File extensions to include
     
     Returns:
-        List of dicts with file metadata and content
+        List of dicts with model card content and metadata
     """
-    github_token = os.getenv("GITHUB_TOKEN")
-    if not github_token:
-        raise ValueError("GITHUB_TOKEN not found in environment variables")
+    # Curated list of models released/updated Sept-Dec 2024 (post-training cutoff)
+    CURATED_MODELS = [
+        # Meta - Llama 3.2 (Released Sept 2024) & Llama 3.3 (Dec 2024)
+        "meta-llama/Llama-3.2-1B",
+        "meta-llama/Llama-3.2-1B-Instruct",
+        "meta-llama/Llama-3.2-3B",
+        "meta-llama/Llama-3.2-3B-Instruct",
+        "meta-llama/Llama-3.3-70B-Instruct",
+        "meta-llama/Llama-Guard-3-1B",
+        "meta-llama/Llama-Guard-3-8B",
+        
+        # Alibaba - Qwen 2.5 (Released Sept 2024)
+        "Qwen/Qwen2.5-0.5B",
+        "Qwen/Qwen2.5-0.5B-Instruct",
+        "Qwen/Qwen2.5-1.5B",
+        "Qwen/Qwen2.5-1.5B-Instruct",
+        "Qwen/Qwen2.5-3B",
+        "Qwen/Qwen2.5-3B-Instruct",
+        "Qwen/Qwen2.5-7B",
+        "Qwen/Qwen2.5-7B-Instruct",
+        "Qwen/Qwen2.5-14B",
+        "Qwen/Qwen2.5-14B-Instruct",
+        "Qwen/Qwen2.5-32B",
+        "Qwen/Qwen2.5-32B-Instruct",
+        "Qwen/Qwen2.5-72B",
+        "Qwen/Qwen2.5-72B-Instruct",
+        "Qwen/Qwen2.5-Coder-7B",
+        "Qwen/Qwen2.5-Coder-7B-Instruct",
+        
+        # Mistral AI - New releases (Sept-Oct 2024)
+        "mistralai/Mistral-Small-Instruct-2409",
+        "mistralai/Pixtral-12B-2409",
+        "mistralai/Ministral-8B-Instruct-2410",
+        
+        # Microsoft - Phi 3.5 (Aug-Sept 2024)
+        "microsoft/Phi-3.5-mini-instruct",
+        "microsoft/Phi-3.5-MoE-instruct",
+        "microsoft/Phi-3.5-vision-instruct",
+        
+        # Google - Gemma 2 (Updated Oct 2024)
+        "google/gemma-2-2b",
+        "google/gemma-2-2b-it",
+        "google/gemma-2-9b",
+        "google/gemma-2-9b-it",
+        "google/gemma-2-27b",
+        "google/gemma-2-27b-it",
+        
+        # OpenAI - Whisper v3 Turbo (Oct 2024)
+        "openai/whisper-large-v3-turbo",
+        "openai/whisper-large-v3",
+        
+        # Stability AI - SD 3.5 (Oct 2024)
+        "stabilityai/stable-diffusion-3.5-large",
+        "stabilityai/stable-diffusion-3.5-large-turbo",
+        "stabilityai/stable-diffusion-3.5-medium",
+        
+        # NVIDIA - Updated models (Sept-Oct 2024)
+        "nvidia/Llama-3.1-Nemotron-70B-Instruct-HF",
+        "nvidia/Mistral-NeMo-Minitron-8B-Instruct",
+        
+        # HuggingFace - Recent releases
+        "HuggingFaceTB/SmolLM-135M",
+        "HuggingFaceTB/SmolLM-360M",
+        "HuggingFaceTB/SmolLM-1.7B",
+        "HuggingFaceTB/SmolLM2-135M",
+        "HuggingFaceTB/SmolLM2-360M",
+        "HuggingFaceTB/SmolLM2-1.7B",
+        
+        # Cohere - Command R7B (Sept 2024)
+        "CohereForAI/c4ai-command-r7b-12-2024",
+        
+        # AI21 Labs - Jamba 1.5 (Aug-Sept 2024)
+        "ai21labs/Jamba-v0.1",
+        
+        # Anthropic (regularly updated)
+        "Anthropic/claude-tokenizer",
+        
+        # Alibaba - Qwen Math & Coder (Sept-Oct 2024)
+        "Qwen/Qwen2.5-Math-1.5B",
+        "Qwen/Qwen2.5-Math-7B",
+        "Qwen/Qwen2.5-Math-72B",
+    ]
     
     documents = []
     total_tokens = 0
     
+    print(f"Loading curated model cards (after {after_date})...")
+    print(f"Target: {max_tokens:,} tokens\n")
+    
+    for model_id in CURATED_MODELS:
+        if total_tokens >= max_tokens:
+            break
+        
+        # Load model card
+        doc = load_hf_model_card(model_id, after_date)
+        
+        if doc and total_tokens + doc['tokens'] <= max_tokens:
+            documents.append(doc)
+            total_tokens += doc['tokens']
+            print(f"  ✓ {model_id} ({doc['tokens']:,} tokens)")
+        elif not doc:
+            print(f"  ⊘ {model_id} (not modified after {after_date})")
+    
+    print(f"\n{'='*60}")
+    print(f"Collected {len(documents)} model cards")
+    print(f"Total tokens: {total_tokens:,}")
+    print(f"{'='*60}")
+    
+    return documents
+
+
+def load_hf_model_cards(
+    after_date: str = "2024-08-01",
+    max_tokens: int = 50000,
+    tags: Optional[List[str]] = None,
+    search: Optional[str] = None
+) -> List[Dict]:
+    """
+    Load multiple model cards from Hugging Face Hub by scanning recent updates.
+    
+    Note: Many recent models don't have READMEs. For faster, more reliable
+    collection, use load_hf_curated_models() instead.
+    
+    Args:
+        after_date: ISO date string, only fetch if modified after
+        max_tokens: Maximum total tokens to collect
+        tags: Filter by tags (e.g., ["text-generation", "pytorch"])
+        search: Search query (e.g., "llama", "whisper")
+    
+    Returns:
+        List of dicts with model card content and metadata
+    """
+    documents = []
+    total_tokens = 0
+    
     try:
-        auth = Auth.Token(github_token)
-        g = Github(auth=auth)
-        repo = g.get_repo(repo_name)
+        # Get recently updated models
+        models = list_models(
+            sort="lastModified",
+            direction=-1,
+            limit=500,  # Check more models to find enough valid ones
+            tags=tags,
+            search=search
+        )
         
-        # Get contents of the path
-        try:
-            contents = repo.get_contents(path)
-        except GithubException:
-            # Try root README if docs/ doesn't exist
-            try:
-                contents = [repo.get_contents("README.md")]
-            except:
-                return []
+        print(f"Scanning recent models (after {after_date})...")
         
-        # Process files (recursively if needed)
-        def process_contents(contents_list):
-            nonlocal total_tokens
+        for model in models:
+            if total_tokens >= max_tokens:
+                break
             
-            for content_file in contents_list:
-                if total_tokens >= max_tokens:
-                    break
-                
-                # If it's a directory, recurse
-                if content_file.type == "dir":
-                    try:
-                        nested_contents = repo.get_contents(content_file.path)
-                        process_contents(nested_contents)
-                    except:
-                        continue
-                
-                # If it's a file with matching extension
-                elif content_file.type == "file":
-                    # Check extension
-                    if not any(content_file.name.endswith(ext) for ext in extensions):
-                        continue
-                    
-                    # Load the file
-                    doc = load_github_file(repo_name, content_file.path, after_date)
-                    
-                    if doc and total_tokens + doc['tokens'] <= max_tokens:
-                        documents.append(doc)
-                        total_tokens += doc['tokens']
-                        print(f"  ✓ Loaded {content_file.path} ({doc['tokens']} tokens)")
-        
-        # Start processing
-        if isinstance(contents, list):
-            process_contents(contents)
-        else:
-            # Single file
-            doc = load_github_file(repo_name, contents.path, after_date)
-            if doc:
+            # Load model card
+            doc = load_hf_model_card(model.id, after_date)
+            
+            if doc and total_tokens + doc['tokens'] <= max_tokens:
                 documents.append(doc)
+                total_tokens += doc['tokens']
+                print(f"  ✓ Loaded {model.id} ({doc['tokens']} tokens)")
+            
+            # Be polite - don't hammer the API
+            if len(documents) % 10 == 0 and len(documents) > 0:
+                print(f"  Progress: {len(documents)} models, {total_tokens:,} tokens")
     
-    except GithubException as e:
-        print(f"GitHub API error for {repo_name}: {e}")
     except Exception as e:
-        print(f"Error loading docs from {repo_name}: {e}")
+        print(f"Error loading model cards: {e}")
     
+    print(f"\nCollected {len(documents)} model cards, {total_tokens:,} tokens total")
+    return documents
+
+
+def load_hf_dataset_cards(
+    after_date: str = "2024-08-01",
+    max_tokens: int = 50000,
+    tags: Optional[List[str]] = None
+) -> List[Dict]:
+    """
+    Load dataset cards from Hugging Face Hub.
+    
+    Args:
+        after_date: ISO date string, only fetch if modified after
+        max_tokens: Maximum total tokens to collect
+        tags: Filter by tags (e.g., ["text-classification", "image-classification"])
+    
+    Returns:
+        List of dicts with dataset card content and metadata
+    """
+    documents = []
+    total_tokens = 0
+    
+    try:
+        api = HfApi()
+        
+        # Get recently updated datasets
+        datasets = list_datasets(
+            sort="lastModified",
+            direction=-1,
+            limit=500,
+            tags=tags
+        )
+        
+        print(f"Scanning recent datasets (after {after_date})...")
+        
+        for dataset in datasets:
+            if total_tokens >= max_tokens:
+                break
+            
+            try:
+                # Get dataset info
+                dataset_info = api.dataset_info(dataset.id, files_metadata=False)
+                
+                # Check date
+                cutoff_date = datetime.fromisoformat(after_date).replace(tzinfo=None)
+                last_modified = dataset_info.lastModified.replace(tzinfo=None)
+                
+                if last_modified < cutoff_date:
+                    continue
+                
+                # Download README
+                readme_path = hf_hub_download(
+                    repo_id=dataset.id,
+                    filename="README.md",
+                    repo_type="dataset"
+                )
+                
+                with open(readme_path, 'r', encoding='utf-8') as f:
+                    content = f.read()
+                
+                tokens = count_tokens(content)
+                
+                if tokens < 50:
+                    continue
+                
+                if total_tokens + tokens <= max_tokens:
+                    doc = {
+                        "content": content,
+                        "url": f"https://huggingface.co/datasets/{dataset.id}",
+                        "last_modified": dataset_info.lastModified.isoformat(),
+                        "tokens": tokens,
+                        "dataset_id": dataset.id,
+                        "type": "dataset_card",
+                        "tags": dataset_info.tags[:10] if dataset_info.tags else []
+                    }
+                    documents.append(doc)
+                    total_tokens += tokens
+                    print(f"  ✓ Loaded {dataset.id} ({tokens} tokens)")
+            
+            except Exception as e:
+                continue
+    
+    except Exception as e:
+        print(f"Error loading dataset cards: {e}")
+    
+    print(f"\nCollected {len(documents)} dataset cards, {total_tokens:,} tokens total")
     return documents
 
 
@@ -281,26 +463,24 @@ def load_gutenberg_books(
 if __name__ == "__main__":
     print("Testing corpus loaders...\n")
     
-    # Test 1: Load single GitHub file
+    # Test 1: Load single model card
     print("=" * 60)
-    print("TEST 1: Load single GitHub file")
+    print("TEST 1: Load single model card")
     print("=" * 60)
-    doc = load_github_file("pytorch/pytorch", "README.md", after_date="2024-08-01")
+    doc = load_hf_model_card("meta-llama/Llama-3.2-3B", after_date="2024-08-01")
     if doc:
-        print(f"✓ Loaded: {doc['path']}")
+        print(f"✓ Loaded: {doc['model_id']}")
         print(f"  Tokens: {doc['tokens']}")
         print(f"  Last modified: {doc['last_modified']}")
         print(f"  URL: {doc['url']}")
     else:
-        print("✗ File not found or not modified after cutoff date")
+        print("✗ Model card not found or not modified after cutoff date")
     
-    # Test 2: Load documentation from a repo
+    # Test 2: Load curated model cards (FAST)
     print("\n" + "=" * 60)
-    print("TEST 2: Load docs from repository (10k token limit)")
+    print("TEST 2: Load curated model cards (10k token limit)")
     print("=" * 60)
-    docs = load_github_docs("pytorch/pytorch", path="docs/", max_tokens=10000)
-    print(f"\nLoaded {len(docs)} documents")
-    print(f"Total tokens: {sum(d['tokens'] for d in docs):,}")
+    docs = load_hf_curated_models(max_tokens=10000, after_date="2024-08-01")
     
     # Test 3: Load Gutenberg books
     print("\n" + "=" * 60)
