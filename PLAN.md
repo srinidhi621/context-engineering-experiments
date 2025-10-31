@@ -19,19 +19,44 @@
 |-------|--------|----------|
 | **Scaffolding** | ✅ Complete | 100% |
 | **Git & Security** | ✅ Complete | 100% |
-| **Environment Setup** | ⏳ Not Started | 0% |
-| **Corpus Collection** | ⏳ Not Started | 0% |
+| **Environment Setup** | ✅ Complete | 100% |
+| **Corpus Collection** | ⏳ In Progress | 0% |
 | **Context Engineering** | ⏳ Not Started | 0% |
 | **Experiments** | ⏳ Not Started | 0% |
 | **Analysis** | ⏳ Not Started | 0% |
 
-**Completed:** 3 commits, 56 files, comprehensive security setup  
-**Next Step:** Set up Python virtual environment and install dependencies  
+**Completed:** 3 commits, 56 files, comprehensive security setup, automated environment setup
+**Current Step:** Download corpus data and begin experiments
 **Repository:** https://github.com/srinidhi621/context-engineering-experiments
 
 ---
 
 ## 📊 Detailed Status
+
+### ✅ Completed (Environment Setup - October 31, 2025)
+
+**Automated Setup Scripts:**
+- [x] Created `scripts/setup_environment.sh` - Complete automated setup
+- [x] Created `scripts/activate.sh` - Custom activation with minimal prompt
+- [x] Tested and verified all 15 dependencies install cleanly
+- [x] Virtual environment created at `venv/`
+- [x] All data/results directories created
+- [x] `.env` configuration template ready
+- [x] API rate limiter verified and working
+- [x] Custom prompt configured: `(context_engineering_experiments) >`
+
+**Environment Details:**
+- Python: 3.13.3
+- Virtual Environment: Isolated, non-git-tracked
+- Packages: 15 core dependencies installed with zero conflicts
+- API: Google Gemini 2.0 Flash (Free Tier, 15 RPM, 1M TPM, 1500 RPD)
+- Rate Limiter: Active and tracking usage in `results/.rate_limiter_state.json`
+
+**Daily Activation:**
+```bash
+source scripts/activate.sh
+# Shows: (context_engineering_experiments) >
+```
 
 ### ✅ Completed (Scaffolding Phase)
 
@@ -43,7 +68,7 @@
 - [x] Implemented structured logging (`src/utils/logging.py`)
 - [x] Implemented statistical analysis functions (`src/utils/stats.py`)
 - [x] Created configuration management (`src/config.py`)
-- [x] Set up `requirements.txt` (13 dependencies)
+- [x] Set up `requirements.txt` (15 dependencies)
 - [x] Created `setup.py` for package installation
 - [x] Created `.env.example` for API key configuration
 - [x] Created `.gitignore` with comprehensive rules
@@ -79,11 +104,8 @@
 
 ---
 
-### 🔨 Next Up (Week 1 - Foundation & Corpus)
+### 🔨 Next Up (Week 1 - Corpus Collection)
 
-- [ ] Set up Python virtual environment
-- [ ] Install all dependencies
-- [ ] Configure API access (Google AI API key)
 - [ ] Download API documentation corpus (AWS, GCP, Azure)
 - [ ] Download SEC financial reports
 - [ ] Download arXiv academic papers
@@ -880,7 +902,7 @@ def create_polluted_context(base_corpus, pollution_level, condition):
         # Just concatenate base + pollutants
         context = base_corpus + "\n\n" + pollutant_docs
     elif isinstance(condition, StructuredContextAssembler):
-        # Structure helps identify relevant vs irrelevant
+        # Structured sections for different memory types
         context = condition.structure_with_sections(
             relevant=base_corpus,
             irrelevant=pollutant_docs

@@ -320,32 +320,128 @@ python --version
 git clone <your-repo-url>
 cd context-engineering-experiments
 
-# Create virtual environment
-python -m venv venv
-source venv/bin/activate  # On Windows: venv\Scripts\activate
+# Run automated setup
+bash scripts/setup_environment.sh
 
-# Install dependencies
-pip install -r requirements.txt
-
-# Set up environment variables
-cp .env.example .env
-# Edit .env with your API keys:
-# GOOGLE_API_KEY=your_actual_api_key_here
+# This will:
+# ✅ Create virtual environment (venv/)
+# ✅ Install all dependencies (15 packages)
+# ✅ Create data directories
+# ✅ Configure environment (.env file)
+# ✅ Run verification tests
 ```
 
-**Get your Google AI API key:**
-1. Go to https://aistudio.google.com/app/apikey
-2. Click "Create API Key"
-3. Copy the key and paste into `.env`
+### Daily Activation
 
-**Verify setup:**
+Every day when starting work, activate the environment with our custom setup:
+
 ```bash
-# Check rate limits
+cd /Users/Srinidhi/my_projects/context_engineering_experiments
+source scripts/activate.sh
+```
+
+**Your prompt will show:**
+```
+(context_engineering_experiments) >
+```
+
+Clean, minimal prompt with just the venv name and cursor. No clutter from paths or usernames.
+
+**To exit when done:**
+```bash
+deactivate
+```
+
+### Verify Setup
+
+```bash
+# After activation, verify everything is working:
+python -c "import google.generativeai, numpy, scipy, pandas; print('✅ All packages ready')"
+
+# Check API configuration:
 python scripts/check_rate_limits.py
 
-# Estimate experiment feasibility
-python scripts/estimate_feasibility.py
+# Run tests:
+pytest tests/ -v
 ```
+
+### Configure API Key
+
+```bash
+# The setup script creates .env from .env.example
+# Edit .env and add your actual GOOGLE_API_KEY:
+
+nano .env
+# Set: GOOGLE_API_KEY=your_actual_api_key_here
+
+# Get your key at: https://aistudio.google.com/app/apikey
+```
+
+### Download Corpus Data
+
+```bash
+# (Optional - download when ready for experiments)
+
+# Download all corpora (~4GB, 20-60 min):
+bash scripts/download_all.sh
+
+# OR download selectively:
+python -c "from src.corpus.loaders import download_api_docs; download_api_docs()"
+python -c "from src.corpus.loaders import download_financial_reports; download_financial_reports()"
+python -c "from src.corpus.loaders import download_academic_papers; download_academic_papers()"
+```
+
+### Run Experiments
+
+```bash
+# After environment is activated:
+
+# 1. Check feasibility first
+python scripts/estimate_feasibility.py
+
+# 2. Run calibration baseline
+python scripts/run_calibration.py --output results/baseline_calibration.json
+
+# 3. Run individual experiment
+python scripts/run_experiment.py --experiment exp1_needle --conditions all
+
+# 4. Analyze results
+python scripts/analyze_results.py --input results/raw/ --output results/analysis/
+
+# 5. Generate report
+python scripts/generate_report.py --output FINAL_REPORT.md
+```
+
+---
+
+## 📋 Installation
+
+**Set up Python virtual environment**
+  ```bash
+  python -m venv venv
+  source venv/bin/activate  # On Windows: venv\Scripts\activate
+  ```
+
+**Install dependencies**
+  ```bash
+  pip install -r requirements.txt
+  ```
+
+**Set up environment variables**
+  ```bash
+  cp .env.example .env
+  # Edit .env with your API keys:
+  # GOOGLE_API_KEY=your_actual_api_key_here
+  ```
+
+**Verify setup:**
+  ```bash
+  # Check rate limits
+  python scripts/check_rate_limits.py
+
+  # Estimate experiment feasibility
+  python scripts/estimate_feasibility.py
+  ```
 
 ### Running Experiments
 
