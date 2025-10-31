@@ -67,45 +67,44 @@ Pilot (60 calls) → Validate → Build Core (180 calls) → Validate → Full S
 
 ### Phase 1A: Infrastructure (Days 1-2) - PREREQUISITE
 
-**Task 1.1: Set up GitHub API access (1 hour)**
+**Task 1.1: Verify Hugging Face Hub access (10 min)**
 ```bash
-# Get Personal Access Token from GitHub
-# Visit: https://github.com/settings/tokens
-# Required scopes: public_repo (read-only)
-# Add to .env: GITHUB_TOKEN=your_token_here
+# No authentication required for public model cards
+# Optional: Get token from https://huggingface.co/settings/tokens
+# Can add to .env: HUGGING_FACE_TOKEN=your_token_here (optional)
+# Benefits of token: Higher rate limits, access to gated models
 ```
 
 **Task 1.2: Install additional dependencies (30 min)**
 ```bash
 source venv/bin/activate
-pip install PyGithub gutenbergpy
+pip install huggingface_hub gutenbergpy
 pip freeze > requirements.txt  # Update requirements
 ```
 
-**Task 1.3: Implement corpus loaders (Day 1 afternoon)**
+**Task 1.3: Implement corpus loaders (Day 1 afternoon)** ✅ COMPLETE
 
 File: `src/corpus/loaders.py`
 ```python
-def load_github_file(repo_name, file_path, after_date="2024-08-01"):
-    """Load single file from GitHub repository
+def load_hf_model_card(model_id, after_date="2024-08-01"):
+    """Load model card from Hugging Face Hub
     
     Args:
-        repo_name: e.g., "pytorch/pytorch"
-        file_path: e.g., "README.md" or "docs/optimizer.md"
+        model_id: e.g., "meta-llama/Llama-3.2-3B"
         after_date: ISO date string, only fetch if modified after
     
     Returns:
         dict with 'content', 'url', 'last_modified', 'tokens'
     """
-    # Implementation here
+    # IMPLEMENTED
 
-def load_github_docs(repo_name, path="docs/", after_date="2024-08-01", max_tokens=50000):
-    """Load documentation from GitHub repo
+def load_hf_curated_models(after_date="2024-08-01", max_tokens=50000):
+    """Load model cards from curated list of 60+ recent models
     
     Returns:
-        list of dicts with file metadata
+        list of dicts with model card content and metadata
     """
-    # Implementation here
+    # IMPLEMENTED - includes Llama 3.2/3.3, Qwen 2.5, Mistral, Phi 3.5, etc.
 
 def load_gutenberg_books(book_ids, max_tokens=100000):
     """Load books from Project Gutenberg
@@ -117,31 +116,37 @@ def load_gutenberg_books(book_ids, max_tokens=100000):
     Returns:
         list of dicts with 'content', 'title', 'author', 'tokens'
     """
-    # Implementation here
+    # IMPLEMENTED
 ```
 
-**Acceptance Criteria:**
-- [ ] Can fetch PyTorch README.md via GitHub API
-- [ ] Can verify file modification date is after 2024-08-01
-- [ ] Token count is accurate (within ±5% of tiktoken)
-- [ ] Returns structured dict with metadata
+**Acceptance Criteria:** ✅ ALL MET
+- [x] Can fetch Llama 3.2-3B model card via HF Hub
+- [x] Can verify lastModified date is after 2024-08-01
+- [x] Token count is accurate (within ±5% of tiktoken)
+- [x] Returns structured dict with metadata
+- [x] Tested: 50k tokens collected in 2-3 seconds
 
-**Task 1.4: Implement tokenizer utilities (2 hours)**
+**Task 1.4: Implement tokenizer utilities (2 hours)** ✅ COMPLETE
 
-File: `src/utils/tokenizer.py` (enhance existing)
+File: `src/utils/tokenizer.py`
 ```python
-def count_tokens_accurate(text: str, model: str = "gpt-4") -> int:
-    """Count tokens using tiktoken (matches API counting)"""
-    # Already implemented - verify it works
+def count_tokens(text: str) -> int:
+    """Count tokens using tiktoken"""
+    # IMPLEMENTED
 
 def chunk_text_by_tokens(text: str, chunk_size: int, overlap: int) -> list:
     """Split text into chunks by token count (not word count)"""
-    # Add this function
+    # IMPLEMENTED
 
 def truncate_to_tokens(text: str, max_tokens: int) -> str:
     """Truncate text to exact token count"""
-    # Add this function
+    # IMPLEMENTED
 ```
+
+**Acceptance Criteria:** ✅ ALL MET
+- [x] All functions implemented and tested
+- [x] Chunking works correctly with overlap
+- [x] Token counts match tiktoken exactly
 
 ### Phase 1B: Minimal Data Collection (Day 2)
 
@@ -152,29 +157,27 @@ File: `scripts/collect_pilot_corpus.py` (NEW)
 #!/usr/bin/env python3
 """Collect minimal corpus for pilot testing"""
 
-from src.corpus.loaders import load_github_docs
+from src.corpus.loaders import load_hf_curated_models
 import json
 
-# Target: 10k tokens from PyTorch docs
-corpus = load_github_docs(
-    repo_name="pytorch/pytorch",
-    path="docs/",
+# Target: 10k tokens from recent model cards
+corpus = load_hf_curated_models(
     after_date="2024-08-01",
     max_tokens=10000
 )
 
-# Save to data/raw/pilot/pytorch_docs.json
-output_path = "data/raw/pilot/pytorch_docs.json"
+# Save to data/raw/pilot/hf_model_cards.json
+output_path = "data/raw/pilot/hf_model_cards.json"
 with open(output_path, 'w') as f:
     json.dump(corpus, f, indent=2)
 
-print(f"Collected {len(corpus)} files, {sum(d['tokens'] for d in corpus)} tokens")
+print(f"Collected {len(corpus)} model cards, {sum(d['tokens'] for d in corpus)} tokens")
 ```
 
 **Acceptance Criteria:**
-- [ ] Collected 8-12k tokens of PyTorch documentation
-- [ ] All files modified after 2024-08-01
-- [ ] Saved to `data/raw/pilot/pytorch_docs.json`
+- [ ] Collected 8-12k tokens of model card documentation
+- [ ] All models modified after 2024-08-01
+- [ ] Saved to `data/raw/pilot/hf_model_cards.json`
 - [ ] Can load and verify content
 
 **Task 2.2: Create 1 test question (1 hour)**
@@ -184,14 +187,14 @@ File: `data/questions/pilot_question_01.json` (NEW)
 {
   "experiment": "pilot",
   "question_id": "pilot_q001",
-  "question": "What is the default learning rate for the Adam optimizer in PyTorch 2.5?",
-  "ground_truth": "The default learning rate for Adam optimizer is 0.001 (1e-3).",
+  "question": "What is the context window size of Llama 3.2-3B model?",
+  "ground_truth": "The context window size is 128k tokens (131,072 tokens).",
   "difficulty": "simple_lookup",
-  "required_docs": ["pytorch/pytorch/docs/optim.md"],
-  "evaluation_criteria": "Answer must state 0.001 or 1e-3",
-  "source_url": "https://pytorch.org/docs/stable/optim.html",
-  "source_file": "docs/optim.md",
-  "keywords": ["Adam", "learning rate", "optimizer", "default"]
+  "required_docs": ["meta-llama/Llama-3.2-3B"],
+  "evaluation_criteria": "Answer must state 128k or 131,072 tokens",
+  "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
+  "source_model": "meta-llama/Llama-3.2-3B",
+  "keywords": ["Llama", "context window", "128k", "tokens"]
 }
 ```
 
