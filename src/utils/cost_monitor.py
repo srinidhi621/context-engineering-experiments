@@ -64,6 +64,8 @@ class CostMonitor:
             'by_model': {},
             'by_hour': {},
             'by_day': {},
+            'by_experiment': {},
+            'by_session': {},
             'alerts': []
         }
     
@@ -79,7 +81,9 @@ class CostMonitor:
         input_tokens: int,
         output_tokens: int,
         prompt: Optional[str] = None,
-        response: Optional[str] = None
+        response: Optional[str] = None,
+        experiment_id: Optional[str] = None,
+        session_id: Optional[str] = None
     ) -> Dict:
         """
         Record an API call and calculate cost.
@@ -113,6 +117,8 @@ class CostMonitor:
             'total_cost': total_cost,
             'prompt_length': len(prompt.split()) if prompt else 0,
             'response_length': len(response.split()) if response else 0,
+            'experiment_id': experiment_id,
+            'session_id': session_id,
         }
         
         with self.lock:
@@ -153,6 +159,35 @@ class CostMonitor:
             self.state['by_day'][day_key]['calls'] += 1
             self.state['by_day'][day_key]['cost'] += total_cost
             self.state['by_day'][day_key]['tokens'] += input_tokens + output_tokens
+            
+            # Update by experiment
+            if experiment_id:
+                if experiment_id not in self.state['by_experiment']:
+                    self.state['by_experiment'][experiment_id] = {
+                        'calls': 0,
+                        'input_tokens': 0,
+                        'output_tokens': 0,
+                        'cost': 0.0
+                    }
+                self.state['by_experiment'][experiment_id]['calls'] += 1
+                self.state['by_experiment'][experiment_id]['input_tokens'] += input_tokens
+                self.state['by_experiment'][experiment_id]['output_tokens'] += output_tokens
+                self.state['by_experiment'][experiment_id]['cost'] += total_cost
+            
+            # Update by session
+            if session_id:
+                if session_id not in self.state['by_session']:
+                    self.state['by_session'][session_id] = {
+                        'calls': 0,
+                        'input_tokens': 0,
+                        'output_tokens': 0,
+                        'cost': 0.0,
+                        'experiment_id': experiment_id
+                    }
+                self.state['by_session'][session_id]['calls'] += 1
+                self.state['by_session'][session_id]['input_tokens'] += input_tokens
+                self.state['by_session'][session_id]['output_tokens'] += output_tokens
+                self.state['by_session'][session_id]['cost'] += total_cost
             
             # Check for alerts
             self._check_alerts(total_cost, hour_key, day_key)
@@ -226,6 +261,8 @@ class CostMonitor:
                     'cost': today_data['cost'],
                 },
                 'by_model': self.state['by_model'],
+                'by_experiment': self.state.get('by_experiment', {}),
+                'by_session': self.state.get('by_session', {}),
                 'budget_remaining': self.ALERT_THRESHOLDS['total'] - self.state['summary']['total_cost'],
                 'recent_alerts': self.state['alerts'][-5:] if self.state['alerts'] else []
             }
@@ -265,6 +302,23 @@ class CostMonitor:
         print(f"   Spent: ${summary['total']['cost']:.4f}")
         print(f"   Remaining: ${summary['budget_remaining']:.4f}")
         print(f"   Usage: {(summary['total']['cost']/self.ALERT_THRESHOLDS['total']*100):.1f}%")
+        
+        # By experiment (if available)
+        if summary.get('by_experiment'):
+            print(f"\n🧪 BY EXPERIMENT:")
+            for exp_id, data in summary['by_experiment'].items():
+                print(f"   {exp_id}:")
+                print(f"      Calls: {data['calls']}")
+                print(f"      Tokens: {data['input_tokens'] + data['output_tokens']:,}")
+                print(f"      Cost: ${data['cost']:.4f}")
+        
+        # By session (if available and not too many)
+        if summary.get('by_session') and len(summary['by_session']) <= 10:
+            print(f"\n📊 RECENT SESSIONS:")
+            for session_id, data in list(summary['by_session'].items())[-5:]:
+                exp_label = f" ({data.get('experiment_id', 'unknown')})" if data.get('experiment_id') else ""
+                print(f"   {session_id}{exp_label}:")
+                print(f"      Calls: {data['calls']}, Cost: ${data['cost']:.4f}")
         
         # Recent alerts
         if summary['recent_alerts']:

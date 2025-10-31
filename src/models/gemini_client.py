@@ -1,30 +1,32 @@
-"""Gemini API client wrapper with rate limiting and error handling"""
+"""Gemini API client wrapper with unified monitoring (rate limiting + cost tracking)"""
 
 import google.generativeai as genai
 from src.config import api_config, config
-from src.utils.rate_limiter import RateLimiter
-from src.utils.cost_monitor import get_monitor
+from src.utils.unified_monitor import get_unified_monitor
 from typing import Optional, List, Dict, Any
 import time
 
 
 class GeminiClient:
-    """Wrapper for Google Gemini API with rate limiting, error handling, and cost tracking"""
+    """Wrapper for Google Gemini API with unified rate limiting and cost tracking"""
     
-    def __init__(self):
-        """Initialize Gemini client with API key and rate limiter"""
+    def __init__(self, budget_limit: float = 174.00):
+        """
+        Initialize Gemini client with unified monitoring.
+        
+        Args:
+            budget_limit: Maximum budget in USD (default: $174 from project plan)
+        """
         if not api_config.google_api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
         
         genai.configure(api_key=api_config.google_api_key)
-        self.rate_limiter = RateLimiter(
-            rpm=api_config.rate_limit_rpm,
-            tpm=api_config.rate_limit_tpm,
-            rpd=api_config.rate_limit_rpd
-        )
-        self.cost_monitor = get_monitor()
         self.generation_model = config.model_name
         self.embedding_model = config.embedding_model_name
+        self.monitor = get_unified_monitor(
+            model_name=self.generation_model,
+            budget_limit=budget_limit
+        )
     
     def generate_content(
         self, 
@@ -32,18 +34,20 @@ class GeminiClient:
         model: Optional[str] = None,
         temperature: float = 0.0,
         max_output_tokens: Optional[int] = None,
-        track_cost: bool = True,
+        experiment_id: Optional[str] = None,
+        session_id: Optional[str] = None,
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Generate content using Gemini model with rate limiting and cost tracking.
+        Generate content using Gemini model with unified monitoring.
         
         Args:
             prompt: Input prompt/question
             model: Model to use (defaults to configured model)
             temperature: Sampling temperature (0.0 = deterministic)
             max_output_tokens: Maximum tokens in response
-            track_cost: Whether to track this call in cost monitor
+            experiment_id: Optional experiment ID for tracking
+            session_id: Optional session ID for tracking
             **kwargs: Additional arguments to pass to generate_content
             
         Returns:
@@ -51,8 +55,15 @@ class GeminiClient:
         """
         model = model or self.generation_model
         
-        # Wait if rate limit approaching
-        self.rate_limiter.wait_if_needed(prompt_tokens=len(prompt.split()))
+        # Estimate token count (rough approximation: 1 token ~ 0.75 words)
+        estimated_input_tokens = int(len(prompt.split()) * 1.33)
+        estimated_output_tokens = max_output_tokens or 2048
+        
+        # Wait if rate limit approaching (enforces free tier limits & budget)
+        self.monitor.wait_if_needed(
+            estimated_input_tokens=estimated_input_tokens,
+            estimated_output_tokens=estimated_output_tokens
+        )
         
         try:
             start_time = time.time()
@@ -68,39 +79,32 @@ class GeminiClient:
             )
             
             end_time = time.time()
+            latency = end_time - start_time
             
             # Extract token counts
             input_tokens = getattr(response.usage_metadata, 'prompt_token_count', 0)
             output_tokens = getattr(response.usage_metadata, 'completion_token_count', 0)
             
-            # Track cost
-            if track_cost:
-                call_record = self.cost_monitor.record_call(
-                    model=model,
-                    input_tokens=input_tokens,
-                    output_tokens=output_tokens,
-                    prompt=prompt[:200],  # First 200 chars
-                    response=response.text[:200] if response.text else None
-                )
-            
-            # Update rate limiter with actual usage
-            if hasattr(response, 'usage_metadata'):
-                self.rate_limiter.record_request(
-                    prompt_tokens=input_tokens,
-                    output_tokens=output_tokens
-                )
+            # Record in unified monitor (handles both rate limiting and cost tracking)
+            call_record = self.monitor.record_call(
+                model=model,
+                input_tokens=input_tokens,
+                output_tokens=output_tokens,
+                latency=latency,
+                prompt=prompt[:200] if len(prompt) > 200 else prompt,
+                response=response.text[:200] if response.text and len(response.text) > 200 else response.text,
+                experiment_id=experiment_id,
+                session_id=session_id
+            )
             
             result = {
                 'text': response.text,
                 'tokens_input': input_tokens,
                 'tokens_output': output_tokens,
-                'latency': end_time - start_time,
+                'latency': latency,
+                'cost': call_record['total_cost'],
                 'model': model
             }
-            
-            # Add cost if tracked
-            if track_cost:
-                result['cost'] = call_record['total_cost']
             
             return result
             
@@ -170,11 +174,11 @@ class GeminiClient:
             embeddings.append(self.embed_text(text, model, track_cost))
         return embeddings
     
-    def get_cost_summary(self) -> Dict:
-        """Get current cost monitoring summary"""
-        return self.cost_monitor.get_summary()
+    def get_status(self) -> Dict:
+        """Get comprehensive monitoring status"""
+        return self.monitor.get_status()
     
-    def print_cost_summary(self):
-        """Print formatted cost summary"""
-        self.cost_monitor.print_summary()
+    def print_status(self):
+        """Print formatted monitoring status"""
+        self.monitor.print_status()
 

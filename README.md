@@ -2,6 +2,30 @@
 
 A rigorous experimental framework to test the importance of context engineering for Large Language Models, comparing long-context (1M tokens) and shorter-context (128k tokens) approaches.
 
+## ⚠️ CURRENT STATUS: INFRASTRUCTURE COMPLETE
+
+**✅ What's Complete (Ready for Experiments):**
+- ✅ Project scaffolding and directory structure
+- ✅ Configuration system (config.py, .env)
+- ✅ **Unified API Monitor** (rate limiting + cost tracking + budget enforcement in ONE system)
+- ✅ API integration (GeminiClient wrapper with unified monitoring)
+- ✅ Token counting utilities
+- ✅ Logging infrastructure
+- ✅ API key configured and verified
+- ✅ **Model selected: gemini-2.0-flash-exp (6x faster than 2.5 Flash on free tier)**
+- ✅ **End-to-end integration test passing**
+- ✅ **google-generativeai upgraded to v0.8.5**
+
+**❌ What's NOT Complete:**
+- ❌ Context engineering implementations (naive, structured, RAG)
+- ❌ Experiment logic (exp1-exp5 are empty TODOs)
+- ❌ Corpus data collection (directories empty)
+- ❌ Evaluation questions (none generated yet)
+- ❌ Metrics implementation (empty TODO)
+- ❌ Experiment runner scripts (empty TODOs)
+
+**Bottom Line:** Infrastructure is production-ready. Now build experimental logic.
+
 ## 🎯 Project Goal
 
 Design a replicable experiment suite that isolates the impact of context engineering on LLM quality, cost, and latency—separately for:
@@ -28,27 +52,44 @@ Design a replicable experiment suite that isolates the impact of context enginee
 
 **Note:** H2 uses Option A (first 128k tokens only, no padding), which means RAG conditions run at lower fill % (~13%) than naïve 1M (up to 90%). This is an acknowledged limitation—results may conflate RAG quality with fill % effects.
 
-## ⚠️ CRITICAL: Free Tier Rate Limits
+## ✅ FREE TIER CONFIGURATION (Optimized)
 
-**Using Gemini 2.0 Flash Experimental (Free Tier):**
+**Using Gemini 2.0 Flash Experimental:**
 - **RPM (Requests Per Minute):** 15
-- **TPM (Tokens Per Minute):** 1,000,000
+- **TPM (Tokens Per Minute):** 1,000,000  
 - **RPD (Requests Per Day):** 1,500
+- **Cost:** $0.00 (free tier)
 
 **Impact on 9,000+ Request Experiment Suite:**
-- At 1,500 requests/day max, full suite would take **~6 days minimum**
-- At average 500k tokens/request, TPM becomes the bottleneck
-- **Realistic estimate: 2-3 weeks** with careful batching
+- At 1,500 requests/day: **~6 days minimum**
+- TPM allows large contexts (up to 1M tokens)
+- **Realistic estimate: 6-7 days** (assuming no issues)
 
-### Rate Limiting Strategy
+**Automatic Enforcement:**
+The unified monitor automatically enforces all limits and budget:
+- Blocks requests exceeding RPM/TPM limits (waits for reset)
+- Hard stops at RPD limit (must resume next day)
+- Hard stops at budget limit ($174)
+- No manual tracking needed
 
-The project includes comprehensive rate limiting:
+### Unified Monitoring System
 
-1. **Pre-Request Token Estimation:** Counts tokens BEFORE API call
-2. **Automatic Wait Logic:** Blocks when limits approached
-3. **Persistent State:** Survives restarts, tracks across sessions
-4. **Daily Reset Handling:** Automatically resets at midnight PT
-5. **Smart Backoff:** Handles 429 errors gracefully
+The project uses a **single unified monitor** that handles everything:
+
+**Features:**
+1. **Rate Limiting:** Enforces RPM, TPM, RPD limits automatically
+2. **Cost Tracking:** Tracks tokens and costs comprehensively
+3. **Budget Enforcement:** Hard stops at $174 limit
+4. **Experiment Tracking:** Tag calls with experiment_id and session_id
+5. **Persistent State:** Survives restarts (saved to `results/.unified_monitor_state.json`)
+6. **No Conflicts:** Single source of truth for all usage
+
+**Benefits Over Separate Systems:**
+- ✅ No duplicate tracking
+- ✅ No state file conflicts
+- ✅ Budget + rate limits enforced together
+- ✅ Simpler API (one system to integrate)
+- ✅ Comprehensive reporting
 
 ### Check Feasibility FIRST
 
@@ -120,27 +161,35 @@ python scripts/check_rate_limits.py
 
 ## 📊 Experimental Design
 
-### Model Configuration
-- **Primary Model:** Google Gemini 2.5 Flash (1M token context window, production-ready, faster)
-- **Embedding Model:** Google text-embedding-004 (latest production embedding for RAG)
-- **Simulated 128k:** First 128k tokens only (Option A)
+### Model Configuration ✅ OPTIMIZED FOR FREE TIER
+
+**✅ CONFIGURED: gemini-2.0-flash-exp**
+
+This project uses **gemini-2.0-flash-exp** for optimal free tier performance:
+
+| Metric | Value | Comparison |
+|--------|-------|------------|
+| **RPM** | 15 | Standard |
+| **TPM** | 1,000,000 | Excellent for long contexts |
+| **RPD** | 1,500 | **6x better than 2.5 Flash** |
+| **Cost** | $0.00 | Free tier |
+
+**Timeline Impact:**
+- ✅ **9,000 requests: ~6 days minimum** (gemini-2.0-flash-exp)
+- ❌ Alternative (gemini-2.5-flash): ~36 days (250 RPD limit)
+
+**Unified Monitoring:**
+- ✅ Rate limiting (RPM, TPM, RPD enforcement)
+- ✅ Cost tracking (by experiment, session, model, day)
+- ✅ Budget enforcement ($174 limit from project plan)
+- ✅ All in one system - no conflicts or inconsistencies
+
+**Configuration:**
+- **Primary Model:** gemini-2.0-flash-exp (production-ready, free tier)
+- **Embedding Model:** text-embedding-004 (latest, free tier)
 - **Temperature:** 0.0 (deterministic)
 - **Repetitions:** 3 runs per condition per question
-
-### Model Rationale
-
-**Why Gemini 2.5 Flash?**
-- ✅ Faster inference than 2.0 Flash
-- ✅ Lower cost than 2.0
-- ✅ Better quality on complex tasks
-- ✅ Production-ready in Google Cloud
-- ✅ Still maintains 1M token context window
-
-**Why text-embedding-004?**
-- ✅ Latest production text embedding model
-- ✅ Optimized for semantic search and RAG
-- ✅ Better performance than gecko embeddings
-- ✅ Included in organizational API access
+- **Budget Limit:** $174 (enforced automatically)
 
 ### Key Variables
 
@@ -318,18 +367,14 @@ context-engineering-experiments/
     └── test_models.py
 ```
 
-## 🚀 Quick Start
+## 🚀 Quick Start (Command Line Ready)
 
 ### Prerequisites
-```bash
-# Python 3.10+
-python --version
+- Python 3.10+ (tested on 3.13.3)
+- Virtual environment capability
+- Google API key from https://aistudio.google.com/app/apikey
 
-# Google Cloud SDK (for Gemini API)
-# Install from: https://cloud.google.com/sdk/docs/install
-```
-
-### Installation
+### One-Time Setup
 
 ```bash
 # Clone repository
@@ -347,38 +392,44 @@ bash scripts/setup_environment.sh
 # ✅ Run verification tests
 ```
 
-### Daily Activation
-
-Every day when starting work, activate the environment with our custom setup:
+### Daily Activation & Command Line Usage
 
 ```bash
-cd /Users/Srinidhi/my_projects/context_engineering_experiments
+# Activate environment (do this every time you start work)
+cd /path/to/context_engineering_experiments
 source scripts/activate.sh
-```
 
-**Your prompt will show:**
-```
-(context_engineering_experiments) >
-```
+# Verify installation
+python scripts/test_api_integration.py
+# Expected: ✅ ALL TESTS PASSED
 
-Clean, minimal prompt with just the venv name and cursor. No clutter from paths or usernames.
+# Check monitoring status
+python scripts/generate_cost_report.py
 
-**To exit when done:**
-```bash
+# Monitor API usage
+python scripts/monitor_costs.py
+
+# When done
 deactivate
 ```
 
-### Verify Setup
+All scripts are executable from command line with `python scripts/<script_name>.py`
+
+### Verify Everything Works
 
 ```bash
-# After activation, verify everything is working:
-python -c "import google.generativeai, numpy, scipy, pandas; print('✅ All packages ready')"
+# Run comprehensive integration test (makes 1 real API call)
+python scripts/test_api_integration.py
 
-# Check API configuration:
-python scripts/check_rate_limits.py
+# Expected output:
+# ✅ Client initialized
+# ✅ Unified monitor configured
+# ✅ API call successful
+# ✅ Experiment tracking working
+# ✅ ALL TESTS PASSED
 
-# Run tests:
-pytest tests/ -v
+# Check current costs and usage
+python scripts/generate_cost_report.py
 ```
 
 ### Configure API Key
@@ -459,22 +510,80 @@ python scripts/generate_report.py --output FINAL_REPORT.md
   python scripts/estimate_feasibility.py
   ```
 
-### Running Experiments
+### Available Command Line Tools
+
+**Testing & Verification:**
+```bash
+python scripts/test_api_integration.py    # End-to-end integration test (use this first!)
+python scripts/verify_api_key.py          # Verify your Google API key
+```
+
+**Monitoring & Reporting:**
+```bash
+python scripts/generate_cost_report.py              # Comprehensive cost report
+python scripts/monitor_costs.py                     # Quick status check
+python scripts/monitor_costs.py --by-day            # Daily breakdown
+python scripts/monitor_costs.py --by-experiment     # Experiment breakdown
+python scripts/check_rate_limits.py                 # Check rate limits
+python scripts/estimate_feasibility.py              # Estimate experiment timeline
+```
+
+**Experiments (Not Yet Implemented):**
+```bash
+python scripts/run_experiment.py          # Run experiments
+python scripts/run_calibration.py         # Run calibration
+python scripts/analyze_results.py         # Analyze results
+python scripts/generate_report.py         # Generate final report
+```
+
+### Monitoring Costs
 
 ```bash
-# 1. Calibrate baseline (measure Gemini's intrinsic fill % degradation)
+# View current costs and usage
+python scripts/monitor_costs.py
+
+# View comprehensive report with experiment/session breakdowns
+python scripts/generate_cost_report.py
+
+# Export report to file
+python scripts/generate_cost_report.py --save cost_report.txt
+
+# Get JSON output for programmatic access
+python scripts/generate_cost_report.py --format json
+
+# View daily breakdown
+python scripts/monitor_costs.py --by-day
+
+# View hourly breakdown
+python scripts/monitor_costs.py --by-hour
+```
+
+The unified monitoring system tracks:
+- ✅ **Rate limits:** RPM, TPM, RPD with auto-enforcement
+- ✅ **API calls:** Total, by experiment, session, model, day
+- ✅ **Tokens:** Input, output, total (all breakdowns)
+- ✅ **Costs:** Calculated with current pricing (all breakdowns)
+- ✅ **Budget:** $174 limit enforced automatically
+- ✅ **Persistent:** Survives restarts (`results/.unified_monitor_state.json`)
+
+**Key Improvement:**
+The unified system prevents exceeding budget or rate limits before making the API call, not after. This protects your free tier quota.
+
+### Running Experiments (NOT YET IMPLEMENTED)
+
+```bash
+# These scripts are scaffolds only - not yet implemented:
+
+# 1. Calibrate baseline
 python scripts/run_calibration.py --output results/baseline_calibration.json
 
 # 2. Run individual experiment
 python scripts/run_experiment.py --experiment exp1_needle --conditions all
 
-# 3. Run full suite (WARNING: This will make ~9,000 API calls)
-python scripts/run_experiment.py --all --parallel 4
-
-# 4. Analyze results
+# 3. Analyze results
 python scripts/analyze_results.py --input results/raw/ --output results/analysis/
 
-# 5. Generate final report
+# 4. Generate final report
 python scripts/generate_report.py --output FINAL_REPORT.md
 ```
 

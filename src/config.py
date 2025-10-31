@@ -10,8 +10,9 @@ load_dotenv()
 @dataclass
 class ExperimentConfig:
     """Base configuration for all experiments"""
-    # Primary model: Gemini 2.5 Flash (faster, cost-effective, production-ready)
-    model_name: str = "gemini-2.5-flash"
+    # Primary model: Gemini 2.0 Flash Experimental (best free tier rate limits)
+    # 15 RPM, 1M TPM, 1500 RPD - allows 9K requests in ~6 days vs 36 days with 2.5 Flash
+    model_name: str = "gemini-2.0-flash-exp"
     # Embedding model: Latest production text embedding model
     embedding_model_name: str = "text-embedding-004"
     context_limit: int = 1_000_000
@@ -27,9 +28,12 @@ class ExperimentConfig:
 class APIConfig:
     """API configuration"""
     google_api_key: str = os.getenv("GOOGLE_API_KEY", "")
+    # Free tier limits for gemini-2.0-flash-exp
     rate_limit_rpm: int = int(os.getenv("RATE_LIMIT_RPM", 15))
     rate_limit_tpm: int = int(os.getenv("RATE_LIMIT_TPM", 1_000_000))
     rate_limit_rpd: int = int(os.getenv("RATE_LIMIT_RPD", 1_500))
+    # Budget limit (in USD) - hard stop to prevent overages
+    budget_limit: float = float(os.getenv("BUDGET_LIMIT", 174.00))
 
 # Global config instances
 config = ExperimentConfig()
