@@ -66,8 +66,8 @@
 **System Configuration:**
 - Python: 3.13.3
 - Model: gemini-2.0-flash-exp (15 RPM, 1M TPM, 1500 RPD, $0.00)
-- Monitoring: Unified system at `src/utils/unified_monitor.py`
-- State: `results/.unified_monitor_state.json` (persistent)
+- Monitoring: Unified system at `src/utils/monitor.py`
+- State: `results/.monitor_state.json` (persistent)
 - Budget: $174 enforced automatically
 
 **Command Line Usage:**
@@ -83,6 +83,28 @@ python scripts/generate_cost_report.py
 
 # Check status
 python scripts/monitor_costs.py
+```
+
+---
+
+## 🎯 Execution Strategy: Experiment-by-Experiment
+
+**Philosophy:** Complete each experiment end-to-end before moving to the next. This allows for:
+- Early validation of methodology
+- Iterative improvements based on learnings
+- Risk mitigation (catch issues early)
+- Adaptive planning (adjust based on results)
+
+**Sequence:**
+1. **Experiment 1** (Needle in Multiple Haystacks) - Establishes baseline and tests all 4 strategies
+2. **Experiment 2** (Context Pollution) - Tests robustness with same strategies
+3. **Experiment 4** (Precision Retrieval) - Academic papers, builds on RAG
+4. **Experiment 3** (Multi-Turn Memory) - Most complex, benefits from prior learnings
+5. **Experiment 5** (Cost-Latency Frontier) - Analysis of all prior experiments
+
+**Per-Experiment Workflow:**
+```
+Data Collection → Implementation → Q&A Generation → Execution → Analysis → Learnings
 ```
 
 ### ✅ Completed (Scaffolding Phase)
@@ -131,197 +153,203 @@ python scripts/monitor_costs.py
 
 ---
 
-### 🔨 Next Up (Week 1 - Corpus Collection)
+---
 
-- [ ] Download API documentation corpus (AWS, GCP, Azure)
-- [ ] Download SEC financial reports
-- [ ] Download arXiv academic papers
-- [ ] Download Wikipedia articles for padding
-- [ ] Generate 50 questions for Experiment 1
-- [ ] Generate 20 questions for Experiment 2
-- [ ] Generate 10 scenarios for Experiment 3
-- [ ] Generate 60 questions for Experiment 4
+## 📅 Revised Timeline: Experiment-by-Experiment
+
+| Experiment | Duration | Key Deliverable |
+|------------|----------|-----------------|
+| **Experiment 1** | Week 1-2 | Baseline established, all 4 strategies tested (3,000 calls) |
+| **Experiment 2** | Week 2-3 | Pollution robustness validated (1,200 calls) |
+| **Experiment 4** | Week 3-4 | Academic retrieval tested (3,600 calls) |
+| **Experiment 3** | Week 4-5 | Multi-turn memory evaluated (600 calls) |
+| **Experiment 5** | Week 5 | Cost-latency frontier computed (analysis only) |
+| **Final Analysis & Report** | Week 5-6 | Complete report with all findings |
+
+**Total API Calls:** 8,400 (down from 9,000 - no calibration needed)
+**Estimated Cost:** ~$120-150 (with buffer)
 
 ---
 
-## 📅 Timeline Overview
+## 🧪 EXPERIMENT 1: Needle in Multiple Haystacks (Week 1-2)
 
-| Phase | Duration | Key Deliverable |
-|-------|----------|-----------------|
-| Phase 1: Foundation & Corpus | Week 1 | All corpora collected, 200 questions ready |
-| Phase 2: Context Engineering | Week 2 | All 4 strategies implemented and tested |
-| Phase 3: Experiment Execution (Part 1) | Week 3 | Experiments 1-2 completed (4,200 API calls) |
-| Phase 4: Experiment Execution (Part 2) | Week 4 | Experiments 3-5 completed (4,800 API calls) |
-| Phase 5: Evaluation & Analysis | Week 5 | All metrics computed, hypotheses tested |
-| Phase 6: Reporting & Documentation | Week 6 | Final report published, code documented |
+### Overview
+**Goal:** Establish baseline performance and test all 4 context assembly strategies across different context fill levels.
 
----
+**Hypothesis:** Engineered 1M context will outperform Naïve 1M by ≥15% at high fill percentages.
 
-## 📅 Phase 1: Foundation & Corpus Preparation (Week 1)
+**Domain:** API Documentation (AWS, GCP, Azure)
 
-### Goals
-- ✅ Set up project infrastructure
-- ✅ Collect and preprocess corpus data
-- ✅ Create evaluation question sets with ground truth
-- ✅ Establish development environment
+**Configuration:**
+- Questions: 50
+- Strategies: 4 (Naïve 1M, Structured 1M, Basic RAG 128k, Advanced RAG 128k)
+- Fill levels: 5 (10%, 30%, 50%, 70%, 90%)
+- Repetitions: 3 per configuration
+- **Total API calls:** 50 × 4 × 5 × 3 = 3,000
+- **Estimated cost:** $45-60
+- **Estimated time:** 10-12 days
 
-### Day 1-2: Project Setup & Environment
+### Phase 1: Data Collection (Days 1-2, ~12 hours)
 
-**Tasks:**
-- [ ] Initialize Git repository
-  ```bash
-  git init
-  git add .
-  git commit -m "Initial project structure"
-  ```
-- [ ] Set up Python virtual environment
-  ```bash
-  python -m venv venv
-  source venv/bin/activate
-  pip install -r requirements.txt
-  ```
-- [ ] Configure API access
-  - Get Google AI API key from [Google AI Studio](https://aistudio.google.com/app/apikey)
-  - Set up `.env` file with credentials
-  - Test API connection
-- [ ] Implement core utilities
-  - `src/utils/tokenizer.py` - Token counting (using tiktoken)
-  - `src/utils/logging.py` - Structured logging
-  - `src/models/gemini_client.py` - API wrapper with rate limiting
-- [ ] Write unit tests for utilities
+**Objective:** Collect API documentation corpus (500k-1M tokens) and padding corpus (2M tokens)
+
+#### Tasks:
+
+**1. API Documentation Corpus**
+- [ ] Download AWS documentation
+  - Services: Lambda, API Gateway, DynamoDB, S3, EC2
+  - Source: https://docs.aws.amazon.com
+  - Method: Web scraping or AWS docs dataset
+  - Target: 200-300k tokens
+
+- [ ] Download GCP documentation
+  - Services: Cloud Functions, Cloud Storage, Firestore, Compute Engine
+  - Source: https://cloud.google.com/docs
+  - Target: 150-200k tokens
+
+- [ ] Download Azure documentation
+  - Services: Azure Functions, Blob Storage, Cosmos DB, Virtual Machines
+  - Source: https://docs.microsoft.com/azure
+  - Target: 150-200k tokens
+
+- [ ] Clean and normalize
+  - Convert HTML → plain text
+  - Remove navigation, headers, footers
+  - Standardize formatting
+  - Extract metadata (service name, category)
+
+- [ ] Verify token counts
+  - Total API docs: 500k-700k tokens
+  - Save to `data/raw/api_docs/{cloud_provider}/{service}/`
+
+**2. Padding Corpus (for fill % control)**
+- [ ] Download 500-1000 Wikipedia articles
+  - Categories: History, Geography, Literature, Arts, Sports, Biology
+  - Use `wikipedia` Python library
+  - Filter to avoid tech/cloud topics
+  - Target: 2M+ tokens
+
+- [ ] Process padding corpus
+  - Clean wiki markup
+  - Chunk into ~2k token segments
+  - Save to `data/raw/padding_corpus/`
+
+**3. Corpus Utilities**
+- [ ] Implement `src/corpus/loaders.py`
+  - Generic corpus loading functions
+  - Token counting per document
+  - Metadata extraction
+
+- [ ] Create `data/corpus_manifest.json`
+  - Catalog of all documents
+  - Token counts, sources, categories
+
+**Deliverables:**
+- ✅ `data/raw/api_docs/` (500k-700k tokens)
+- ✅ `data/raw/padding_corpus/` (2M+ tokens)
+- ✅ `data/corpus_manifest.json`
+- ✅ Corpus loading utilities
+
+### Phase 2: Implementation (Days 3-5, ~20 hours)
+
+**Objective:** Implement all 4 context assembly strategies
+
+**File:** `src/context_engineering/naive.py`
+
+- [ ] Implement `NaiveContextAssembler` class
+  - Sequential document concatenation
+  - Token-aware truncation using `src/utils/tokenizer.py`
+  - Fill % padding support (add padding corpus to reach target tokens)
+  - No optimization, no structure
+
+- [ ] Write unit tests
   - Test token counting accuracy
-  - Test API client retry logic
-  - Test rate limiting
+  - Test padding reaches target
+  - Test truncation at boundaries
+  - Test with various fill percentages
+
+**Key Features:**
+```python
+class NaiveContextAssembler:
+    def assemble(self, documents: List[str], target_tokens: int, 
+                 fill_pct: float, padding_corpus: List[str]) -> str:
+        """
+        Sequential concatenation with padding
+        1. Concatenate docs until relevant content exhausted
+        2. Add padding to reach target_tokens (based on fill_pct)
+        3. Simple truncation if over limit
+        """
+```
+
+#### 2. Structured Context Assembler (~5 hours)
+
+**File:** `src/context_engineering/structured.py`
+
+- [ ] Implement `StructuredContextAssembler` class
+  - Generate table of contents
+  - Add XML metadata tags to each document
+  - Include navigation instructions
+  - Hierarchical organization
+  - Fill % padding support
+
+- [ ] Write unit tests
+  - Test TOC generation
+  - Test metadata tagging
+  - Verify token overhead <10%
+
+**Document Structure:**
+```xml
+<document id="doc_0">
+  <metadata>
+    <title>AWS Lambda Overview</title>
+    <source>AWS Documentation</source>
+    <topic>Serverless Computing</topic>
+  </metadata>
+  <content>[Document content]</content>
+</document>
+```
+
+#### 3. Basic RAG Pipeline (~8 hours)
+
+**File:** `src/context_engineering/rag.py`
+
+- [ ] Implement chunking strategy (512 tokens, 50 overlap)
+- [ ] Implement embedding generation (Google text-embedding-004)
+- [ ] Implement vector store (FAISS or ChromaDB)
+- [ ] Implement retrieval (top-k by similarity)
+- [ ] Implement context assembly from retrieved chunks
+- [ ] Write end-to-end tests
+
+**Dependencies to add:**
+```bash
+pip install faiss-cpu chromadb
+```
+
+#### 4. Advanced RAG Pipeline (~4 hours)
+
+**File:** `src/context_engineering/advanced_rag.py`
+
+- [ ] Extend basic RAG with:
+  - Hybrid search (dense + BM25 sparse)
+  - Reciprocal Rank Fusion
+  - Optional reranking
+  - Query decomposition for complex questions
+
+- [ ] Write tests for advanced features
 
 **Deliverables:**
-- ✓ Working development environment
-- ✓ API client with rate limiting (60 RPM)
-- ✓ Token counting utility
-- ✓ Structured logging system
-- ✓ Initial tests passing
-
-**Time Estimate:** 16 hours
+- ✅ `src/context_engineering/naive.py`
+- ✅ `src/context_engineering/structured.py`
+- ✅ `src/context_engineering/rag.py`
+- ✅ `src/context_engineering/advanced_rag.py`
+- ✅ All unit tests passing
+- ✅ Integration test with sample corpus
 
 ---
 
-### Day 3-4: Corpus Collection
+### Phase 3: Question Generation (Days 6-7, ~12 hours)
 
-#### Experiment 1: API Documentation (500k-1M tokens)
-
-**Sources:**
-1. **AWS Documentation**
-   - Lambda, API Gateway, DynamoDB, S3
-   - Download from: https://docs.aws.amazon.com
-   - Method: Web scraping or use AWS docs dataset
-   
-2. **GCP Documentation**
-   - Cloud Functions, Cloud Storage, Firestore
-   - Download from: https://cloud.google.com/docs
-   
-3. **Azure Documentation**
-   - Azure Functions, Blob Storage, Cosmos DB
-   - Download from: https://docs.microsoft.com/azure
-
-**Tasks:**
-- [ ] Scrape/download API docs (use BeautifulSoup or Selenium)
-- [ ] Clean HTML → plain text conversion
-- [ ] Normalize formatting (remove excessive whitespace, standardize headers)
-- [ ] Extract metadata (service name, category, last updated)
-- [ ] Verify total token count reaches 500k-1M
-- [ ] Save as organized files: `data/raw/api_docs/{service}/{document}.txt`
-
-**Format:**
-```
-data/raw/api_docs/
-├── aws/
-│   ├── lambda_overview.txt
-│   ├── lambda_api.txt
-│   └── ...
-├── gcp/
-│   └── ...
-└── azure/
-    └── ...
-```
-
-#### Experiment 2: Financial Reports (50k base + 1M pollution)
-
-**Sources:**
-1. **Base Corpus:** SEC EDGAR filings
-   - 5-10 company Q4 reports (2023-2024)
-   - Focus: Tech companies (Apple, Google, Microsoft, Amazon, Meta)
-   - Download from: https://www.sec.gov/edgar
-   
-2. **Pollution Corpus:**
-   - Additional 20-30 reports from different companies/quarters
-   - Mix of industries to ensure diversity
-
-**Tasks:**
-- [ ] Download 10-K and 10-Q filings from SEC EDGAR
-- [ ] Extract text from filings (use `python-edgar` or manual download)
-- [ ] Parse sections (focus on Q4 summaries, financial statements)
-- [ ] Label each report: company, quarter, year, industry
-- [ ] Separate base corpus (5 reports × 50k tokens each)
-- [ ] Create pollution pool (1M+ tokens)
-
-#### Experiment 4: Academic Papers (500k tokens)
-
-**Sources:**
-1. **arXiv Papers:** CS/AI domain (Machine Learning, NLP)
-   - Download from: https://arxiv.org/
-   - Target: 100 papers × 5k tokens each = 500k total
-
-**Tasks:**
-- [ ] Download 100 recent papers from arXiv (2022-2024)
-- [ ] Convert PDFs to text (use `pdfplumber` or `PyMuPDF`)
-- [ ] Parse structure: Title, Abstract, Introduction, Methods, Results, Conclusion
-- [ ] Clean conversion artifacts (headers, footers, references)
-- [ ] Extract metadata: authors, year, venue, citations
-- [ ] Verify token count per paper (aim for 4k-6k each)
-
-#### Padding Corpus (2M+ tokens)
-
-**Sources:** Wikipedia articles from unrelated domains
-
-**Categories to include:**
-- History (World Wars, ancient civilizations)
-- Geography (countries, cities, landmarks)
-- Literature (classic novels, authors)
-- Arts (painting, music, theater)
-- Sports (Olympics, major leagues)
-- Biology (animals, plants, ecosystems)
-
-**Tasks:**
-- [ ] Use Wikipedia API to download 500-1000 articles
-  ```python
-  import wikipedia
-  articles = wikipedia.random(1000)
-  ```
-- [ ] Filter to ensure no overlap with test domains
-- [ ] Clean wiki markup → plain text
-- [ ] Chunk into ~2k token segments
-- [ ] Total: 2M+ tokens reusable across experiments
-
-**Deliverables:**
-- ✓ `data/raw/api_docs/` - 500k-1M tokens
-- ✓ `data/raw/financial_reports/` - 1M+ tokens
-- ✓ `data/raw/academic_papers/` - 500k tokens
-- ✓ `data/raw/padding_corpus/` - 2M+ tokens
-- ✓ `data/corpus_manifest.json` - Metadata catalog
-
-**Scripts to write:**
-- `src/corpus/downloaders/scrape_aws_docs.py`
-- `src/corpus/downloaders/download_sec_filings.py`
-- `src/corpus/downloaders/download_arxiv_papers.py`
-- `src/corpus/downloaders/download_wikipedia.py`
-- `src/corpus/loaders.py` - Generic corpus loader
-
-**Time Estimate:** 16 hours
-
----
-
-### Day 5-7: Question Generation & Ground Truth
-
-**Goal:** Create 200 total questions across 4 experiments (50 each)
+**Objective:** Create 50 high-quality questions with ground truth answers
 
 #### Question Design Principles
 
@@ -382,91 +410,20 @@ data/raw/api_docs/
 
 **Tasks:**
 - [ ] Generate 50 questions with variety
-  - 20 simple lookups
-  - 20 synthesis questions
-  - 10 complex/contradiction questions
-- [ ] Write ground truth answers (100-200 words each)
-- [ ] Identify required source documents for each
-- [ ] Define evaluation criteria (what makes an answer correct?)
+  - 20 simple lookups (e.g., "What is the default timeout for AWS Lambda?")
+  - 20 synthesis questions (e.g., "Compare authentication across AWS/GCP/Azure")
+  - 10 complex/contradiction questions (e.g., resolve conflicting docs)
 
-#### Experiment 2 Questions (Financial Reports)
+- [ ] For each question, provide:
+  - Ground truth answer (100-200 words)
+  - Required source documents
+  - Evaluation criteria (what makes it correct?)
+  - Difficulty level
+  - Answer type (factual/comparative/analytical)
 
-**Focus:** Questions answerable ONLY from the base corpus
+- [ ] Save to `data/questions/exp1_questions.json`
 
-**Examples:**
-```json
-{
-  "id": "exp2_q001",
-  "question": "What was Apple's Q4 2023 revenue?",
-  "ground_truth": "$89.5 billion",
-  "difficulty": "simple_lookup",
-  "required_docs": ["financial_reports/apple_q4_2023.txt"],
-  "base_corpus_only": true
-}
-```
-
-**Tasks:**
-- [ ] Generate 20 questions strictly from base corpus
-- [ ] Ensure answers are NOT in pollution documents
-- [ ] Write clear ground truth with numbers/facts
-- [ ] Mark which company/quarter each question targets
-
-#### Experiment 3 Questions (Multi-Turn Memory)
-
-**Format:** Conversational scenarios with 10 turns each
-
-**Example Scenario:**
-```json
-{
-  "id": "exp3_scenario_001",
-  "scenario": "Customer contacting support about billing issue",
-  "turns": [
-    {
-      "turn": 1,
-      "customer_says": "I was charged twice for my subscription",
-      "required_context": ["customer_history", "billing_docs"],
-      "expected_actions": ["Verify charge history", "Check subscription status"]
-    },
-    {
-      "turn": 2,
-      "customer_says": "Yes, on October 15 and October 16",
-      "required_context": ["previous_turn", "billing_docs"],
-      "expected_actions": ["Locate charges", "Explain if legitimate or error"]
-    }
-    // ... 8 more turns
-  ]
-}
-```
-
-**Tasks:**
-- [ ] Create 10 multi-turn scenarios (5 turns each for simplicity)
-- [ ] Define required context at each turn
-- [ ] Write expected responses/actions
-- [ ] Include memory retention questions ("What did I say in turn 2?")
-
-#### Experiment 4 Questions (Academic Papers)
-
-**Examples:**
-```json
-{
-  "id": "exp4_q001",
-  "question": "What was the sample size in the BERT paper?",
-  "ground_truth": "3.3 billion words (Wikipedia + BookCorpus)",
-  "difficulty": "simple_lookup",
-  "required_docs": ["academic_papers/bert_2018.txt"],
-  "section": "Methods"
-}
-```
-
-**Tasks:**
-- [ ] Generate 60 questions
-  - 30 fact lookups (sample size, accuracy, parameters)
-  - 20 comparisons (which papers used technique X?)
-  - 10 meta-analyses (summarize findings across papers)
-- [ ] Include section hints (Abstract, Methods, Results)
-- [ ] Write detailed ground truth with citations
-
-**Format for All Questions:**
+**JSON Format:**
 ```json
 {
   "experiment": "exp1_needle",
