@@ -1,9 +1,9 @@
 # Project Implementation Plan
 
 **Project:** Context Engineering for LLMs - Experimental Suite  
-**Timeline:** 6 Weeks  
+**Timeline:** 10-12 Weeks (Realistic)  
 **Start Date:** October 30, 2025  
-**Budget:** $174 (API costs - enforced automatically)  
+**Budget:** $0 (Free Tier - gemini-2.0-flash-exp)  
 **Team Size:** 1  
 
 **Last Updated:** October 31, 2025  
@@ -27,39 +27,84 @@
 - No experiments run
 
 **Time Spent:** ~25 hours on infrastructure  
-**Remaining:** ~215 hours for experiments and analysis
+**Remaining:** ~10-12 weeks for experiments and analysis (realistic estimate)
 
 **Repository:** https://github.com/srinidhi621/context-engineering-experiments
 
 ---
 
-## 🎯 Execution Strategy
+## 🎯 Execution Strategy: Iterative & Practical
 
-**Philosophy:** Complete each experiment end-to-end before moving to next. Each experiment follows:
+**Philosophy:** Validate small, then scale. Build incrementally with continuous validation.
+
+**Approach:**
 ```
-Data Collection → Implementation → Q&A Generation → Execution → Analysis → Learnings
+Pilot (60 calls) → Validate → Build Core (180 calls) → Validate → Full Scale (4,200 calls)
 ```
 
-**Sequence:**
-1. **Experiment 1** - Needle in Haystacks (establishes baseline, tests all 4 strategies)
-2. **Experiment 2** - Context Pollution (tests robustness)
-3. **Experiment 4** - Precision Retrieval (academic papers)
-4. **Experiment 3** - Multi-Turn Memory (most complex, benefits from prior learnings)
-5. **Experiment 5** - Cost-Latency Frontier (analysis of all experiments)
+**Revised Scope (Focused & Achievable):**
+1. **Pilot Phase** - 10 questions, 2 strategies, validate entire pipeline
+2. **Experiment 1** - Needle in Haystacks (establishes baseline, tests all 4 strategies)
+3. **Experiment 2** - Context Pollution (tests robustness)
+4. **Experiment 5** - Cost-Latency Frontier (analysis of Exp 1-2)
 
-**Total Estimated API Calls:** 8,400  
-**Total Estimated Cost:** $120-150
+**Experiments DROPPED (Too Ambitious):**
+- ❌ Experiment 3 - Multi-Turn Memory (complex, limited generalizability)
+- ❌ Experiment 4 - Precision Retrieval (requires extensive PDF parsing)
+
+**Total Estimated API Calls:** 4,380 (vs original 8,400)  
+**Total Estimated Cost:** $0 (free tier)  
+**Total Estimated Time:** 10-12 weeks (realistic)
 
 ---
 
-## 🧪 EXPERIMENT 1: Needle in Multiple Haystacks
+## 🧪 PILOT PHASE: Validate Pipeline (Week 1)
 
-**Duration:** 10-12 days  
+**Duration:** 3-5 days  
+**Goal:** End-to-end validation before scaling up  
+**API Calls:** 180 (10 questions × 2 strategies × 3 fill levels × 3 reps)  
+**Est. Cost:** $0 (free tier)
+
+### Scope
+- **Corpus:** 50k tokens AWS Lambda docs only
+- **Strategies:** Naïve 1M + Basic RAG 128k (test both extremes)
+- **Fill Levels:** [0.3, 0.5, 0.7] (representative sample)
+- **Questions:** 10 manually crafted with ground truth
+
+### Deliverables
+- [ ] Minimal corpus collected and validated
+- [ ] Naive + RAG assemblers working
+- [ ] Padding system working (RAG padded to match fill %)
+- [ ] 10 questions + ground truth answers
+- [ ] All 180 API calls completed
+- [ ] Metrics computed (correctness, cost, latency)
+- [ ] Checkpoint/resume system tested
+- [ ] **Go/No-Go Decision:** If pilot fails, fix before scaling
+
+### Success Criteria
+- Pipeline runs end-to-end without crashes
+- Results are reasonable (not random garbage)
+- Metrics are computable and interpretable
+- Token counting is accurate (±5%)
+- Checkpointing works (can resume from failure)
+
+---
+
+## 🧪 EXPERIMENT 1: Needle in Multiple Haystacks (Weeks 2-4)
+
+**Duration:** 2-3 weeks  
 **Goal:** Establish baseline and test all 4 context strategies across fill levels  
 **Hypothesis:** Engineered 1M > Naïve 1M by ≥15% at high fill %  
 **Domain:** API Documentation (AWS, GCP, Azure)  
 **API Calls:** 3,000 (50 questions × 4 strategies × 5 fill levels × 3 reps)  
-**Est. Cost:** $45-60
+**Est. Cost:** $0 (free tier)
+
+**CRITICAL FIX:** RAG strategies will be **padded to match fill %** of naive strategies. This ensures we're comparing context engineering quality, not fill % effects.
+
+Example at 70% fill (700k tokens):
+- Naïve 1M: 700k tokens (real docs + padding)
+- RAG 128k: Retrieve ~90k relevant chunks + pad to 700k with irrelevant content
+- This isolates RAG quality from attention dilution effects
 
 ### Phase 1: Data Collection (~2 days)
 
@@ -109,7 +154,8 @@ Data Collection → Implementation → Q&A Generation → Execution → Analysis
 
 **Dependencies:**
 ```bash
-pip install faiss-cpu chromadb rank-bm25
+pip install faiss-cpu rank-bm25 tqdm
+# Already in requirements.txt
 ```
 
 **Tests:**
@@ -218,13 +264,15 @@ pip install faiss-cpu chromadb rank-bm25
 
 ---
 
-## 🧪 EXPERIMENT 2: Context Pollution
+## 🧪 EXPERIMENT 2: Context Pollution (Weeks 5-6)
 
-**Duration:** 5-7 days  
+**Duration:** 1-2 weeks  
 **Goal:** Test robustness to irrelevant information  
 **Domain:** Financial Reports (SEC filings)  
 **API Calls:** 1,200 (20 questions × 4 strategies × 5 pollution levels × 3 reps)  
-**Est. Cost:** $20-30
+**Est. Cost:** $0 (free tier)
+
+**Note:** RAG strategies also padded to match pollution levels for fair comparison.
 
 ### Phase 1: Data Collection (~2 days)
 
@@ -261,106 +309,30 @@ pip install faiss-cpu chromadb rank-bm25
 
 ---
 
-## 🧪 EXPERIMENT 4: Precision Retrieval
+## ❌ EXPERIMENTS 3 & 4: DROPPED
 
-**Duration:** 8-10 days  
-**Goal:** Test retrieval accuracy on academic papers  
-**Domain:** arXiv ML/NLP papers  
-**API Calls:** 3,600 (60 questions × 4 strategies × 5 fill levels × 3 reps)  
-**Est. Cost:** $50-70
+**Experiment 3 (Multi-Turn Memory)** and **Experiment 4 (Precision Retrieval)** have been removed from scope to keep the project achievable:
 
-### Phase 1: Data Collection (~3 days)
+**Why Dropped:**
+- **Exp 3:** Requires complex stateful conversation management, limited generalizability
+- **Exp 4:** Requires extensive PDF parsing (100+ papers), time-intensive data prep
 
-- [ ] Download 100 arXiv papers (2022-2024, ML/NLP domain)
-- [ ] Convert PDF → text (pdfplumber or PyMuPDF)
-- [ ] Parse structure: Title, Abstract, Methods, Results, Conclusion
-- [ ] Extract metadata: authors, year, citations
-- [ ] Target: 500k tokens total (~5k per paper)
-- [ ] Save to: `data/raw/academic_papers/`
+**Impact:** Reduces API calls from 8,400 → 4,200 and timeline from 6 weeks → 10-12 weeks (more realistic)
 
-### Phase 2: Implementation (~1 day)
-
-- [ ] Paper-specific parsing utilities
-- [ ] Section-aware retrieval for RAG
-- [ ] Reuse existing assemblers
-
-### Phase 3: Question Generation (~2 days)
-
-- [ ] 30 fact lookups (sample size, accuracy, parameters)
-- [ ] 20 comparisons (which papers used technique X?)
-- [ ] 10 meta-analyses (summarize findings)
-- [ ] Include section hints
-- [ ] Save to: `data/questions/exp4_questions.json`
-
-### Phase 4: Execution (~2 days)
-
-- [ ] Run 3,600 API calls
-- [ ] Script: `scripts/run_experiment_4.py`
-
-### Phase 5: Analysis (~1 day)
-
-- [ ] Citation accuracy (precision/recall)
-- [ ] Section retrieval accuracy
-- [ ] Completeness for meta-analyses
-- [ ] Precision@K metrics
+**Future Work:** These experiments can be added later if initial results warrant expansion.
 
 ---
 
-## 🧪 EXPERIMENT 3: Multi-Turn Memory
+## 🧪 EXPERIMENT 5: Cost-Latency Frontier (Weeks 7-8)
 
-**Duration:** 7-9 days  
-**Goal:** Test conversation state management  
-**Domain:** Customer support scenarios  
-**API Calls:** 600 (10 scenarios × 5 turns × 4 strategies × 3 reps)  
-**Est. Cost:** $20-30
-
-### Phase 1: Data Collection (~2 days)
-
-- [ ] Customer history templates
-- [ ] Support documentation corpus
-- [ ] Product information
-- [ ] Create 10 diverse scenarios (billing, tech support, returns, etc.)
-- [ ] Save to: `data/raw/support_docs/`
-
-### Phase 2: Implementation (~2 days)
-
-- [ ] Stateful conversation manager
-- [ ] Memory management for each strategy
-- [ ] Context growth tracking
-
-### Phase 3: Scenario Design (~2 days)
-
-- [ ] 10 scenarios, 5 turns each
-- [ ] Define required context per turn
-- [ ] Expected actions/responses
-- [ ] Memory retention questions
-- [ ] Save to: `data/questions/exp3_scenarios.json`
-
-### Phase 4: Execution (~1 day)
-
-- [ ] Run 600 turn-level API calls
-- [ ] Track cumulative context growth
-- [ ] Script: `scripts/run_experiment_3.py`
-
-### Phase 5: Analysis (~1 day)
-
-- [ ] Coherence scores
-- [ ] Memory retention (recall from turn N at turn N+3)
-- [ ] Cumulative cost per conversation
-- [ ] Context compression effectiveness
-
----
-
-## 🧪 EXPERIMENT 5: Cost-Latency Frontier
-
-**Duration:** 3-4 days  
+**Duration:** 3-5 days  
 **Goal:** Find optimal strategy for different constraints  
-**Data:** Analysis of Experiments 1-4 (no new API calls)  
+**Data:** Analysis of Experiments 1-2 (no new API calls)  
 **Est. Cost:** $0
 
 ### Tasks
 
-- [ ] Aggregate all metrics from Exp 1-4
+- [ ] Aggregate all metrics from Exp 1-2
 - [ ] Normalize quality, cost, latency to [0, 1]
 - [ ] Compute efficiency score: quality / (cost × latency)
 - [ ] Find Pareto frontier (non-dominated points)
@@ -371,9 +343,9 @@ pip install faiss-cpu chromadb rank-bm25
 
 ---
 
-## 📊 Final Analysis & Reporting
+## 📊 Final Analysis & Reporting (Weeks 9-12)
 
-**Duration:** Week 5-6  
+**Duration:** 3-4 weeks  
 **Goal:** Complete statistical analysis and write final report
 
 ### Statistical Analysis (~3 days)
@@ -454,10 +426,9 @@ python scripts/monitor_costs.py
 python scripts/generate_cost_report.py
 
 # Run experiments (when ready)
-python scripts/run_experiment_1.py
-python scripts/run_experiment_2.py
-python scripts/run_experiment_4.py
-python scripts/run_experiment_3.py
+python scripts/run_pilot.py              # Start with this!
+python scripts/run_experiment_1.py       # After pilot succeeds
+python scripts/run_experiment_2.py       # After Exp 1 succeeds
 
 # Generate analysis
 python scripts/analyze_results.py

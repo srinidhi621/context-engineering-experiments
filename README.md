@@ -17,14 +17,17 @@ A rigorous experimental framework to test the importance of context engineering 
 - ✅ **google-generativeai upgraded to v0.8.5**
 
 **❌ What's NOT Complete:**
-- ❌ Context engineering implementations (naive, structured, RAG)
-- ❌ Experiment logic (exp1-exp5 are empty TODOs)
+- ❌ Context engineering implementations (naive, structured - only basic RAG done)
+- ❌ Experiment logic (pilot, exp1, exp2 - all empty TODOs)
 - ❌ Corpus data collection (directories empty)
 - ❌ Evaluation questions (none generated yet)
 - ❌ Metrics implementation (empty TODO)
 - ❌ Experiment runner scripts (empty TODOs)
+- ❌ Checkpoint/resume system (not implemented)
 
 **Bottom Line:** Infrastructure is production-ready. Now build experimental logic.
+
+**Revised Scope:** Dropped Exp 3 & 4 (too ambitious). Focus on Pilot → Exp 1 → Exp 2 → Analysis. Estimated 10-12 weeks total.
 
 ## 🎯 Project Goal
 
@@ -50,7 +53,7 @@ Design a replicable experiment suite that isolates the impact of context enginee
 - Advanced 128k RAG costs <40% of naïve 1M per query
 - Advanced 128k RAG has <2x latency of naïve 1M
 
-**Note:** H2 uses Option A (first 128k tokens only, no padding), which means RAG conditions run at lower fill % (~13%) than naïve 1M (up to 90%). This is an acknowledged limitation—results may conflate RAG quality with fill % effects.
+**Methodology Fix:** RAG strategies will be **padded to match fill %** of naive strategies. After retrieving relevant chunks, we pad with irrelevant content to reach the target context size. This ensures we're comparing context engineering quality, not confounding fill % with retrieval quality.
 
 ## ✅ FREE TIER CONFIGURATION (Optimized)
 
@@ -60,10 +63,11 @@ Design a replicable experiment suite that isolates the impact of context enginee
 - **RPD (Requests Per Day):** 1,500
 - **Cost:** $0.00 (free tier)
 
-**Impact on 9,000+ Request Experiment Suite:**
-- At 1,500 requests/day: **~6 days minimum**
+**Impact on Experiment Suite:**
+- **Revised scope: 4,380 requests** (down from 9,000 - dropped Exp 3 & 4)
+- At 1,500 requests/day: **~3 days minimum**
 - TPM allows large contexts (up to 1M tokens)
-- **Realistic estimate: 6-7 days** (assuming no issues)
+- **Realistic estimate: 4-5 days** (with retry buffer)
 
 **Automatic Enforcement:**
 The unified monitor automatically enforces all limits and budget:
@@ -231,13 +235,23 @@ Fill %  | Tokens Used | What It Tests
 
 **Why This Matters:** Models exhibit "Lost in the Middle" phenomenon—recall accuracy degrades as context fills up, independent of content quality. Controlling fill % ensures we measure engineering quality, not just fill % artifacts.
 
-## 🧪 Experiment Suite
+## 🧪 Experiment Suite (Revised Scope)
+
+### Pilot Phase: Validate Pipeline
+**Purpose:** End-to-end validation before scaling up
+
+- **Corpus:** 50k tokens AWS Lambda docs
+- **Strategies:** Naïve 1M + Basic RAG 128k (test both extremes)
+- **Tasks:** 10 manually crafted questions with ground truth
+- **API Calls:** 180 (10 questions × 2 strategies × 3 fill levels × 3 reps)
+- **What It Tests:** Pipeline functionality, checkpoint/resume, metrics computation
 
 ### Experiment 1: Needle in Multiple Haystacks
 **Purpose:** Test retrieval quality vs. context stuffing under information overload
 
 - **Corpus:** 500k-1M tokens of technical documentation (AWS, GCP, Azure API docs)
 - **Tasks:** 50 questions (20 lookups, 20 synthesis, 10 contradiction detection)
+- **API Calls:** 3,000 (50 questions × 4 strategies × 5 fill levels × 3 reps)
 - **What It Tests:** Multi-document reasoning, cross-referencing
 - **Metrics:** Correctness, citation accuracy, cost per query
 
@@ -247,33 +261,21 @@ Fill %  | Tokens Used | What It Tests
 - **Base Corpus:** 50k tokens relevant content (company Q4 financial report)
 - **Pollutant:** Add 50k → 950k tokens of plausible but irrelevant content
 - **Tasks:** 20 questions strictly answerable from base corpus
+- **API Calls:** 1,200 (20 questions × 4 strategies × 5 pollution levels × 3 reps)
 - **What It Tests:** Resistance to distraction, precision
 - **Metrics:** Accuracy vs pollution level, false positive rate
-
-### Experiment 3: Multi-Turn Memory
-**Purpose:** Test conversational context management
-
-- **Scenario:** 10-turn customer support conversation
-- **Memory Requirements:** Customer history (50k) + docs (200k) + conversation
-- **Tasks:** Each turn requires integrating new + historical context
-- **What It Tests:** Stateful memory, conversation coherence
-- **Metrics:** Coherence score, fact retention, cumulative cost
-
-### Experiment 4: Precision Retrieval
-**Purpose:** Measure information extraction from dense, structured data
-
-- **Corpus:** 100 academic papers (500k tokens total)
-- **Tasks:** 30 fact lookups, 20 comparisons, 10 meta-analyses
-- **What It Tests:** Structured navigation, citation accuracy
-- **Metrics:** Precision@K, completeness, token efficiency
 
 ### Experiment 5: Cost-Latency Frontier
 **Purpose:** Map Pareto frontier of quality vs. cost vs. latency
 
-- **Analysis:** 3D optimization across all prior experiments
+- **Analysis:** 3D optimization across Experiments 1-2
 - **Output:** Dominant strategies (no approach beats them on all 3 metrics)
+- **API Calls:** 0 (analysis only)
 - **What It Tests:** Real-world deployment trade-offs
 - **Metrics:** Efficiency score = Quality / (Cost × Latency)
+
+### ❌ Experiments 3 & 4: DROPPED
+**Experiment 3 (Multi-Turn Memory)** and **Experiment 4 (Precision Retrieval)** have been removed to keep the project achievable within 10-12 weeks. They required complex implementation (stateful conversations, PDF parsing) with limited generalizability. Can be added as future work.
 
 ## 🏗️ Project Structure
 
@@ -466,16 +468,19 @@ python -c "from src.corpus.loaders import download_academic_papers; download_aca
 # 1. Check feasibility first
 python scripts/estimate_feasibility.py
 
-# 2. Run calibration baseline
-python scripts/run_calibration.py --output results/baseline_calibration.json
+# 2. Run PILOT first (validate entire pipeline)
+python scripts/run_pilot.py --output results/pilot_results.jsonl
 
-# 3. Run individual experiment
-python scripts/run_experiment.py --experiment exp1_needle --conditions all
+# 3. If pilot succeeds, run Experiment 1
+python scripts/run_experiment_1.py --output results/exp1_results.jsonl
 
-# 4. Analyze results
+# 4. Run Experiment 2
+python scripts/run_experiment_2.py --output results/exp2_results.jsonl
+
+# 5. Analyze results
 python scripts/analyze_results.py --input results/raw/ --output results/analysis/
 
-# 5. Generate report
+# 6. Generate report
 python scripts/generate_report.py --output FINAL_REPORT.md
 ```
 
@@ -617,17 +622,17 @@ pytest --cov=src tests/
 
 ## 💰 Budget Estimation
 
-**API Costs (Gemini Flash 2.5):**
-- Input: $0.00001875 per 1k tokens
-- Output: $0.000075 per 1k tokens
+**API Costs (Gemini 2.0 Flash Experimental):**
+- Input: $0.00 per 1k tokens (free tier)
+- Output: $0.00 per 1k tokens (free tier)
 
-**Estimated Usage:**
-- 9,000 queries × avg 500k input tokens = 4.5B input tokens
-- 9,000 queries × avg 2k output tokens = 18M output tokens
+**Estimated Usage (Revised Scope):**
+- 4,380 queries × avg 500k input tokens = 2.2B input tokens
+- 4,380 queries × avg 2k output tokens = 9M output tokens
 
-**Total Cost:** ~$86 (input) + $1.35 (output) = **~$87**
+**Total Cost:** **$0** (completely free on free tier)
 
-**Recommended Budget:** $174 (2x buffer for reruns and debugging)
+**Rate Limit Constraint:** 1,500 requests/day → ~3 days minimum, ~4-5 days realistic
 
 ## 🔍 Key Insights Expected
 
@@ -696,7 +701,8 @@ At the end of this project, you will have:
 
 **Tools & Libraries:**
 - tiktoken: Token counting
-- FAISS/ChromaDB: Vector stores
+- FAISS: Vector store for dense retrieval
+- rank-bm25: Sparse retrieval for hybrid search
 - scipy: Statistical analysis
 - plotly: Interactive visualizations
 
@@ -735,7 +741,8 @@ For questions about this research:
 
 ---
 
-**Last Updated:** October 30, 2025  
-**Version:** 1.0  
+**Last Updated:** October 31, 2025  
+**Version:** 1.1 (Revised Scope)  
 **Status:** Ready for Implementation  
-**Estimated Completion:** 6 weeks from start
+**Estimated Completion:** 10-12 weeks from start  
+**Changes:** Dropped Exp 3 & 4, added pilot phase, fixed H2 methodology (RAG padding)
