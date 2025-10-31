@@ -33,7 +33,7 @@ def verify_api_key(api_key: str, verbose: bool = False) -> dict:
         'timestamp': datetime.now().isoformat(),
         'models': [],
         'primary_model': 'gemini-2.5-flash',
-        'embedding_model': 'embedding-gecko-001',
+        'embedding_model': 'text-embedding-004',
         'test_response': '',
         'capabilities': [],
         'rate_limits': {

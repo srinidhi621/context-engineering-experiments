@@ -122,7 +122,7 @@ python scripts/check_rate_limits.py
 
 ### Model Configuration
 - **Primary Model:** Google Gemini 2.5 Flash (1M token context window, production-ready, faster)
-- **Embedding Model:** Google embedding-gecko-001 (for RAG vector search)
+- **Embedding Model:** Google text-embedding-004 (latest production embedding for RAG)
 - **Simulated 128k:** First 128k tokens only (Option A)
 - **Temperature:** 0.0 (deterministic)
 - **Repetitions:** 3 runs per condition per question
@@ -136,11 +136,11 @@ python scripts/check_rate_limits.py
 - ✅ Production-ready in Google Cloud
 - ✅ Still maintains 1M token context window
 
-**Why embedding-gecko?**
-- ✅ Native Google embedding model
-- ✅ Optimized for semantic search
-- ✅ Included in free tier access
-- ✅ Works seamlessly with Gemini API
+**Why text-embedding-004?**
+- ✅ Latest production text embedding model
+- ✅ Optimized for semantic search and RAG
+- ✅ Better performance than gecko embeddings
+- ✅ Included in organizational API access
 
 ### Key Variables
 
