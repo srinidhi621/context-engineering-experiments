@@ -200,12 +200,11 @@ This project uses **gemini-2.0-flash-exp** for optimal free tier performance:
 **Independent Variables:**
 - Context engineering approach (naïve, structured, RAG variants)
 - Context fill percentage (10%, 30%, 50%, 70%, 90%)
-- Information position (start, middle, end)
 
 **Dependent Variables:**
 - **Quality:** Correctness (0-1), citation accuracy, completeness
 - **Cost:** Token usage, API costs per query
-- **Latency:** Time-to-first-token (TTFT), total response time
+- **Latency:** Total response time
 - **Robustness:** Performance degradation vs. fill % and pollution level
 
 ### Experimental Conditions
