@@ -121,10 +121,26 @@ python scripts/check_rate_limits.py
 ## 📊 Experimental Design
 
 ### Model Configuration
-- **Primary Model:** Google Gemini Flash 2.5 (1M token context window)
+- **Primary Model:** Google Gemini 2.5 Flash (1M token context window, production-ready, faster)
+- **Embedding Model:** Google embedding-gecko-001 (for RAG vector search)
 - **Simulated 128k:** First 128k tokens only (Option A)
 - **Temperature:** 0.0 (deterministic)
 - **Repetitions:** 3 runs per condition per question
+
+### Model Rationale
+
+**Why Gemini 2.5 Flash?**
+- ✅ Faster inference than 2.0 Flash
+- ✅ Lower cost than 2.0
+- ✅ Better quality on complex tasks
+- ✅ Production-ready in Google Cloud
+- ✅ Still maintains 1M token context window
+
+**Why embedding-gecko?**
+- ✅ Native Google embedding model
+- ✅ Optimized for semantic search
+- ✅ Included in free tier access
+- ✅ Works seamlessly with Gemini API
 
 ### Key Variables
 

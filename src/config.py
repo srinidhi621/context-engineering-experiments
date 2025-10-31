@@ -10,7 +10,10 @@ load_dotenv()
 @dataclass
 class ExperimentConfig:
     """Base configuration for all experiments"""
-    model_name: str = "gemini-2.0-flash-exp"
+    # Primary model: Gemini 2.5 Flash (faster, cost-effective, production-ready)
+    model_name: str = "gemini-2.5-flash"
+    # Embedding model: Gemini's native embedding model for RAG
+    embedding_model_name: str = "embedding-gecko-001"
     context_limit: int = 1_000_000
     temperature: float = 0.0
     repetitions: int = 3

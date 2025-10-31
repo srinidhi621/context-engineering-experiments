@@ -1,0 +1,28 @@
+{
+  "model": "gemini-2.0-flash-exp",
+  "limits": {
+    "rpm": 15,
+    "tpm": 1000000,
+    "rpd": 1500
+  },
+  "current_usage": {
+    "requests_this_minute": 0,
+    "requests_remaining_this_minute": 15,
+    "tokens_this_minute": 0,
+    "tokens_remaining_this_minute": 1000000,
+    "requests_today": 0,
+    "requests_remaining_today": 1500,
+    "tokens_today": 0
+  },
+  "lifetime": {
+    "total_requests": 0,
+    "total_tokens_input": 0,
+    "total_tokens_output": 0,
+    "total_tokens": 0
+  },
+  "utilization": {
+    "rpm_pct": 0.0,
+    "tpm_pct": 0.0,
+    "rpd_pct": 0.0
+  }
+}
