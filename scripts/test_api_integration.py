@@ -36,8 +36,8 @@ def test_api_integration():
         return False
     print()
     
-    # Step 2: Check unified monitor status
-    print("Step 2: Checking unified monitor status...")
+    # Step 2: Check API monitor status
+    print("Step 2: Checking API monitor status...")
     try:
         status = client.get_status()
         print(f"  ✅ Monitor configured for: {status['model']}")
@@ -87,8 +87,8 @@ Nothing else."""
         return False
     print()
     
-    # Step 4: Check unified monitor updated
-    print("Step 4: Verifying unified monitor tracking...")
+    # Step 4: Verify API monitor tracking and persistence
+    print("Step 4: Verifying API monitor tracking and persistence...")
     try:
         status = client.get_status()
         print(f"  ✅ Total calls tracked: {status['totals']['total_requests']}")
@@ -101,10 +101,19 @@ Nothing else."""
             exp_data = status['by_experiment']['integration_test']
             print(f"  ✅ Experiment tracking working: {exp_data['calls']} calls in 'integration_test'")
         
+        # Verify state file exists
+        import os
+        if os.path.exists('results/.monitor_state.json'):
+            print(f"  ✅ State persisted to disk: results/.monitor_state.json")
+        else:
+            print(f"  ⚠️  WARNING: State file not found on disk")
+        
         if status['totals']['total_requests'] > 0:
-            print(f"  ✅ Unified monitor is recording correctly")
+            print(f"  ✅ API monitor recording and persisting correctly")
     except Exception as e:
         print(f"  ❌ FAILED: {e}")
+        import traceback
+        traceback.print_exc()
         return False
     print()
     

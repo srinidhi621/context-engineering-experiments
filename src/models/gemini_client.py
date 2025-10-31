@@ -1,18 +1,18 @@
-"""Gemini API client wrapper with unified monitoring (rate limiting + cost tracking)"""
+"""Gemini API client wrapper with comprehensive monitoring"""
 
 import google.generativeai as genai
 from src.config import api_config, config
-from src.utils.unified_monitor import get_unified_monitor
+from src.utils.monitor import get_monitor
 from typing import Optional, List, Dict, Any
 import time
 
 
 class GeminiClient:
-    """Wrapper for Google Gemini API with unified rate limiting and cost tracking"""
+    """Wrapper for Google Gemini API with rate limiting and cost tracking"""
     
     def __init__(self, budget_limit: float = 174.00):
         """
-        Initialize Gemini client with unified monitoring.
+        Initialize Gemini client with API monitoring.
         
         Args:
             budget_limit: Maximum budget in USD (default: $174 from project plan)
@@ -23,7 +23,7 @@ class GeminiClient:
         genai.configure(api_key=api_config.google_api_key)
         self.generation_model = config.model_name
         self.embedding_model = config.embedding_model_name
-        self.monitor = get_unified_monitor(
+        self.monitor = get_monitor(
             model_name=self.generation_model,
             budget_limit=budget_limit
         )
@@ -39,7 +39,13 @@ class GeminiClient:
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Generate content using Gemini model with unified monitoring.
+        Generate content using Gemini model with comprehensive monitoring.
+        
+        All calls are tracked and persisted to disk:
+        - Tokens in/out counted
+        - Costs calculated
+        - Tagged with experiment_id and session_id
+        - Saved to results/.monitor_state.json
         
         Args:
             prompt: Input prompt/question
@@ -85,7 +91,7 @@ class GeminiClient:
             input_tokens = getattr(response.usage_metadata, 'prompt_token_count', 0)
             output_tokens = getattr(response.usage_metadata, 'completion_token_count', 0)
             
-            # Record in unified monitor (handles both rate limiting and cost tracking)
+            # Record in monitor (tracks everything and saves to disk)
             call_record = self.monitor.record_call(
                 model=model,
                 input_tokens=input_tokens,

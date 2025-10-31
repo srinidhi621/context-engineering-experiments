@@ -1,8 +1,14 @@
 """
-Unified API Monitor - Combines rate limiting and cost tracking into single system.
+API Monitor - Comprehensive monitoring for API calls, rate limits, and costs.
 
-This consolidates RateLimiter and CostMonitor to ensure we stay within free tier limits
-while tracking all usage and costs comprehensively.
+Tracks all API calls with full persistence across runs:
+- Every call tracked (tokens in/out, costs, latency)
+- Per-run tracking (experiment_id, session_id)
+- Per-day aggregation
+- Budget enforcement
+- Rate limit enforcement (RPM, TPM, RPD)
+
+All data persisted to disk after EVERY call.
 """
 
 import json
@@ -70,7 +76,7 @@ class ModelLimits:
         return LIMITS['gemini-2.5-pro']
 
 
-class UnifiedAPIMonitor:
+class APIMonitor:
     """
     Unified monitoring system that combines:
     - Rate limiting (RPM, TPM, RPD enforcement)
@@ -83,11 +89,11 @@ class UnifiedAPIMonitor:
     def __init__(
         self,
         model_name: str,
-        state_file: str = "results/.unified_monitor_state.json",
+        state_file: str = "results/.monitor_state.json",
         budget_limit: float = 174.00
     ):
         """
-        Initialize unified monitor.
+        Initialize API monitor.
         
         Args:
             model_name: Primary model being used
@@ -98,12 +104,12 @@ class UnifiedAPIMonitor:
         self.limits = ModelLimits.get_for_model(model_name)
         self.state_file = Path(state_file)
         self.budget_limit = budget_limit
-        self.lock = threading.Lock()
+        self.lock = threading.RLock()  # Use RLock for reentrant locking
         
         # Load or initialize state
         self.state = self._load_state()
         
-        logger.info(f"Unified monitor initialized for {model_name}")
+        logger.info(f"API monitor initialized for {model_name}")
         logger.info(f"Limits: RPM={self.limits.rpm}, TPM={self.limits.tpm:,}, RPD={self.limits.rpd}")
         logger.info(f"Budget: ${budget_limit:.2f}")
     
@@ -351,9 +357,8 @@ class UnifiedAPIMonitor:
             # Check alerts
             self._check_alerts(total_cost)
             
-            # Save state periodically
-            if self.state['totals']['total_requests'] % 10 == 0:
-                self._save_state()
+            # ALWAYS save state to ensure persistence across runs
+            self._save_state()
         
         return call_record
     
@@ -501,13 +506,13 @@ class UnifiedAPIMonitor:
 _monitor = None
 
 
-def get_unified_monitor(model_name: Optional[str] = None, budget_limit: float = 174.00) -> UnifiedAPIMonitor:
-    """Get or create global unified monitor instance"""
+def get_monitor(model_name: Optional[str] = None, budget_limit: float = 174.00) -> APIMonitor:
+    """Get or create global API monitor instance"""
     global _monitor
     if _monitor is None:
         if model_name is None:
             from ..config import config
             model_name = config.model_name
-        _monitor = UnifiedAPIMonitor(model_name=model_name, budget_limit=budget_limit)
+        _monitor = APIMonitor(model_name=model_name, budget_limit=budget_limit)
     return _monitor
 
