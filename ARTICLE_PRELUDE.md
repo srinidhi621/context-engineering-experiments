@@ -46,7 +46,7 @@ If you're still reading, you're probably wondering what we're actually testing. 
 
 **Concrete prediction:**
 - A well engineered 1M context beats naïve 1M context by ≥15% on quality
-- At high context pollution levels (≥50% irrelevant content—the information kind, not the air quality kind), the well engineered context maintains >90% accuracy vs <70% for naïve
+- At high context pollution levels (≥50% irrelevant content—the information kind, not the Delhi air quality kind), the well engineered context maintains >90% accuracy vs <70% for naïve
 - Cost per query is ≥20% lower for engineered approaches (this one should be obvious) 
 
 **Translation:** More tokens don't automatically mean better results. How you organize those tokens matters; even at massive scale.
