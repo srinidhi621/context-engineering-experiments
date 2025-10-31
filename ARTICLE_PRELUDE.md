@@ -6,70 +6,25 @@
 
 ## The Decision
 
-It's 2:47 AM. You're staring at three architecture diagrams on your screen, each promising to solve your company's document Q&A problem. 
+The reasons to write this and then build the subsequent codebase were motivated by two things:
+1. In a specific conversation with a team member, we were discussing how a 128k context window can limit what we can do. I tried to make the point that a well engineered 128k context window can stand up to a 1M context window, all other variables being equal.
+2. There are models out there with 1 million and 2 million tokens, and there is an inherent curiosity to see if these actually made a difference to shipping a real product.
 
-**Option A:** Throw everything into Gemini's 1M token context window. Clean. Simple. The marketing says it "just works."
+Now, back in the grand old days pre-gen AI, there was this notion amongst practitioners that the model (prediction, classification etc) itself was a very small part of what made a good system. I believe the same can be said for building systems that use LLMs - the large majority of work lies in the data, the problem definition, and the engineering of the system.
 
-**Option B:** Build a RAG pipeline with embeddings, vector stores, and retrieval. Complex. More code. But... controlled.
+So, I thought why don't we actually test it out—Google Gemini has a fairly capable model that can be used for free, plus Cursor and Claude came out with new versions of their coding tools. So we could plan and run some experiments and figure out what this context engineering actually means for building systems that use LLMs.
 
-**Option C:** Some hybrid thing your team doesn't fully understand yet.
+For context, 100k tokens is about the size of a small book. With 1M tokens you could fit nearly all of the 7 Harry Potter books.  
 
-Your CTO wants a decision by Friday. The vendors are confident. The blog posts are enthusiastic. But something feels off.
+So let's ask the questions that we are actually testing:
 
-You open a new terminal window and think: *"Has anyone actually measured this?"*
+### Question 1: Does adding 900k tokens into a context window actually work better than a well-engineered 100k token context?
 
----
-
-## The Industry Moment
-
-We're living through a remarkable shift in LLM capabilities. In the span of 18 months, context windows exploded from 4k tokens (GPT-3) to 32k (GPT-4), then 128k, and now 1-2 million tokens for models like Gemini 1.5 Pro and Claude 3. 
-
-The promise is intoxicating: **Just dump your entire knowledge base into the prompt. The model will figure it out.**
-
-And suddenly, a question that seemed settled—*"How do we get relevant information to LLMs?"*—feels unsettled again.
-
-### The Conventional Wisdom (Circa 2023)
-
-For the past few years, the answer was clear: **Retrieval-Augmented Generation (RAG)**. You couldn't fit much context, so you had to be surgical:
-- Chunk documents into bite-sized pieces
-- Embed them in a vector space
-- Retrieve only what's relevant
-- Assemble a focused context
-
-It was complex. It required infrastructure. But it worked.
-
-### The New Narrative (2025)
-
-Now the pitch has changed:
-
-> *"With 1M token windows, RAG is obsolete. Just give the model everything. It's like having infinite RAM—use it."*
-
-The logic seems sound:
-- More information = better answers
-- No retrieval means no missed documents
-- Simpler architecture, faster iteration
-
-**But is it true?**
-
----
-
-## The Uncomfortable Questions
-
-As engineers, we've learned to be suspicious of "just works" solutions. Every time we hear "you don't need to optimize anymore," we reach for our profilers.
-
-So let's ask the uncomfortable questions:
-
-### Question 1: Does naively stuffing 900k tokens into a context window actually work better than a well-engineered 100k token context?
-
-The "Lost in the Middle" research (Liu et al., 2023) showed that models struggle to recall information buried in long contexts. They remember the beginning and end, but lose the middle. That was tested at 32k tokens.
-
-**Does the problem magically disappear at 1M tokens?** Or does it get worse?
+The "Lost in the Middle" research (Liu et al., 2023) showed that models struggle to recall information buried in long contexts at 32k tokens. **Does the problem magically disappear at 1M tokens? Would be nice if it did—save us all a whole lot of trouble.** Or does it get worse?
 
 ### Question 2: Can a smaller context window with disciplined engineering match or beat a naive long-context approach?
 
-If you have 128k tokens and use them wisely—retrieval, ranking, structure—can you compete with someone dumping 1M tokens of unstructured text?
-
-**David vs. Goliath?** Or wishful thinking?
+If you have 128k tokens and use them wisely across retrieval, ranking, structure, etc—can you compete with someone dumping 1M tokens of unstructured text?
 
 ### Question 3: What about cost, latency, and robustness?
 
@@ -80,31 +35,30 @@ Even if long-context *works*, is it practical?
 
 These aren't just technical questions. **They're architecture decisions affecting millions of dollars and user experience.**
 
----
+If you're still reading, you're probably wondering what we're actually testing. Let's get down to it.
 
 ## What We're Actually Testing
 
-We're not here to wave hands or theorize. We're here to measure.
 
 ### Hypothesis 1: Long Context ≠ Magic Bullet
 
 > *"Even with 1M-token windows, naïvely stuffing context underperforms engineered retrieval + packaging."*
 
 **Concrete prediction:**
-- Engineered 1M context beats naïve 1M context by ≥15% on quality
-- At high pollution levels (≥50% irrelevant content), engineered maintains >90% accuracy vs <70% for naïve
-- Cost per query is ≥20% lower for engineered approaches
+- A well engineered 1M context beats naïve 1M context by ≥15% on quality
+- At high context pollution levels (≥50% irrelevant content—the information kind, not the air quality kind), the well engineered context maintains >90% accuracy vs <70% for naïve
+- Cost per query is ≥20% lower for engineered approaches (this one should be obvious) 
 
-**Translation:** More tokens don't automatically mean better results. How you organize those tokens matters—even at massive scale.
+**Translation:** More tokens don't automatically mean better results. How you organize those tokens matters; even at massive scale.
 
 ### Hypothesis 2: Smart Beats Big
 
 > *"128k-token models, with disciplined context engineering, can match or beat naïve long-context use on practical tasks."*
 
 **Concrete prediction:**
-- Advanced 128k RAG matches within 5% of naïve 1M on quality
-- Advanced 128k RAG costs <40% of naïve 1M per query  
-- Advanced 128k RAG has <2x latency of naïve 1M
+- A well engineered 128k RAG matches within 5% of naïve 1M on quality
+- And costs <40% of naïve 1M per query  
+- And has <2x latency of naïve 1M (this one is a bit more interesting)
 
 **Translation:** You might not need the biggest context window. Smart beats big.
 
@@ -120,15 +74,23 @@ If **both are false**, it means long-context models with naive approaches genuin
 
 **Either way, we get data instead of opinions.**
 
+## Why Now? The Industry Moment
+
+We're living through a remarkable shift in LLM capabilities. In just 18 months, context windows exploded from 4k tokens (GPT-3) to 32k (GPT-4), then 128k, and now 1-2 million tokens for models like Gemini 1.5 Pro and Claude 3.
+
+The narrative has shifted from "be surgical with your context" to "just dump everything in." The marketing is confident. The blog posts are enthusiastic.
+
+**But has anyone actually measured whether this works?** That's what we're doing here.
+
+Another interesting experiment would be to see how a smaller, less capable model (say GPT-4o) fares against a larger model (GPT-5). This test would pit context length against model size and capability (plus ~2 years of model development). But we'll save that for another time.
+
+**A side note on measuring "quality":** This is tricky. We'll use the model's ability to answer questions accurately, cite sources correctly, and synthesize information from multiple documents. "Correctness" is a good proxy for quality, but it's not the only metric.
+
 ---
 
 ## The Experiment Design: Isolating What Actually Matters
 
-Here's the challenge: How do you fairly compare a 1M token context with a 128k token context? If you just test them as-is, you're confounding *context engineering quality* with *attention dilution effects*.
-
-### The Critical Control: Fill Percentage
-
-Models exhibit "Lost in the Middle" behavior—recall degrades as context fills up, independent of content quality. If RAG uses 13% of its 128k window while naive approaches use 90% of their 1M window, you can't tell if performance differences come from better retrieval or just less attention dilution.
+Here's the challenge: How do you fairly compare a 1M token context with a 128k token context? If you just test them as-is, you're confounding *context engineering quality* with *attention dilution effects*. In other words, if the RAG approach uses 13% of its 128k window while the naive approach uses 90% of its 1M window, you can't tell if performance differences come from better retrieval or just less attention dilution.
 
 **Our solution:** Pad all contexts to the same fill percentage.
 
@@ -140,8 +102,6 @@ At 70% fill (700k tokens):
 Result: Both strategies face identical attention strain. 
 Differences now reflect engineering quality, not fill %.
 ```
-
-This is methodologically rigorous. Most blog posts skip this.
 
 ### Four Strategies, Five Fill Levels, Two Experiments
 
@@ -159,7 +119,7 @@ This is methodologically rigorous. Most blog posts skip this.
 
 **Experiments:**
 
-- **Experiment 1: Needle in Multiple Haystacks** - 50 questions across 500k-1M tokens of API documentation (AWS, GCP, Azure). Tests multi-document reasoning and synthesis.
+- **Experiment 1: Needle in Multiple Haystacks** - 50 questions across 500k-1M tokens of API documentation (AWS, GCP, Azure). Tests multi-document reasoning and synthesis. Data fetched is outside of the cut-off date of the Gemini 2.0 Flash model.
 
 - **Experiment 2: Context Pollution** - 20 questions answerable from 50k base tokens, with pollution ramping from 50k to 950k irrelevant content. Tests robustness to distraction.
 
@@ -188,31 +148,10 @@ We'll map the 3D trade-off space (quality × cost × latency) to find dominant s
 ## What We're NOT Testing (And Why)
 
 **We're not testing:**
-- Multi-turn conversations (Experiment 3, dropped—too complex for initial scope)
-- Academic paper retrieval (Experiment 4, dropped—requires extensive PDF parsing)
-- Multiple model families (focusing on Gemini 2.0 Flash for consistency)
-- Position effects (interesting, but secondary to core hypotheses)
-
-**Why the reduced scope?**  
-We'd rather do 2 experiments rigorously than 5 experiments sloppily. Science requires focus.
+- Multiple model versions within the same provider (Gemini Flash vs Pro models) or model families (OpenAI vs Anthropic vs Google). We're focusing on Gemini 2.0 Flash across all experiments for consistency and control. 
+- Position effects: Placement of the "needle" in the context haystack (interesting, but secondary to core hypotheses)
 
 ---
-
-## The Broader Point: Context Engineering as a Discipline
-
-This experiment is about more than two hypotheses. It's about establishing **context engineering** as a first-class discipline in LLM systems.
-
-Right now, the industry treats context as an afterthought:
-- Prompt engineering gets conferences, frameworks, entire companies
-- Model architecture gets research papers and PhD theses  
-- Context engineering gets... a paragraph in a RAG tutorial?
-
-**But context engineering determines:**
-- Whether the model sees the right information
-- How efficiently it processes that information  
-- Whether it can actually use what it sees
-
-Think about it: You can have the perfect prompt and the perfect model, but if your context is a 900k token garbage dump, you'll get garbage answers.
 
 ### The Questions That Follow
 
@@ -240,18 +179,6 @@ After we run these experiments (estimated 10-12 weeks), we'll publish a follow-u
 We'll also open-source the entire experimental framework, so you can run variations for your own use cases.
 
 ---
-
-## The Real Question
-
-Here's what we're really asking:
-
-**In the age of million-token context windows, does engineering discipline still matter? Or did scale make craftsmanship obsolete?**
-
-Our hypothesis: **Craftsmanship still matters.** In fact, it might matter more at scale than it did at small scale.
-
-But we're about to find out.
-
-If you're making the same architecture decision our hypothetical engineer faced at 2:47 AM, we hope to give you data instead of marketing.
 
 Stay tuned.
 
