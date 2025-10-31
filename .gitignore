@@ -47,6 +47,10 @@ data/processed/*
 *.jsonl
 *.parquet
 
+# Gutenberg cache (downloaded books)
+texts/
+*.txt.gz
+
 # Results (Experiment outputs)
 results/raw/*
 results/metrics/*
