@@ -29,6 +29,29 @@ A rigorous experimental framework to test the importance of context engineering 
 
 **Revised Scope:** Dropped Exp 3 & 4 (too ambitious). Focus on Pilot → Exp 1 → Exp 2 → Analysis. Estimated 10-12 weeks total.
 
+## 🎯 Data Strategy: GitHub + Gutenberg
+
+**Why This Combination?**
+
+1. **Post-Training Cutoff:** GitHub content filtered to after August 2024 ensures fresh, unmemorized data
+2. **No Web Scraping:** Both sources have official APIs (GitHub API, Gutenberg plain text)
+3. **Verifiable:** Easy to check dates, trace sources, validate ground truth
+4. **Clearly Separable:** Technical docs vs. classic literature = unambiguous relevance distinction
+5. **Free & Legal:** No rate limits, no costs, no copyright concerns
+
+**Data Sources:**
+- **Pilot:** PyTorch docs (10k tokens)
+- **Experiment 1 Corpus:** 30 popular GitHub repos (PyTorch, TensorFlow, Next.js, TypeScript, Django, etc.) - 700k tokens
+- **Padding Corpus:** 15+ Gutenberg classics (Pride & Prejudice, Frankenstein, Sherlock Holmes, etc.) - 2M+ tokens
+- **Experiment 2 Base:** 3-5 additional repos (FastAPI, Pydantic, SQLAlchemy) - 50k tokens
+- **Experiment 2 Pollution:** Reuse Gutenberg corpus (irrelevant to technical questions)
+
+**Key Advantages:**
+- GitHub modifications are timestamped → easy to filter post-cutoff
+- Gutenberg provides high-quality, clean text for padding/pollution
+- No ambiguity about what's relevant (code docs) vs. irrelevant (Victorian novels)
+- Both APIs are well-documented and reliable
+
 ## 🎯 Project Goal
 
 Design a replicable experiment suite that isolates the impact of context engineering on LLM quality, cost, and latency—separately for:
@@ -239,30 +262,39 @@ Fill %  | Tokens Used | What It Tests
 ### Pilot Phase: Validate Pipeline
 **Purpose:** End-to-end validation before scaling up
 
-- **Corpus:** 50k tokens AWS Lambda docs
+- **Corpus:** 10k tokens from recent GitHub repository docs (PyTorch)
 - **Strategies:** Naïve 1M + Basic RAG 128k (test both extremes)
 - **Tasks:** 10 manually crafted questions with ground truth
 - **API Calls:** 180 (10 questions × 2 strategies × 3 fill levels × 3 reps)
 - **What It Tests:** Pipeline functionality, checkpoint/resume, metrics computation
+- **Data Source:** GitHub API (no scraping needed, guaranteed post-cutoff)
 
 ### Experiment 1: Needle in Multiple Haystacks
 **Purpose:** Test retrieval quality vs. context stuffing under information overload
 
-- **Corpus:** 500k-1M tokens of technical documentation (AWS, GCP, Azure API docs)
+- **Corpus:** 500k-1M tokens of recent technical documentation from GitHub repositories
+  - 30 popular repos (PyTorch, TensorFlow, Next.js, TypeScript, etc.)
+  - README files, docs/ folders, recent issues/PRs
+  - All content filtered to post-August 2024 (post-training cutoff)
 - **Tasks:** 50 questions (20 lookups, 20 synthesis, 10 contradiction detection)
 - **API Calls:** 3,000 (50 questions × 4 strategies × 5 fill levels × 3 reps)
 - **What It Tests:** Multi-document reasoning, cross-referencing
 - **Metrics:** Correctness, citation accuracy, cost per query
+- **Data Source:** GitHub API (official, structured, easy to verify dates)
 
 ### Experiment 2: Context Pollution
 **Purpose:** Measure robustness to irrelevant information
 
-- **Base Corpus:** 50k tokens relevant content (company Q4 financial report)
-- **Pollutant:** Add 50k → 950k tokens of plausible but irrelevant content
+- **Base Corpus:** 50k tokens relevant technical content (GitHub repo documentation)
+- **Pollutant:** Add 50k → 950k tokens of classic literature (Project Gutenberg)
+  - Clearly irrelevant to technical questions
+  - Pre-cleaned plain text (no parsing needed)
+  - Mix of fiction and non-fiction from different eras
 - **Tasks:** 20 questions strictly answerable from base corpus
 - **API Calls:** 1,200 (20 questions × 4 strategies × 5 pollution levels × 3 reps)
 - **What It Tests:** Resistance to distraction, precision
 - **Metrics:** Accuracy vs pollution level, false positive rate
+- **Data Sources:** GitHub API + Project Gutenberg (both free, no scraping)
 
 ### Experiment 5: Cost-Latency Frontier
 **Purpose:** Map Pareto frontier of quality vs. cost vs. latency
@@ -702,6 +734,8 @@ At the end of this project, you will have:
 - tiktoken: Token counting
 - FAISS: Vector store for dense retrieval
 - rank-bm25: Sparse retrieval for hybrid search
+- PyGithub: GitHub API access for corpus collection
+- gutenbergpy: Project Gutenberg access for padding corpus
 - scipy: Statistical analysis
 - plotly: Interactive visualizations
 

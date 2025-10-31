@@ -60,33 +60,575 @@ Pilot (60 calls) → Validate → Build Core (180 calls) → Validate → Full S
 
 ## 🧪 PILOT PHASE: Validate Pipeline (Week 1)
 
-**Duration:** 3-5 days  
-**Goal:** End-to-end validation before scaling up  
-**API Calls:** 180 (10 questions × 2 strategies × 3 fill levels × 3 reps)  
+**Duration:** 5-7 days  
+**Goal:** End-to-end validation with 1 question before scaling up  
+**API Calls:** 18 (1 question × 2 strategies × 3 fill levels × 3 reps)  
 **Est. Cost:** $0 (free tier)
 
-### Scope
-- **Corpus:** 50k tokens AWS Lambda docs only
-- **Strategies:** Naïve 1M + Basic RAG 128k (test both extremes)
-- **Fill Levels:** [0.3, 0.5, 0.7] (representative sample)
-- **Questions:** 10 manually crafted with ground truth
+### Phase 1A: Infrastructure (Days 1-2) - PREREQUISITE
 
-### Deliverables
-- [ ] Minimal corpus collected and validated
-- [ ] Naive + RAG assemblers working
-- [ ] Padding system working (RAG padded to match fill %)
-- [ ] 10 questions + ground truth answers
-- [ ] All 180 API calls completed
-- [ ] Metrics computed (correctness, cost, latency)
-- [ ] Checkpoint/resume system tested
-- [ ] **Go/No-Go Decision:** If pilot fails, fix before scaling
+**Task 1.1: Set up GitHub API access (1 hour)**
+```bash
+# Get Personal Access Token from GitHub
+# Visit: https://github.com/settings/tokens
+# Required scopes: public_repo (read-only)
+# Add to .env: GITHUB_TOKEN=your_token_here
+```
 
-### Success Criteria
+**Task 1.2: Install additional dependencies (30 min)**
+```bash
+source venv/bin/activate
+pip install PyGithub gutenbergpy
+pip freeze > requirements.txt  # Update requirements
+```
+
+**Task 1.3: Implement corpus loaders (Day 1 afternoon)**
+
+File: `src/corpus/loaders.py`
+```python
+def load_github_file(repo_name, file_path, after_date="2024-08-01"):
+    """Load single file from GitHub repository
+    
+    Args:
+        repo_name: e.g., "pytorch/pytorch"
+        file_path: e.g., "README.md" or "docs/optimizer.md"
+        after_date: ISO date string, only fetch if modified after
+    
+    Returns:
+        dict with 'content', 'url', 'last_modified', 'tokens'
+    """
+    # Implementation here
+
+def load_github_docs(repo_name, path="docs/", after_date="2024-08-01", max_tokens=50000):
+    """Load documentation from GitHub repo
+    
+    Returns:
+        list of dicts with file metadata
+    """
+    # Implementation here
+
+def load_gutenberg_books(book_ids, max_tokens=100000):
+    """Load books from Project Gutenberg
+    
+    Args:
+        book_ids: list of Gutenberg IDs (e.g., [1342, 84, 98])
+        max_tokens: maximum tokens to load
+    
+    Returns:
+        list of dicts with 'content', 'title', 'author', 'tokens'
+    """
+    # Implementation here
+```
+
+**Acceptance Criteria:**
+- [ ] Can fetch PyTorch README.md via GitHub API
+- [ ] Can verify file modification date is after 2024-08-01
+- [ ] Token count is accurate (within ±5% of tiktoken)
+- [ ] Returns structured dict with metadata
+
+**Task 1.4: Implement tokenizer utilities (2 hours)**
+
+File: `src/utils/tokenizer.py` (enhance existing)
+```python
+def count_tokens_accurate(text: str, model: str = "gpt-4") -> int:
+    """Count tokens using tiktoken (matches API counting)"""
+    # Already implemented - verify it works
+
+def chunk_text_by_tokens(text: str, chunk_size: int, overlap: int) -> list:
+    """Split text into chunks by token count (not word count)"""
+    # Add this function
+
+def truncate_to_tokens(text: str, max_tokens: int) -> str:
+    """Truncate text to exact token count"""
+    # Add this function
+```
+
+### Phase 1B: Minimal Data Collection (Day 2)
+
+**Task 2.1: Collect pilot corpus (2 hours)**
+
+File: `scripts/collect_pilot_corpus.py` (NEW)
+```python
+#!/usr/bin/env python3
+"""Collect minimal corpus for pilot testing"""
+
+from src.corpus.loaders import load_github_docs
+import json
+
+# Target: 10k tokens from PyTorch docs
+corpus = load_github_docs(
+    repo_name="pytorch/pytorch",
+    path="docs/",
+    after_date="2024-08-01",
+    max_tokens=10000
+)
+
+# Save to data/raw/pilot/pytorch_docs.json
+output_path = "data/raw/pilot/pytorch_docs.json"
+with open(output_path, 'w') as f:
+    json.dump(corpus, f, indent=2)
+
+print(f"Collected {len(corpus)} files, {sum(d['tokens'] for d in corpus)} tokens")
+```
+
+**Acceptance Criteria:**
+- [ ] Collected 8-12k tokens of PyTorch documentation
+- [ ] All files modified after 2024-08-01
+- [ ] Saved to `data/raw/pilot/pytorch_docs.json`
+- [ ] Can load and verify content
+
+**Task 2.2: Create 1 test question (1 hour)**
+
+File: `data/questions/pilot_question_01.json` (NEW)
+```json
+{
+  "experiment": "pilot",
+  "question_id": "pilot_q001",
+  "question": "What is the default learning rate for the Adam optimizer in PyTorch 2.5?",
+  "ground_truth": "The default learning rate for Adam optimizer is 0.001 (1e-3).",
+  "difficulty": "simple_lookup",
+  "required_docs": ["pytorch/pytorch/docs/optim.md"],
+  "evaluation_criteria": "Answer must state 0.001 or 1e-3",
+  "source_url": "https://pytorch.org/docs/stable/optim.html",
+  "source_file": "docs/optim.md",
+  "keywords": ["Adam", "learning rate", "optimizer", "default"]
+}
+```
+
+**Acceptance Criteria:**
+- [ ] Question is answerable from collected corpus
+- [ ] Ground truth is verifiable (can cite source)
+- [ ] Question is unambiguous
+- [ ] Answer is factual (not opinion)
+
+### Phase 1C: Implement Context Assemblers (Days 3-4)
+
+**Task 3.1: Implement naive context assembler (Day 3 morning)**
+
+File: `src/context_engineering/naive.py`
+```python
+from typing import List, Dict
+from src.utils.tokenizer import count_tokens_accurate, truncate_to_tokens
+
+class NaiveContextAssembler:
+    """Sequential document concatenation with no structure"""
+    
+    def assemble(self, documents: List[Dict], max_tokens: int) -> str:
+        """
+        Concatenate documents sequentially.
+        
+        Args:
+            documents: List of dicts with 'content', 'title', 'url'
+            max_tokens: Maximum tokens in output
+        
+        Returns:
+            Assembled context string
+        """
+        # Simply concatenate with double newline separator
+        context_parts = []
+        total_tokens = 0
+        
+        for doc in documents:
+            content = doc['content']
+            tokens = count_tokens_accurate(content)
+            
+            if total_tokens + tokens <= max_tokens:
+                context_parts.append(content)
+                total_tokens += tokens
+            else:
+                # Truncate last document to fit
+                remaining = max_tokens - total_tokens
+                if remaining > 100:  # Only add if meaningful
+                    truncated = truncate_to_tokens(content, remaining)
+                    context_parts.append(truncated)
+                break
+        
+        return "\n\n".join(context_parts)
+```
+
+**Unit Test:** `tests/test_naive_assembler.py`
+```python
+def test_naive_assembly_token_limit():
+    docs = [
+        {"content": "Doc 1 content...", "title": "Doc 1"},
+        {"content": "Doc 2 content...", "title": "Doc 2"},
+    ]
+    assembler = NaiveContextAssembler()
+    result = assembler.assemble(docs, max_tokens=1000)
+    
+    assert count_tokens_accurate(result) <= 1000
+    assert "Doc 1 content" in result
+```
+
+**Acceptance Criteria:**
+- [ ] Assembles context within token limit (±1%)
+- [ ] Preserves document order
+- [ ] Handles edge cases (empty docs, very large docs)
+- [ ] Unit tests pass
+
+**Task 3.2: Implement padding system (Day 3 afternoon)**
+
+File: `src/corpus/padding.py`
+```python
+from typing import List, Dict
+import random
+from src.corpus.loaders import load_gutenberg_books
+from src.utils.tokenizer import count_tokens_accurate, truncate_to_tokens
+
+class PaddingGenerator:
+    """Generate irrelevant padding content to reach target fill %"""
+    
+    def __init__(self):
+        # Pre-load some Gutenberg books for padding
+        # Book IDs: 1342 (Pride & Prejudice), 84 (Frankenstein), 
+        #           98 (A Tale of Two Cities), 1661 (Sherlock Holmes)
+        self.padding_books = load_gutenberg_books([1342, 84, 98, 1661])
+        self.padding_text = "\n\n".join([b['content'] for b in self.padding_books])
+    
+    def generate_padding(self, target_tokens: int) -> str:
+        """
+        Generate padding text of target token count.
+        
+        Randomly samples from pre-loaded books to create padding.
+        """
+        if target_tokens <= 0:
+            return ""
+        
+        # Sample random chunks from padding_text
+        total_tokens = count_tokens_accurate(self.padding_text)
+        if target_tokens >= total_tokens:
+            # Need multiple copies
+            copies = (target_tokens // total_tokens) + 1
+            result = (self.padding_text + "\n\n") * copies
+        else:
+            # Sample from middle of text (more variety)
+            start = random.randint(0, total_tokens - target_tokens)
+            result = self.padding_text  # Simplified for now
+        
+        # Truncate to exact token count
+        return truncate_to_tokens(result, target_tokens)
+    
+    def pad_to_fill_percentage(self, 
+                               content: str, 
+                               fill_pct: float,
+                               max_context_tokens: int = 1_000_000) -> str:
+        """
+        Pad content to reach target fill percentage.
+        
+        Args:
+            content: The actual relevant content
+            fill_pct: Target fill percentage (0.1 to 0.9)
+            max_context_tokens: Maximum context window size
+        
+        Returns:
+            content + padding to reach fill_pct * max_context_tokens
+        """
+        target_total = int(max_context_tokens * fill_pct)
+        content_tokens = count_tokens_accurate(content)
+        
+        if content_tokens >= target_total:
+            # Content already exceeds target, truncate
+            return truncate_to_tokens(content, target_total)
+        
+        padding_needed = target_total - content_tokens
+        padding = self.generate_padding(padding_needed)
+        
+        # Interleave or append? For now, append
+        result = content + "\n\n" + padding
+        
+        return result
+```
+
+**Unit Test:** `tests/test_padding.py`
+```python
+def test_padding_matches_fill_percentage():
+    gen = PaddingGenerator()
+    content = "Short content." * 100
+    
+    result = gen.pad_to_fill_percentage(
+        content, 
+        fill_pct=0.5, 
+        max_context_tokens=10000
+    )
+    
+    tokens = count_tokens_accurate(result)
+    assert 4950 <= tokens <= 5050  # 5000 ± 1%
+```
+
+**Acceptance Criteria:**
+- [ ] Generates padding of exact token count (±1%)
+- [ ] Padding is irrelevant to technical questions
+- [ ] Can pad to any fill percentage
+- [ ] Unit tests pass
+
+**Task 3.3: Enhance RAG with padding (Day 4)**
+
+File: `src/context_engineering/rag.py` (enhance existing)
+
+Add method to RAGPipeline class:
+```python
+def assemble_context_with_padding(self, 
+                                  retrieved_chunks: List[Dict],
+                                  fill_pct: float,
+                                  max_tokens: int = 1_000_000) -> str:
+    """
+    Assemble retrieved chunks and pad to match fill percentage.
+    
+    This is the KEY methodological control for H2.
+    """
+    from src.corpus.padding import PaddingGenerator
+    
+    # Assemble retrieved chunks
+    context = self.assemble_context(retrieved_chunks, max_tokens)
+    
+    # Pad to match fill percentage
+    padder = PaddingGenerator()
+    padded_context = padder.pad_to_fill_percentage(
+        context, fill_pct, max_tokens
+    )
+    
+    return padded_context
+```
+
+**Acceptance Criteria:**
+- [ ] RAG context can be padded to match naive fill %
+- [ ] Fill % is accurate (±1%)
+- [ ] Padding doesn't interfere with retrieval
+- [ ] Unit tests pass
+
+### Phase 1D: Implement Minimal Runner (Day 5)
+
+**Task 4.1: Create pilot runner script**
+
+File: `scripts/run_minimal_pilot.py` (NEW)
+```python
+#!/usr/bin/env python3
+"""
+Minimal pilot: Run 1 question with 2 strategies at 3 fill levels.
+Total: 1 × 2 × 3 × 3 reps = 18 API calls
+"""
+
+import json
+import time
+from pathlib import Path
+from src.models.gemini_client import GeminiClient
+from src.context_engineering.naive import NaiveContextAssembler
+from src.context_engineering.rag import RAGPipeline
+from src.corpus.loaders import load_github_docs
+from src.utils.logging import get_logger
+
+logger = get_logger(__name__)
+
+def run_minimal_pilot():
+    # Load corpus
+    with open("data/raw/pilot/pytorch_docs.json") as f:
+        corpus = json.load(f)
+    
+    # Load question
+    with open("data/questions/pilot_question_01.json") as f:
+        question = json.load(f)
+    
+    # Initialize client
+    client = GeminiClient()
+    
+    # Initialize assemblers
+    naive = NaiveContextAssembler()
+    rag = RAGPipeline()
+    
+    # Index corpus for RAG
+    documents = [doc['content'] for doc in corpus]
+    rag.chunk_documents(documents, chunk_size=512, overlap=50)
+    rag.index_chunks()
+    
+    # Configuration
+    strategies = ["naive", "rag"]
+    fill_levels = [0.3, 0.5, 0.7]
+    repetitions = 3
+    max_tokens = 1_000_000
+    
+    results = []
+    
+    for strategy in strategies:
+        for fill_pct in fill_levels:
+            for rep in range(repetitions):
+                logger.info(f"Running {strategy} at {fill_pct*100}% fill, rep {rep+1}")
+                
+                # Assemble context
+                if strategy == "naive":
+                    target_tokens = int(max_tokens * fill_pct)
+                    context = naive.assemble(corpus, target_tokens)
+                else:  # RAG
+                    retrieved = rag.retrieve(question['question'], top_k=5)
+                    context = rag.assemble_context_with_padding(
+                        retrieved, fill_pct, max_tokens
+                    )
+                
+                # Build prompt
+                prompt = f"""Answer the following question based on the provided documentation.
+
+Question: {question['question']}
+
+Documentation:
+{context}
+
+Answer:"""
+                
+                # Make API call
+                try:
+                    start_time = time.time()
+                    response = client.generate_content(
+                        prompt,
+                        temperature=0.0,
+                        experiment_id="pilot",
+                        session_id=f"{strategy}_fill{int(fill_pct*100)}_rep{rep}"
+                    )
+                    latency = time.time() - start_time
+                    
+                    # Record result
+                    result = {
+                        "question_id": question['question_id'],
+                        "strategy": strategy,
+                        "fill_pct": fill_pct,
+                        "repetition": rep,
+                        "response": response['text'],
+                        "tokens_input": response['tokens_input'],
+                        "tokens_output": response['tokens_output'],
+                        "latency": latency,
+                        "cost": response['cost'],
+                        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                    results.append(result)
+                    
+                    logger.info(f"Success: {response['tokens_input']} input tokens, "
+                               f"{response['tokens_output']} output tokens, "
+                               f"{latency:.2f}s latency")
+                    
+                except Exception as e:
+                    logger.error(f"Failed: {e}")
+                    # Continue with next call
+                
+                # Small delay to be polite to API
+                time.sleep(2)
+    
+    # Save results
+    output_path = Path("results/pilot_minimal_results.jsonl")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    with open(output_path, 'w') as f:
+        for result in results:
+            f.write(json.dumps(result) + '\n')
+    
+    logger.info(f"Pilot complete! Saved {len(results)} results to {output_path}")
+    
+    # Print summary
+    print("\n" + "="*60)
+    print("PILOT SUMMARY")
+    print("="*60)
+    print(f"Total API calls: {len(results)}")
+    print(f"Total tokens: {sum(r['tokens_input'] for r in results):,}")
+    print(f"Total cost: ${sum(r['cost'] for r in results):.4f}")
+    print(f"Results saved to: {output_path}")
+    print("="*60 + "\n")
+
+if __name__ == "__main__":
+    run_minimal_pilot()
+```
+
+**Acceptance Criteria:**
+- [ ] Script runs without crashes
+- [ ] Makes exactly 18 API calls
+- [ ] Saves results to JSONL file
+- [ ] Can resume if interrupted (enhancement)
+- [ ] Logging is clear and informative
+
+**Task 4.2: Manual evaluation of results (Day 5 evening)**
+
+File: `scripts/evaluate_pilot_manually.py` (NEW)
+```python
+#!/usr/bin/env python3
+"""Manually evaluate pilot results"""
+
+import json
+
+# Load results
+with open("results/pilot_minimal_results.jsonl") as f:
+    results = [json.loads(line) for line in f]
+
+# Load ground truth
+with open("data/questions/pilot_question_01.json") as f:
+    question = json.load(f)
+
+print(f"Question: {question['question']}")
+print(f"Ground Truth: {question['ground_truth']}\n")
+
+for i, result in enumerate(results, 1):
+    print(f"\n{'='*60}")
+    print(f"Result {i}/{len(results)}")
+    print(f"Strategy: {result['strategy']}, Fill: {result['fill_pct']*100}%, Rep: {result['repetition']}")
+    print(f"{'='*60}")
+    print(f"Response: {result['response']}")
+    print(f"Tokens: {result['tokens_input']} in, {result['tokens_output']} out")
+    print(f"Latency: {result['latency']:.2f}s")
+    
+    # Manual scoring
+    score = input("\nIs this correct? (1=yes, 0=no): ")
+    result['correct'] = int(score)
+
+# Save scored results
+with open("results/pilot_minimal_results_scored.jsonl", 'w') as f:
+    for result in results:
+        f.write(json.dumps(result) + '\n')
+
+# Print statistics
+correct_by_strategy = {}
+for result in results:
+    strategy = result['strategy']
+    if strategy not in correct_by_strategy:
+        correct_by_strategy[strategy] = []
+    correct_by_strategy[strategy].append(result.get('correct', 0))
+
+print("\n" + "="*60)
+print("PILOT EVALUATION SUMMARY")
+print("="*60)
+for strategy, scores in correct_by_strategy.items():
+    accuracy = sum(scores) / len(scores) * 100
+    print(f"{strategy}: {accuracy:.1f}% correct ({sum(scores)}/{len(scores)})")
+print("="*60)
+```
+
+### Phase 1E: Review and Go/No-Go Decision (Day 6-7)
+
+**Task 5.1: Analyze pilot results**
+- [ ] Check if responses make sense
+- [ ] Verify token counting is accurate
+- [ ] Confirm fill % is correctly implemented
+- [ ] Identify any bugs or issues
+
+**Task 5.2: Go/No-Go Decision Checklist**
+
+✅ **GO** if:
+- [ ] All 18 API calls completed successfully
+- [ ] Responses are relevant to question
+- [ ] Token counts are accurate (±5%)
+- [ ] Fill % is correct (±5%)
+- [ ] No major bugs found
+- [ ] Cost is $0 (free tier)
+
+❌ **NO-GO** if:
+- [ ] More than 2 API calls failed
+- [ ] Responses are gibberish
+- [ ] Token counts are wildly off (>10% error)
+- [ ] Fill % is not working
+- [ ] Major bugs that need fixing
+
+**If NO-GO:** Fix issues before proceeding to full pilot.
+
+**Success Criteria:**
 - Pipeline runs end-to-end without crashes
 - Results are reasonable (not random garbage)
-- Metrics are computable and interpretable
 - Token counting is accurate (±5%)
-- Checkpointing works (can resume from failure)
+- Fill % matching works (±5%)
+- Decision documented in `results/pilot_go_nogo.md`
 
 ---
 
@@ -95,36 +637,52 @@ Pilot (60 calls) → Validate → Build Core (180 calls) → Validate → Full S
 **Duration:** 2-3 weeks  
 **Goal:** Establish baseline and test all 4 context strategies across fill levels  
 **Hypothesis:** Engineered 1M > Naïve 1M by ≥15% at high fill %  
-**Domain:** API Documentation (AWS, GCP, Azure)  
+**Domain:** GitHub Repository Documentation  
 **API Calls:** 3,000 (50 questions × 4 strategies × 5 fill levels × 3 reps)  
 **Est. Cost:** $0 (free tier)
 
-**CRITICAL FIX:** RAG strategies will be **padded to match fill %** of naive strategies. This ensures we're comparing context engineering quality, not fill % effects.
+**CRITICAL:** RAG strategies will be **padded to match fill %** of naive strategies (implemented in pilot phase).
 
-Example at 70% fill (700k tokens):
-- Naïve 1M: 700k tokens (real docs + padding)
-- RAG 128k: Retrieve ~90k relevant chunks + pad to 700k with irrelevant content
-- This isolates RAG quality from attention dilution effects
+### Week 2: Data Collection & Question Generation (7 days)
 
-### Phase 1: Data Collection (~2 days)
+**Day 1-2: Collect GitHub Corpus (~700k tokens from 30 repos)**
 
-**Corpus Needed:**
-- [ ] API documentation (500k-700k tokens)
-  - AWS: Lambda, API Gateway, DynamoDB, S3 (~250k)
-  - GCP: Cloud Functions, Storage, Firestore (~200k)
-  - Azure: Functions, Blob Storage, Cosmos DB (~200k)
-  - Sources: Official docs, web scraping
-  - Save to: `data/raw/api_docs/{provider}/{service}/`
+Use `scripts/collect_exp1_corpus.py` to fetch documentation from 30 popular repositories across different languages/frameworks:
+- Python ML/AI (PyTorch, TensorFlow, scikit-learn, HuggingFace)
+- JavaScript/TypeScript (Next.js, React, Node.js, TypeScript)
+- Go (Golang, Kubernetes, Docker)
+- Rust (rust-lang, tokio)
+- Other (Django, Flask, Rails, Terraform, etc.)
 
-- [ ] Padding corpus (2M+ tokens, reusable across experiments)
-  - Wikipedia articles: History, Geography, Literature, Arts, Sports
-  - Filter out tech topics
-  - Chunk into ~2k segments
-  - Save to: `data/raw/padding_corpus/`
+All docs filtered to modifications after 2024-08-01.
+Save to: `data/raw/exp1/github_corpus.json`
 
-**Utilities:**
-- [ ] Implement `src/corpus/loaders.py` (load, count tokens, metadata)
-- [ ] Create `data/corpus_manifest.json` (catalog all documents)
+**Day 3: Collect Gutenberg Padding Corpus (2M+ tokens)**
+
+Use `scripts/collect_padding_corpus.py` to fetch 15+ classic books from Project Gutenberg.
+Books: Pride & Prejudice, Frankenstein, Tale of Two Cities, Sherlock Holmes, etc.
+Save to: `data/raw/padding/gutenberg_corpus.json`
+
+**Day 4-7: Generate 50 Questions with Ground Truth**
+
+Manually/semi-automatically create questions by reading the collected docs:
+- 20 simple lookups (single fact from single doc)
+- 20 synthesis (combine info from 2-3 docs)
+- 10 contradiction detection (find conflicts or compare statements)
+
+Each question must have:
+- Ground truth answer (verifiable from docs)
+- Required documents list
+- Evaluation criteria
+- Keywords for retrieval testing
+
+Save to: `data/questions/exp1_questions.json`
+
+**Deliverables:**
+- [ ] 700k tokens of GitHub documentation
+- [ ] 2M+ tokens of Gutenberg padding
+- [ ] 50 questions with ground truth
+- [ ] All data saved in structured JSON format
 
 ### Phase 2: Implementation (~3 days)
 
@@ -268,44 +826,97 @@ pip install faiss-cpu rank-bm25 tqdm
 
 **Duration:** 1-2 weeks  
 **Goal:** Test robustness to irrelevant information  
-**Domain:** Financial Reports (SEC filings)  
+**Domain:** GitHub Documentation + Gutenberg Books  
 **API Calls:** 1,200 (20 questions × 4 strategies × 5 pollution levels × 3 reps)  
 **Est. Cost:** $0 (free tier)
 
 **Note:** RAG strategies also padded to match pollution levels for fair comparison.
 
-### Phase 1: Data Collection (~2 days)
+### Week 5: Data Collection & Question Generation (5 days)
 
-- [ ] Base corpus (50k tokens): 5 Q4 reports (Apple, Google, Microsoft, Amazon, Meta)
-- [ ] Pollution corpus (1M tokens): 20-30 unrelated financial reports
-- [ ] Source: SEC EDGAR (https://www.sec.gov/edgar)
-- [ ] Parse sections, extract financials, label metadata
-- [ ] Save to: `data/raw/financial_reports/{base|pollution}/`
+**Day 1: Collect Base Corpus (50k tokens of relevant GitHub docs)**
 
-### Phase 2: Implementation (~1 day)
+Use 3-5 repositories not used in Experiment 1:
+- Example: FastAPI, Pydantic, SQLAlchemy, Celery, Requests
+- Fetch recent documentation (after 2024-08-01)
+- Target: 50k tokens total
+- Save to: `data/raw/exp2/base_corpus.json`
 
-- [ ] Pollution injection utility
-- [ ] Modify assemblers to handle base + pollution mixing
-- [ ] RAG should retrieve only relevant chunks
+**Day 2: Prepare Pollution Corpus (reuse Gutenberg)**
 
-### Phase 3: Question Generation (~1 day)
+Use the Gutenberg corpus collected in Experiment 1:
+- Already have 2M+ tokens from `data/raw/padding/gutenberg_corpus.json`
+- Classic literature is clearly irrelevant to technical questions
+- No additional collection needed
 
-- [ ] 20 questions answerable ONLY from base corpus
-- [ ] Ensure answers NOT in pollution docs
-- [ ] Save to: `data/questions/exp2_questions.json`
+**Day 3-5: Generate 20 Questions**
 
-### Phase 4: Execution (~1 day)
+Create questions answerable ONLY from base corpus:
+- 15 simple lookups (single fact)
+- 5 synthesis (2-3 docs from base)
+- Verify answers are NOT in pollution corpus
+- Example: "What is the default timeout for FastAPI requests?" (should NOT appear in Dickens)
 
-- [ ] Pollution levels: [50k, 200k, 500k, 700k, 950k]
-- [ ] Run 1,200 API calls
-- [ ] Script: `scripts/run_experiment_2.py`
+Save to: `data/questions/exp2_questions.json`
 
-### Phase 5: Analysis (~1 day)
+**Deliverables:**
+- [ ] 50k tokens base corpus (relevant)
+- [ ] Gutenberg pollution corpus verified (2M+ tokens, irrelevant)
+- [ ] 20 questions with ground truth
+- [ ] Confirmed pollution doesn't contain answers
 
-- [ ] Accuracy vs pollution level
-- [ ] Hallucination rate (false positives from pollution)
-- [ ] Degradation curves per strategy
-- [ ] Which strategy most robust?
+### Week 6: Execution & Analysis (5 days)
+
+**Day 1-2: Implement Pollution Injection**
+
+File: `src/corpus/pollution.py` (NEW)
+```python
+class PollutionInjector:
+    """Inject irrelevant content at varying levels"""
+    
+    def inject_pollution(self, 
+                        base_content: str,
+                        pollution_content: str,
+                        pollution_tokens: int) -> str:
+        """
+        Mix base content with pollution.
+        
+        Args:
+            base_content: Relevant documents
+            pollution_content: Irrelevant text (Gutenberg)
+            pollution_tokens: Amount of pollution to add
+        
+        Returns:
+            Mixed content (base + pollution)
+        """
+        # Truncate pollution to target size
+        pollution = truncate_to_tokens(pollution_content, pollution_tokens)
+        
+        # Strategy: Append pollution after base
+        # (Could also interleave, but simpler for now)
+        return base_content + "\n\n" + pollution
+```
+
+**Day 3-4: Run Experiment 2 (1,200 API calls)**
+
+Pollution levels:
+- 50k tokens pollution (50% of base)
+- 200k tokens pollution (4x base)
+- 500k tokens pollution (10x base)
+- 700k tokens pollution (14x base)
+- 950k tokens pollution (19x base)
+
+Script: `scripts/run_experiment_2.py`
+
+**Day 5: Analyze Results**
+
+Metrics:
+- Accuracy vs pollution level (does it degrade?)
+- Hallucination rate (false positives from pollution)
+- Degradation curves per strategy
+- Which strategy most robust to noise?
+
+Save to: `results/exp2_analysis/`
 
 ---
 
