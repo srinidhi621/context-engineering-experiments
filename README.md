@@ -2,30 +2,41 @@
 
 A rigorous experimental framework to test the importance of context engineering for Large Language Models, comparing long-context (1M tokens) and shorter-context (128k tokens) approaches.
 
-## ⚠️ CURRENT STATUS: INFRASTRUCTURE COMPLETE
+## ⚠️ CURRENT STATUS: PHASE 1A COMPLETE
 
-**✅ What's Complete (Ready for Experiments):**
+**✅ What's Complete (Infrastructure + Data Loaders):**
 - ✅ Project scaffolding and directory structure
 - ✅ Configuration system (config.py, .env)
 - ✅ **Unified API Monitor** (rate limiting + cost tracking + budget enforcement in ONE system)
 - ✅ API integration (GeminiClient wrapper with unified monitoring)
-- ✅ Token counting utilities
+- ✅ **Corpus loaders implemented** (Hugging Face Hub + Gutenberg, 460+ lines)
+  - `load_hf_model_card()` - Single model card loader
+  - `load_hf_curated_models()` - Fast collection from 60+ recent models
+  - `load_gutenberg_books()` - Classic literature loader
+  - Tested: 50k tokens collected in 2-3 seconds
+- ✅ **Enhanced tokenizer utilities** (counting, chunking with overlap, truncation)
 - ✅ Logging infrastructure
 - ✅ API key configured and verified
 - ✅ **Model selected: gemini-2.0-flash-exp (6x faster than 2.5 Flash on free tier)**
 - ✅ **End-to-end integration test passing**
 - ✅ **google-generativeai upgraded to v0.8.5**
 
+**🔄 In Progress (Pilot Phase):**
+- ⏳ Phase 1B: Collect 10k tokens pilot corpus + create 1 test question
+- ⏳ Phase 1C: Implement context assemblers (naive, padding, RAG enhancement)
+- ⏳ Phase 1D: Create minimal runner (18 API calls)
+- ⏳ Phase 1E: Go/No-Go decision
+
 **❌ What's NOT Complete:**
 - ❌ Context engineering implementations (naive, structured - only basic RAG done)
-- ❌ Experiment logic (pilot, exp1, exp2 - all empty TODOs)
-- ❌ Corpus data collection (directories empty)
-- ❌ Evaluation questions (none generated yet)
+- ❌ Pilot corpus collected (need 10k tokens)
+- ❌ Pilot question created (need 1 test question)
+- ❌ Evaluation questions for full experiments (none generated yet)
 - ❌ Metrics implementation (empty TODO)
 - ❌ Experiment runner scripts (empty TODOs)
 - ❌ Checkpoint/resume system (not implemented)
 
-**Bottom Line:** Infrastructure is production-ready. Now build experimental logic.
+**Bottom Line:** Phase 1A complete (infrastructure + data loaders). Ready for Phase 1B (data collection).
 
 **Revised Scope:** Dropped Exp 3 & 4 (too ambitious). Focus on Pilot → Exp 1 → Exp 2 → Analysis. Estimated 10-12 weeks total.
 
