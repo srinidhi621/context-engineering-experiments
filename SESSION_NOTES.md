@@ -58,20 +58,29 @@ pip install gutenbergpy>=0.3.4
 ## 📝 DOCUMENTATION UPDATED
 
 **Files Updated:**
-1. `README.md` - New data strategy section, updated experiments
-2. `PLAN.md` - Phase 1A marked complete, updated implementation details
+1. `README.md` - New data strategy, updated dates, corrected pilot details (1 question, 18 calls)
+2. `PLAN.md` - Phase 1A marked complete, corrected pilot details, fixed function names
 3. `requirements.txt` - Removed PyGithub, added huggingface_hub
-4. `src/corpus/loaders.py` - 460+ lines, fully implemented
+4. `src/corpus/loaders.py` - 493 lines, removed duplicate count_tokens (now imports from tokenizer)
 5. `src/utils/tokenizer.py` - Enhanced with chunking function
+
+**Documentation Cleanup (Nov 3):**
+- Fixed outdated dates (Oct 31 → Nov 3)
+- Corrected PROJECT_PLAN.md → PLAN.md references
+- Fixed pilot counts: 10 questions/180 calls → 1 question/18 calls (consistent across all docs)
+- Removed duplicate count_tokens function (centralized in tokenizer.py)
+- Fixed function names in code examples (load_hf_curated_models, hf_model_cards.json)
 
 **Git Commits:**
 ```
-ff9f3c5 - Complete Phase 1A: Infrastructure Setup
-2b2e543 - Pivot from GitHub to Hugging Face Hub  
+58628b4 - Update documentation to reflect Phase 1A completion
+2152f64 - Add session notes for Oct 31, 2025
 5be0386 - Update all documentation for Hugging Face pivot
+2b2e543 - Pivot from GitHub to Hugging Face Hub  
+ff9f3c5 - Complete Phase 1A: Infrastructure Setup
 ```
 
-**Branch:** main (4 commits ahead of origin/main)
+**Branch:** main (clean, ready to commit documentation fixes)
 
 ---
 

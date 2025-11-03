@@ -8,31 +8,13 @@ from pathlib import Path
 from huggingface_hub import HfApi, hf_hub_download, list_models, list_datasets
 from huggingface_hub.utils import RepositoryNotFoundError, HfHubHTTPError
 from gutenbergpy import textget
-import tiktoken
 from dotenv import load_dotenv
+
+# Import token counting from centralized utilities
+from ..utils.tokenizer import count_tokens
 
 # Load environment variables
 load_dotenv()
-
-
-def count_tokens(text: str, model: str = "gpt-4") -> int:
-    """
-    Count tokens in text using tiktoken.
-    
-    Args:
-        text: Text to count tokens for
-        model: Model name for tokenizer (default: gpt-4)
-    
-    Returns:
-        Number of tokens
-    """
-    try:
-        encoding = tiktoken.encoding_for_model(model)
-        return len(encoding.encode(text))
-    except Exception:
-        # Fallback to cl100k_base if model not found
-        encoding = tiktoken.get_encoding("cl100k_base")
-        return len(encoding.encode(text))
 
 
 def load_hf_model_card(

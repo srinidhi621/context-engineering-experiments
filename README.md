@@ -281,9 +281,9 @@ Fill %  | Tokens Used | What It Tests
 
 - **Corpus:** 10k tokens from recent model cards (Llama 3.2/3.3, Qwen 2.5)
 - **Strategies:** Naïve 1M + Basic RAG 128k (test both extremes)
-- **Tasks:** 10 manually crafted questions with ground truth
-- **API Calls:** 180 (10 questions × 2 strategies × 3 fill levels × 3 reps)
-- **What It Tests:** Pipeline functionality, checkpoint/resume, metrics computation
+- **Tasks:** 1 test question with ground truth (minimal validation)
+- **API Calls:** 18 (1 question × 2 strategies × 3 fill levels × 3 reps)
+- **What It Tests:** Pipeline functionality, context assembly, API integration
 - **Data Source:** Hugging Face Hub (no authentication needed, guaranteed post-cutoff)
 
 ### Experiment 1: Needle in Multiple Haystacks
@@ -330,7 +330,7 @@ Fill %  | Tokens Used | What It Tests
 ```
 context-engineering-experiments/
 ├── README.md                      # This file
-├── PROJECT_PLAN.md               # Detailed implementation roadmap
+├── PLAN.md                        # Detailed implementation roadmap
 ├── requirements.txt              # Python dependencies
 ├── setup.py                      # Package configuration
 ├── .env.example                  # Environment variables template
@@ -759,7 +759,7 @@ At the end of this project, you will have:
 ## 🤝 Contributing
 
 This is a research project. If you'd like to:
-- **Replicate:** Follow the setup instructions and PROJECT_PLAN.md
+- **Replicate:** Follow the setup instructions and PLAN.md
 - **Extend:** Add new experiments or conditions
 - **Improve:** Submit PRs for code improvements
 
@@ -791,8 +791,8 @@ For questions about this research:
 
 ---
 
-**Last Updated:** October 31, 2025  
-**Version:** 1.1 (Revised Scope)  
-**Status:** Ready for Implementation  
+**Last Updated:** November 3, 2025  
+**Version:** 1.2 (Phase 1A Complete)  
+**Status:** Phase 1A Complete - Ready for Phase 1B  
 **Estimated Completion:** 10-12 weeks from start  
-**Changes:** Dropped Exp 3 & 4, added pilot phase, fixed H2 methodology (RAG padding)
+**Changes:** Phase 1A infrastructure complete (corpus loaders, tokenizer utils)

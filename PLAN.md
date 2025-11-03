@@ -47,11 +47,11 @@
 
 **Approach:**
 ```
-Pilot (60 calls) → Validate → Build Core (180 calls) → Validate → Full Scale (4,200 calls)
+Pilot (18 calls) → Validate → Build Core → Validate → Full Scale (4,380 calls)
 ```
 
 **Revised Scope (Focused & Achievable):**
-1. **Pilot Phase** - 10 questions, 2 strategies, validate entire pipeline
+1. **Pilot Phase** - 1 question, 2 strategies, validate entire pipeline (18 API calls)
 2. **Experiment 1** - Needle in Haystacks (establishes baseline, tests all 4 strategies)
 3. **Experiment 2** - Context Pollution (tests robustness)
 4. **Experiment 5** - Cost-Latency Frontier (analysis of Exp 1-2)
@@ -436,14 +436,13 @@ from pathlib import Path
 from src.models.gemini_client import GeminiClient
 from src.context_engineering.naive import NaiveContextAssembler
 from src.context_engineering.rag import RAGPipeline
-from src.corpus.loaders import load_github_docs
 from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
 def run_minimal_pilot():
     # Load corpus
-    with open("data/raw/pilot/pytorch_docs.json") as f:
+    with open("data/raw/pilot/hf_model_cards.json") as f:
         corpus = json.load(f)
     
     # Load question
