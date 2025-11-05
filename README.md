@@ -2,6 +2,13 @@
 
 A rigorous experimental framework to test the importance of context engineering for Large Language Models, comparing long-context (1M tokens) and shorter-context (128k tokens) approaches.
 
+For contributor practices and workflow expectations, see [Repository Guidelines](AGENTS.md).
+
+### ⚠️ Free-Tier Token Limits
+
+- The Gemini free tier enforces a per-minute input token limit of roughly 250k tokens per model. Any single request exceeding that count triggers a 429 response regardless of delays between calls.
+- Pilot contexts above ~240k tokens are skipped by `scripts/run_minimal_pilot.py` to avoid quota errors. To run 500k–900k token fills as planned, enable billing (paid tier) so you gain the higher quota while keeping gemini-2.0-flash-exp at $0, or redesign the prompts to fit under the cap.
+
 ## ⚠️ CURRENT STATUS: PHASE 1A COMPLETE
 
 **✅ What's Complete (Infrastructure + Data Loaders):**
