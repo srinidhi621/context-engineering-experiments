@@ -3,8 +3,10 @@
 
 This runner estimates prompt token usage and applies a local throttle to respect
 Gemini's per-minute token quotas. If a single request would exceed the configured
-per-minute limit (default 240k tokens), it will be skipped with a diagnostic
-message rather than triggering a 429 from the API.
+per-minute limit it is skipped with a diagnostic message instead of triggering
+a 429. Set ``PER_MINUTE_TOKEN_LIMIT`` in the environment (or use the CLI flag)
+to match your project's quota. The default fallback is 240k tokens/minute,
+which aligns with the historical free-tier ceiling.
 """
 
 from __future__ import annotations
@@ -12,6 +14,7 @@ from __future__ import annotations
 import argparse
 import json
 import time
+import os
 from datetime import datetime, timezone
 from pathlib import Path
 from typing import Deque, Dict, Iterable, List, Tuple
@@ -34,6 +37,7 @@ Provide a concise factual answer. Respond in plain text with no additional comme
 
 
 def parse_args() -> argparse.Namespace:
+    env_limit = int(os.getenv("PER_MINUTE_TOKEN_LIMIT", "240000"))
     parser = argparse.ArgumentParser(
         description="Execute the pilot run using pre-assembled contexts."
     )
@@ -85,10 +89,11 @@ def parse_args() -> argparse.Namespace:
     parser.add_argument(
         "--per-minute-token-limit",
         type=int,
-        default=240_000,
+        default=env_limit,
         help=(
             "Maximum input tokens allowed per rolling minute. "
-            "Set slightly below the official quota to stay safe (default: %(default)s)."
+            "Set slightly below the official quota to stay safe "
+            "(default: %(default)s, override with PER_MINUTE_TOKEN_LIMIT)."
         ),
     )
     return parser.parse_args()

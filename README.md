@@ -4,10 +4,10 @@ A rigorous experimental framework to test the importance of context engineering 
 
 For contributor practices and workflow expectations, see [Repository Guidelines](AGENTS.md).
 
-### ⚠️ Free-Tier Token Limits
+### ⚖️ Token Limits & Throttling
 
-- The Gemini free tier enforces a per-minute input token limit of roughly 250k tokens per model. Any single request exceeding that count triggers a 429 response regardless of delays between calls.
-- Pilot contexts above ~240k tokens are skipped by `scripts/run_minimal_pilot.py` to avoid quota errors. To run 500k–900k token fills as planned, enable billing (paid tier) so you gain the higher quota while keeping gemini-2.0-flash-exp at $0, or redesign the prompts to fit under the cap.
+- The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `3600000` for a 3.6 M guardrail).
+- If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it.
 
 ## ⚠️ CURRENT STATUS: PHASE 1A COMPLETE
 
