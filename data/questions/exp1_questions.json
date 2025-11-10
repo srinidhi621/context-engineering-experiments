@@ -151,5 +151,90 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q010",
+    "question": "What GQA capability does the Llama 3.3 text-only model indicate in its comparison table?",
+    "ground_truth": "The table marks GQA as 'Yes' for the Llama 3.3 text-only row.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer must clearly state that GQA is supported (Yes).",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["GQA", "table"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q011",
+    "question": "What knowledge cutoff is listed for Llama 3.3 in the model table?",
+    "ground_truth": "The card lists December 2023 as the knowledge cutoff.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer should say 'December 2023'.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["knowledge cutoff", "December 2023"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q012",
+    "question": "How many input modalities does the Llama 3.3 text-only model expose?",
+    "ground_truth": "The card lists Multilingual Text as the sole input modality.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer must mention only one input modality: multilingual text.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["input modality"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q013",
+    "question": "What output modalities does the Llama 3.3 text-only entry support?",
+    "ground_truth": "It outputs Multilingual Text and code.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer must mention both text and code outputs.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["output modalities"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q014",
+    "question": "According to the Qwen2.5-0.5B card, what kinds of improvements are driven by specialized expert models?",
+    "ground_truth": "The card credits specialized expert models for significantly more knowledge and greatly improved coding and mathematics capabilities.",
+    "difficulty": "synthesis",
+    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "evaluation_criteria": "Answer must mention both increased knowledge and improvements in coding/mathematics tied to expert models.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
+    "source_model": "Qwen/Qwen2.5-0.5B",
+    "keywords": ["experts", "coding", "math"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
