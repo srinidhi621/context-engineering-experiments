@@ -1,0 +1,87 @@
+[
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q001",
+    "question": "According to the Llama 3.3-70B Instruct model card, what is the model's context length?",
+    "ground_truth": "The Llama 3.3-70B Instruct card specifies a 128k-token context length.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer must explicitly state a 128k-token context window.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["context length", "128k", "Llama 3.3"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q002",
+    "question": "What license governs the use of the Llama 3.3-70B Instruct model according to its card?",
+    "ground_truth": "Usage is governed by the Llama 3.3 Community License Agreement provided by Meta.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer should mention the 'Llama 3.3 Community License Agreement' by name.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["license", "Llama 3.3", "community licence"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q003",
+    "question": "Does the Llama 3.3-70B Instruct card list supported languages, and if so, which language family does it cover?",
+    "ground_truth": "The card lists English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai, indicating coverage of both Indo-European and Indic languages.",
+    "difficulty": "synthesis",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer should list at least four of the languages given and mention the multilingual coverage (Indo-European plus Indic).",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["languages", "multilingual", "Llama 3.3"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q004",
+    "question": "According to the Qwen2.5-0.5B model card, what pipeline tag is associated with this model?",
+    "ground_truth": "The card tags the pipeline as text-generation.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "evaluation_criteria": "Answer must state 'text-generation'.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
+    "source_model": "Qwen/Qwen2.5-0.5B",
+    "keywords": ["pipeline_tag", "text-generation"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q005",
+    "question": "What license governs the Qwen2.5-0.5B model?",
+    "ground_truth": "The Qwen2.5-0.5B model is released under the Apache 2.0 license.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "evaluation_criteria": "Answer must explicitly mention Apache-2.0.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
+    "source_model": "Qwen/Qwen2.5-0.5B",
+    "keywords": ["license", "Apache 2.0"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  }
+]

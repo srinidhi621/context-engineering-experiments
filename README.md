@@ -580,7 +580,7 @@ python scripts/generate_report.py --output FINAL_REPORT.md
 
 ### Question Set Authoring
 
-- Start from the templates in `data/questions/exp1_questions.template.json` and `data/questions/exp2_questions.template.json`.
+- Start from `data/questions/exp1_questions.json` (in-progress set) or copy the `.template.json` files when authoring new batches.
 - After editing any question file run `python scripts/validate_question_set.py <file>` to enforce field coverage, unique IDs, and required document lists before committing.
 - Corpus collection helpers:
   - `scripts/collect_exp1_corpus.py` → Hugging Face model cards for Experiment 1.
