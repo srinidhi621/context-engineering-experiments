@@ -532,6 +532,10 @@ python scripts/run_experiment_1.py --output results/exp1_results.jsonl
 # 3b. Score pilot results before proceeding
 python scripts/evaluate_pilot_manually.py
 
+# Unified runner scaffolding (preferred for future experiments)
+python scripts/run_experiment.py --experiment pilot --dry-run
+python scripts/run_calibration.py --dry-run
+
 # 4. Run Experiment 2
 python scripts/run_experiment_2.py --output results/exp2_results.jsonl
 
@@ -562,6 +566,7 @@ python scripts/generate_report.py --output FINAL_REPORT.md
   cp .env.example .env
   # Edit .env with your API keys:
   # GOOGLE_API_KEY=your_actual_api_key_here
+  # PER_MINUTE_TOKEN_LIMIT=3600000   # Example paid-tier guardrail
   ```
 
 **Verify setup:**

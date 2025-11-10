@@ -13,16 +13,14 @@ from __future__ import annotations
 
 import argparse
 import json
-import time
 import os
 from datetime import datetime, timezone
 from pathlib import Path
-from typing import Deque, Dict, Iterable, List, Tuple
-
-from collections import deque
+from typing import Dict, Iterable, List
 
 from src.models.gemini_client import GeminiClient
 from src.utils.tokenizer import count_tokens
+from src.utils.throttle import PerMinuteTokenThrottle, TokenLimitExceeded
 
 
 PROMPT_TEMPLATE = """You are validating a context-engineering pipeline. Use only the supplied context to answer the question.
@@ -143,37 +141,7 @@ def run_pilot(args: argparse.Namespace) -> None:
         "Calls exceeding this limit are skipped to avoid API 429 errors."
     )
 
-    token_window: Deque[Tuple[float, int]] = deque()
-
-    def wait_for_token_budget(estimated_tokens: int) -> float:
-        if estimated_tokens > args.per_minute_token_limit:
-            raise RuntimeError(
-                f"Estimated prompt ({estimated_tokens:,} tokens) exceeds the configured "
-                f"per-minute limit of {args.per_minute_token_limit:,} tokens. "
-                "Reduce the fill percentage or increase the limit if your quota allows."
-            )
-
-        waited = 0.0
-        now = time.monotonic()
-        while token_window and now - token_window[0][0] >= 60:
-            token_window.popleft()
-
-        used = sum(tokens for (_, tokens) in token_window)
-        while used + estimated_tokens > args.per_minute_token_limit:
-            oldest_time, oldest_tokens = token_window[0]
-            sleep_time = max(0.0, 60 - (now - oldest_time))
-            print(
-                f"Throttling for {sleep_time:.1f}s to stay under "
-                f"{args.per_minute_token_limit:,} tokens/minute."
-            )
-            time.sleep(sleep_time)
-            waited += sleep_time
-            now = time.monotonic()
-            while token_window and now - token_window[0][0] >= 60:
-                token_window.popleft()
-            used = sum(tokens for (_, tokens) in token_window)
-
-        return waited
+    throttle = PerMinuteTokenThrottle(args.per_minute_token_limit)
 
     with output_path.open("w", encoding="utf-8") as f_out:
         for ctx in contexts:
@@ -208,8 +176,8 @@ def run_pilot(args: argparse.Namespace) -> None:
                 )
 
                 try:
-                    wait_seconds = wait_for_token_budget(prompt_tokens)
-                except RuntimeError as exc:
+                    wait_seconds = throttle.wait_for_budget(prompt_tokens)
+                except TokenLimitExceeded as exc:
                     print(f"Skipping call: {exc}")
                     record = {**metadata, "error": str(exc)}
                     f_out.write(json.dumps(record) + "\n")
@@ -224,10 +192,7 @@ def run_pilot(args: argparse.Namespace) -> None:
                 )
 
                 actual_input_tokens = response.get("tokens_input") or prompt_tokens
-                now_monotonic = time.monotonic()
-                while token_window and now_monotonic - token_window[0][0] >= 60:
-                    token_window.popleft()
-                token_window.append((now_monotonic, actual_input_tokens))
+                throttle.record(actual_input_tokens)
 
                 record = {
                     **metadata,
