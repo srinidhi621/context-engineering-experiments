@@ -529,6 +529,9 @@ python scripts/run_pilot.py --output results/pilot_results.jsonl
 # 3. If pilot succeeds, run Experiment 1
 python scripts/run_experiment_1.py --output results/exp1_results.jsonl
 
+# 3b. Score pilot results before proceeding
+python scripts/evaluate_pilot_manually.py
+
 # 4. Run Experiment 2
 python scripts/run_experiment_2.py --output results/exp2_results.jsonl
 
