@@ -83,5 +83,73 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q006",
+    "question": "What training data summary does the Llama 3.3 (text-only) row provide?",
+    "ground_truth": "The table states that the text-only Llama 3.3 model is trained on a new mix of publicly available online data.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer must mention \"new mix\" and that the data is publicly available online.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["training data", "publicly available"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q007",
+    "question": "Which input and output modalities are listed for the Llama 3.3 text-only model?",
+    "ground_truth": "The table shows Multilingual Text as the input modality and Multilingual Text and code as the output modalities.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "evaluation_criteria": "Answer must identify both input (multilingual text) and output (multilingual text plus code).",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": ["modalities", "input", "output"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q008",
+    "question": "What range of parameter sizes does the Qwen2.5 family release according to the 0.5B card?",
+    "ground_truth": "The introduction states that Qwen2.5 releases base and instruction-tuned models ranging from 0.5 to 72 billion parameters.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "evaluation_criteria": "Answer must mention both endpoints: 0.5B and 72B parameters.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
+    "source_model": "Qwen/Qwen2.5-0.5B",
+    "keywords": ["parameters", "range", "Qwen2.5"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q009",
+    "question": "List two capability improvements Qwen2.5 highlights over Qwen2 in its 0.5B card.",
+    "ground_truth": "The card states that Qwen2.5 adds significantly more knowledge with improved coding and mathematics experts, and also improves instruction following, long-text generation beyond 8K tokens, structured data understanding, and structured output generation.",
+    "difficulty": "synthesis",
+    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "evaluation_criteria": "Answer must mention at least two specific improvements cited (e.g., better coding/maths plus improved instruction following or long-text generation).",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
+    "source_model": "Qwen/Qwen2.5-0.5B",
+    "keywords": ["improvements", "instruction following", "coding", "math"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
