@@ -506,6 +506,14 @@ nano .env
 ```bash
 # (Optional - download when ready for experiments)
 
+# Experiment 1 model-card corpus (~700k tokens)
+python scripts/collect_exp1_corpus.py --dry-run   # inspect stats
+python scripts/collect_exp1_corpus.py             # write to data/raw/exp1/
+
+# Gutenberg padding corpus (~2M tokens)
+python scripts/collect_padding_corpus.py --dry-run
+python scripts/collect_padding_corpus.py
+
 # Download all corpora (~4GB, 20-60 min):
 bash scripts/download_all.sh
 
@@ -574,6 +582,9 @@ python scripts/generate_report.py --output FINAL_REPORT.md
 
 - Start from the templates in `data/questions/exp1_questions.template.json` and `data/questions/exp2_questions.template.json`.
 - After editing any question file run `python scripts/validate_question_set.py <file>` to enforce field coverage, unique IDs, and required document lists before committing.
+- Corpus collection helpers:
+  - `scripts/collect_exp1_corpus.py` → Hugging Face model cards for Experiment 1.
+  - `scripts/collect_padding_corpus.py` → Project Gutenberg padding corpus shared across experiments.
 
 **Verify setup:**
   ```bash
