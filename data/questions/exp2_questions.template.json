@@ -1,0 +1,19 @@
+[
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q001",
+    "question": "Example: Which training corpus is relevant for Qwen2.5-7B according to its model card?",
+    "ground_truth": "The Qwen2.5-7B model card states the corpus mix includes filtered public web data and code.",
+    "difficulty": "synthesis",
+    "required_docs": ["Qwen/Qwen2.5-7B-Instruct"],
+    "evaluation_criteria": "Answer must cite the model card and mention both web data and code.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
+    "source_model": "Qwen/Qwen2.5-7B-Instruct",
+    "keywords": ["training data", "Qwen"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  }
+]

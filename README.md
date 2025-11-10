@@ -535,6 +535,7 @@ python scripts/evaluate_pilot_manually.py
 # Unified runner scaffolding (preferred for future experiments)
 python scripts/run_experiment.py --experiment pilot --dry-run
 python scripts/run_calibration.py --dry-run
+python scripts/validate_question_set.py data/questions/exp1_questions.template.json
 
 # 4. Run Experiment 2
 python scripts/run_experiment_2.py --output results/exp2_results.jsonl
@@ -568,6 +569,11 @@ python scripts/generate_report.py --output FINAL_REPORT.md
   # GOOGLE_API_KEY=your_actual_api_key_here
   # PER_MINUTE_TOKEN_LIMIT=3600000   # Example paid-tier guardrail
   ```
+
+### Question Set Authoring
+
+- Start from the templates in `data/questions/exp1_questions.template.json` and `data/questions/exp2_questions.template.json`.
+- After editing any question file run `python scripts/validate_question_set.py <file>` to enforce field coverage, unique IDs, and required document lists before committing.
 
 **Verify setup:**
   ```bash

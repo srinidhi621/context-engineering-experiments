@@ -241,8 +241,8 @@ While the Gemini quota increase is pending, we can continue prepping the remaind
 - **Monitoring Hooks:** Ensure runners tag `experiment_id`/`session_id` consistently and respect the `PER_MINUTE_TOKEN_LIMIT` environment variable just like the pilot runner.
 
 ### Step 4: Question Set Authoring Framework
-- **Schema Definition:** Create templates for `data/questions/exp1_questions.json` and `data/questions/exp2_questions.json` (fields, validation rules).
-- **Validation Helper:** Add `scripts/validate_question_set.py` to lint question files (unique IDs, required-doc coverage) so we can iterate quickly once we start writing prompts.
+- **Schema Definition:** Create templates for `data/questions/exp1_questions.json` and `data/questions/exp2_questions.json` (fields, validation rules). **Status:** Templates staged as `.template.json` files ready to duplicate.
+- **Validation Helper:** Add `scripts/validate_question_set.py` to lint question files (unique IDs, required-doc coverage) so we can iterate quickly once we start writing prompts. **Status:** Implemented; run `python scripts/validate_question_set.py data/questions/exp1_questions.template.json`.
 
 Executing these four threads in parallel keeps Phase 1B moving despite quota delays and positions us to jump directly into Experiment 1 as soon as the pilot rerun succeeds.
 
