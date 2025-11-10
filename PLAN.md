@@ -223,6 +223,29 @@ File: `data/questions/pilot_question_01.json` (NEW)
 - [ ] Question is unambiguous
 - [ ] Answer is factual (not opinion)
 
+## 🔜 Immediate Next Steps (Phase 1B/1C Bridge)
+
+While the Gemini quota increase is pending, we can continue prepping the remainder of Phase 1B and unblock Phase 1C so the experiment run can start the moment quotas are lifted.
+
+### Step 1: Pilot Evaluation + Reporting
+- **Task 4.2 Implementation:** Build `scripts/evaluate_pilot_manually.py` as originally scoped (load JSONL responses, compare to ground truth, emit scored JSONL + markdown summary).
+- **Acceptance:** Script reports accuracy for each fill level, flags missing calls, and produces a `results/pilot_minimal_results_scored.jsonl`.
+- **Dependency:** Requires at least one successful response per fill level; the script should gracefully handle skipped entries so we can run it immediately after the quota rerun.
+
+### Step 2: Additional Context Assemblers
+- **Structured Context (`src/context_engineering/structured.py`):** Implement metadata headers + TOC scaffolding described in Phase 1C Task 3.1; include unit tests mirroring `tests/test_context_engineering.py`.
+- **RAG Variants (`rag.py`, `advanced_rag.py`):** Wire tokenizer, retriever, and padding hooks now so only vector data needs to plug in later. Provide smoke tests with mocked retrievers.
+
+### Step 3: Runner & CLI Integration
+- **Runner Skeletons:** Flesh out `scripts/run_experiment.py` and `scripts/run_calibration.py` with argument parsing, config loading, and placeholder experiment dispatch so pilot/Exp1 share infrastructure.
+- **Monitoring Hooks:** Ensure runners tag `experiment_id`/`session_id` consistently and respect the `PER_MINUTE_TOKEN_LIMIT` environment variable just like the pilot runner.
+
+### Step 4: Question Set Authoring Framework
+- **Schema Definition:** Create templates for `data/questions/exp1_questions.json` and `data/questions/exp2_questions.json` (fields, validation rules).
+- **Validation Helper:** Add `scripts/validate_question_set.py` to lint question files (unique IDs, required-doc coverage) so we can iterate quickly once we start writing prompts.
+
+Executing these four threads in parallel keeps Phase 1B moving despite quota delays and positions us to jump directly into Experiment 1 as soon as the pilot rerun succeeds.
+
 ### Phase 1C: Implement Context Assemblers (Days 3-4)
 
 **Task 3.1: Implement naive context assembler (Day 3 morning)**
