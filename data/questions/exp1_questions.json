@@ -935,5 +935,121 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "question": "According to the Qwen2.5-32B-Instruct card, what additions differentiate it from the base 32B entry?",
+    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and explicitly positions it as an instruction-tuned variant built on the base model for chatbot use, unlike the base Qwen2.5-32B card which simply lists architecture details.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "Qwen/Qwen2.5-32B",
+      "Qwen/Qwen2.5-32B-Instruct"
+    ],
+    "evaluation_criteria": "Answer must mention at least one instruct-specific detail (chat tag, instruction tuning, Qwen Chat link) absent from the base card.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct",
+    "source_model": "Qwen/Qwen2.5-32B-Instruct",
+    "keywords": [
+      "Qwen",
+      "32B",
+      "instruction"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    },
+    "experiment": "exp1",
+    "question_id": "exp1_q042"
+  },
+  {
+    "question": "Which model in the StabilityAI vs Phi-3.5 comparison requires a gating form and Stability Community License acknowledgement before download?",
+    "ground_truth": "Stable Diffusion 3.5 Large requires acknowledging the Stability Community License via the gating form, while Phi-3.5-vision-instruct is MIT licensed without additional gating.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "stabilityai/stable-diffusion-3.5-large",
+      "microsoft/Phi-3.5-vision-instruct"
+    ],
+    "evaluation_criteria": "Answer must state that SD 3.5 Large requires gating and Stability Community License, whereas Phi-3.5 vision does not.",
+    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
+    "source_model": "stabilityai/stable-diffusion-3.5-large",
+    "keywords": [
+      "Stability AI",
+      "license"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    },
+    "experiment": "exp1",
+    "question_id": "exp1_q043"
+  },
+  {
+    "question": "Which Mistral release is governed by the Mistral Research License versus Apache-2.0?",
+    "ground_truth": "Mistral-Small-Instruct-2409 uses the Mistral Research License (MRL) with additional restrictions, whereas Pixtral-12B-2409 is Apache-2.0 licensed.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "mistralai/Mistral-Small-Instruct-2409",
+      "mistralai/Pixtral-12B-2409"
+    ],
+    "evaluation_criteria": "Answer must identify which model uses MRL and which uses Apache-2.0.",
+    "source_url": "https://huggingface.co/mistralai/Mistral-Small-Instruct-2409",
+    "source_model": "mistralai/Mistral-Small-Instruct-2409",
+    "keywords": [
+      "Mistral",
+      "license"
+    ],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    },
+    "experiment": "exp1",
+    "question_id": "exp1_q044"
+  },
+  {
+    "question": "Which Whisper variant explicitly states it prunes decoder layers for faster inference?",
+    "ground_truth": "The Whisper large-v3-turbo card states it is a finetuned version of a pruned Whisper large-v3 with decoder layers reduced from 32 to 4 for speed, whereas the base card does not mention pruning.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "openai/whisper-large-v3",
+      "openai/whisper-large-v3-turbo"
+    ],
+    "evaluation_criteria": "Answer must mention the pruning detail unique to turbo and contrast with the base card.",
+    "source_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
+    "source_model": "openai/whisper-large-v3-turbo",
+    "keywords": [
+      "Whisper",
+      "pruned"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    },
+    "experiment": "exp1",
+    "question_id": "exp1_q045"
+  },
+  {
+    "question": "According to the Phi-3.5-MoE card, which scenarios does it emphasize compared to the Phi-3.5-mini card?",
+    "ground_truth": "The MoE card specifically highlights memory/compute constrained environments, latency-bound scenarios, and strong reasoning (code, math, logic), whereas the mini card simply states lightweight general-purpose text generation.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "microsoft/Phi-3.5-MoE-instruct",
+      "microsoft/Phi-3.5-mini-instruct"
+    ],
+    "evaluation_criteria": "Answer must mention the MoE card's focus on memory/compute constraints, latency, or strong reasoning relative to mini.",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-MoE-instruct",
+    "source_model": "microsoft/Phi-3.5-MoE-instruct",
+    "keywords": [
+      "Phi-3.5",
+      "MoE"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    },
+    "experiment": "exp1",
+    "question_id": "exp1_q046"
   }
 ]
