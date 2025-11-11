@@ -389,5 +389,22 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q024",
+    "question": "Summarize the kinds of tasks Gemma 2-9B is designed for according to its model card description.",
+    "ground_truth": "The card says Gemma models are text-to-text decoder-only LLMs well-suited for text generation tasks such as question answering, summarization, and reasoning, and can be deployed in resource-limited environments.",
+    "difficulty": "synthesis",
+    "required_docs": ["google/gemma-2-9b"],
+    "evaluation_criteria": "Answer must mention at least two of the listed tasks (question answering, summarization, reasoning) and note deployment in resource-constrained settings.",
+    "source_url": "https://huggingface.co/google/gemma-2-9b",
+    "source_model": "google/gemma-2-9b",
+    "keywords": ["Gemma", "tasks"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
