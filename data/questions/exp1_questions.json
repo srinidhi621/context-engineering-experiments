@@ -270,5 +270,39 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q017",
+    "question": "What base model does the Llama Guard 3-8B card identify?",
+    "ground_truth": "It states that the model is built on meta-llama/Meta-Llama-3.1-8B.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-Guard-3-8B"],
+    "evaluation_criteria": "Answer must mention Meta-Llama-3.1-8B as the base.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-8B",
+    "source_model": "meta-llama/Llama-Guard-3-8B",
+    "keywords": ["base model", "Llama Guard"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q018",
+    "question": "Which license applies to Llama Guard 3-8B?",
+    "ground_truth": "The card references the Llama 3.1 Community License Agreement.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-Guard-3-8B"],
+    "evaluation_criteria": "Answer must cite the Llama 3.1 Community License Agreement.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-8B",
+    "source_model": "meta-llama/Llama-Guard-3-8B",
+    "keywords": ["license", "Llama Guard"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
