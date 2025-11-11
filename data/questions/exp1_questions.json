@@ -746,5 +746,28 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q034",
+    "question": "Summarize how Qwen2.5-7B-Instruct positions itself for chatbot/system-prompt scenarios compared to the base Qwen2.5-7B card.",
+    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and explicitly mentions improved resilience to diverse system prompts and enhanced instruction following, whereas the base card only lists the architecture and improvements without the chat focus.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "Qwen/Qwen2.5-7B",
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
+    "evaluation_criteria": "Answer must mention the instruct card's chat/link additions and system prompt resilience relative to the base card.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
+    "source_model": "Qwen/Qwen2.5-7B-Instruct",
+    "keywords": [
+      "Qwen",
+      "chat"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
