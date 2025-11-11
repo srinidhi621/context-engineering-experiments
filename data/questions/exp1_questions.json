@@ -700,5 +700,28 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q032",
+    "question": "What additions does the Qwen2.5-7B-Instruct card mention compared to the base Qwen2.5-7B entry?",
+    "ground_truth": "Both share the same architecture and improvements, but the Instruct card explicitly tags the model for chat use, references the Chat Qwen link, and notes that it is an instruction-tuned variant built on the base model, targeting improved instruction following and chatbot condition-setting.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "Qwen/Qwen2.5-7B",
+      "Qwen/Qwen2.5-7B-Instruct"
+    ],
+    "evaluation_criteria": "Answer must mention at least one instruct-specific element (e.g., chat tag, instruction tuning, Qwen Chat link) absent from the base card.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
+    "source_model": "Qwen/Qwen2.5-7B-Instruct",
+    "keywords": [
+      "Qwen",
+      "instruction"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
