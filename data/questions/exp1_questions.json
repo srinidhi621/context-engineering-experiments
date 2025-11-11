@@ -792,5 +792,29 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q036",
+    "question": "How does the Gemma 2-27B instruction-tuned card differentiate itself from the base 27B entry?",
+    "ground_truth": "The instruction-tuned card includes a base_model reference to google/gemma-2-27b and is tagged for conversational use, signalling that it is specifically tuned for chat/instruction tasks compared to the generic base card.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "google/gemma-2-27b",
+      "google/gemma-2-27b-it"
+    ],
+    "evaluation_criteria": "Answer must mention the base_model pointer or conversational tagging unique to the instruct card, distinguishing it from the base card.",
+    "source_url": "https://huggingface.co/google/gemma-2-27b-it",
+    "source_model": "google/gemma-2-27b-it",
+    "keywords": [
+      "Gemma",
+      "27B",
+      "instruction"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
