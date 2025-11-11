@@ -816,5 +816,124 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q037",
+    "question": "How does the Qwen2.5-32B-Instruct card position itself differently from the base 32B entry?",
+    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and notes it is an instruction-tuned variant built on the base model to improve instruction following and chatbot role-play, which the base 32B card does not emphasize.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "Qwen/Qwen2.5-32B",
+      "Qwen/Qwen2.5-32B-Instruct"
+    ],
+    "evaluation_criteria": "Answer must mention at least one instruct-specific detail (chat tag, Qwen Chat link, explicit instruction tuning) absent from the base card.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct",
+    "source_model": "Qwen/Qwen2.5-32B-Instruct",
+    "keywords": [
+      "Qwen",
+      "32B",
+      "instruction"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q038",
+    "question": "Which model can be used under the MIT license without additional gating, and which requires acceptance of the Stability Community License before download?",
+    "ground_truth": "Phi-3.5-vision-instruct is MIT licensed with no extra gating, while Stable Diffusion 3.5 Large requires acknowledging the Stability AI Community License via the gating form before access.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "microsoft/Phi-3.5-vision-instruct",
+      "stabilityai/stable-diffusion-3.5-large"
+    ],
+    "evaluation_criteria": "Answer must clearly state that Phi-3.5 vision is MIT licensed and ungated, whereas SD 3.5 Large needs the Stability Community License acknowledgement and gating form.",
+    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
+    "source_model": "stabilityai/stable-diffusion-3.5-large",
+    "keywords": [
+      "license",
+      "Stability AI",
+      "Phi-3.5"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q039",
+    "question": "Which release uses the proprietary Mistral Research License versus Apache-2.0, according to the Mistral-Small-Instruct-2409 and Pixtral-12B-2409 cards?",
+    "ground_truth": "Mistral-Small-Instruct-2409 is distributed under the Mistral Research License (MRL) with additional restrictions, whereas Pixtral-12B-2409 is Apache-2.0 licensed.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "mistralai/Mistral-Small-Instruct-2409",
+      "mistralai/Pixtral-12B-2409"
+    ],
+    "evaluation_criteria": "Answer must identify which model uses MRL and which uses Apache-2.0.",
+    "source_url": "https://huggingface.co/mistralai/Mistral-Small-Instruct-2409",
+    "source_model": "mistralai/Mistral-Small-Instruct-2409",
+    "keywords": [
+      "Mistral",
+      "license"
+    ],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q040",
+    "question": "What multi-image or video-specific tasks does Phi-3.5-vision-instruct emphasize that are absent from the Phi-3.5 mini/MoE text-only cards?",
+    "ground_truth": "The vision card calls out general image understanding, OCR, chart/table understanding, multi-image comparison, and multi-image or video clip summarization, tasks not described in the mini or MoE text-only cards.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "microsoft/Phi-3.5-vision-instruct",
+      "microsoft/Phi-3.5-mini-instruct",
+      "microsoft/Phi-3.5-MoE-instruct"
+    ],
+    "evaluation_criteria": "Answer must list at least two vision/video tasks unique to the vision card.",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct",
+    "source_model": "microsoft/Phi-3.5-vision-instruct",
+    "keywords": [
+      "Phi-3.5",
+      "vision",
+      "video"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 3
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q041",
+    "question": "Which Whisper variant explicitly states it prunes decoder layers for speed, and how does that contrast with the base model's architecture description?",
+    "ground_truth": "Whisper large-v3-turbo states it is a finetuned version of a pruned Whisper large-v3 with decoding layers reduced from 32 to 4 for speed, while the base large-v3 card describes the standard architecture without that pruning.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "openai/whisper-large-v3",
+      "openai/whisper-large-v3-turbo"
+    ],
+    "evaluation_criteria": "Answer must mention the pruning (32 to 4 layers) unique to turbo and note that the base card lacks that modification.",
+    "source_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
+    "source_model": "openai/whisper-large-v3-turbo",
+    "keywords": [
+      "Whisper",
+      "pruned"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
