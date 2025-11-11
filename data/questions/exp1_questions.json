@@ -1051,5 +1051,101 @@
     },
     "experiment": "exp1",
     "question_id": "exp1_q046"
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q047",
+    "question": "What additions does the Qwen2.5-72B-Instruct card mention compared to the base 72B entry?",
+    "ground_truth": "The instruct card is tagged for chat, links to Qwen Chat, and explicitly states it is an instruction-tuned variant built on the base model for improved instruction following and role-play, whereas the base 72B card simply enumerates architecture and capability improvements.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "Qwen/Qwen2.5-72B",
+      "Qwen/Qwen2.5-72B-Instruct"
+    ],
+    "evaluation_criteria": "Answer must cite at least one instruct-specific detail (chat tag, instruction tuning, Qwen Chat link) not present in the base card.",
+    "source_url": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct",
+    "source_model": "Qwen/Qwen2.5-72B-Instruct",
+    "keywords": [
+      "Qwen",
+      "72B",
+      "instruction"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q048",
+    "question": "Which card describes a text-to-image pipeline versus an automatic speech recognition pipeline (StabilityAI SD 3.5 Large vs Whisper large-v3)?",
+    "ground_truth": "Stable Diffusion 3.5 Large lists pipeline_tag=text-to-image, while Whisper large-v3 lists pipeline_tag=automatic-speech-recognition, indicating SD 3.5 generates images from text whereas Whisper performs ASR.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "stabilityai/stable-diffusion-3.5-large",
+      "openai/whisper-large-v3"
+    ],
+    "evaluation_criteria": "Answer must mention SD 3.5 Large as text-to-image and Whisper large-v3 as ASR.",
+    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
+    "source_model": "stabilityai/stable-diffusion-3.5-large",
+    "keywords": [
+      "pipeline",
+      "text-to-image",
+      "ASR"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q049",
+    "question": "Which Mistral release handles multimodal image inputs according to the cards, and which is text-only under the Mistral Research License?",
+    "ground_truth": "Pixtral-12B-2409 is Apache-2.0 licensed with a multimodal text+image pipeline, whereas Mistral-Small-Instruct-2409 is text-only and distributed under the Mistral Research License.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "mistralai/Pixtral-12B-2409",
+      "mistralai/Mistral-Small-Instruct-2409"
+    ],
+    "evaluation_criteria": "Answer must note Pixtral's multimodal capabilities and Apache-2.0 license versus Mistral Small Instruct's text focus and MRL license.",
+    "source_url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
+    "source_model": "mistralai/Pixtral-12B-2409",
+    "keywords": [
+      "Mistral",
+      "Pixtral",
+      "multimodal"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q050",
+    "question": "Which Gemma and Qwen cards highlight different licensing requirements (Gemma license vs Apache-2.0)?",
+    "ground_truth": "Gemma 2-27B (and instruct) require agreeing to the Gemma usage license via the gating prompt, while Qwen2.5-32B models are released under Apache-2.0 with no additional gating mentioned.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "google/gemma-2-27b",
+      "Qwen/Qwen2.5-32B"
+    ],
+    "evaluation_criteria": "Answer must state that Gemma card requires the Gemma license agreement while the Qwen card references Apache-2.0.",
+    "source_url": "https://huggingface.co/google/gemma-2-27b",
+    "source_model": "google/gemma-2-27b",
+    "keywords": [
+      "Gemma",
+      "Qwen",
+      "license"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
