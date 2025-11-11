@@ -675,5 +675,30 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q031",
+    "question": "Compare Mistral-Small-Instruct-2409 and Pixtral-12B-2409: what licensing and modality differences do their cards highlight?",
+    "ground_truth": "Mistral-Small-Instruct-2409 uses the Mistral Research License (MRL) and targets multilingual text generation, while Pixtral-12B-2409 is Apache-2.0 licensed, multimodal (text + images) with a 12B decoder and 400M vision encoder, emphasizing image-related benchmarks.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "mistralai/Mistral-Small-Instruct-2409",
+      "mistralai/Pixtral-12B-2409"
+    ],
+    "evaluation_criteria": "Answer must mention the different licenses (MRL vs Apache-2.0) and note Pixtral's multimodal design in contrast to the text-focused Mistral Small Instruct card.",
+    "source_url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
+    "source_model": "mistralai/Pixtral-12B-2409",
+    "keywords": [
+      "Mistral",
+      "Pixtral",
+      "license",
+      "multimodal"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
