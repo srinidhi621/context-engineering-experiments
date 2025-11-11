@@ -603,5 +603,29 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q028",
+    "question": "According to the OpenAI Whisper large-v3 and Whisper large-v3-turbo cards, which variant is pruned and finetuned from the other, and what license difference do they highlight?",
+    "ground_truth": "The Whisper large-v3-turbo card states it is a finetuned version of a pruned Whisper large-v3 model, whereas large-v3 is the original. Whisper large-v3 is Apache-2.0 licensed, while the turbo model is MIT licensed.",
+    "difficulty": "contradiction",
+    "required_docs": [
+      "openai/whisper-large-v3",
+      "openai/whisper-large-v3-turbo"
+    ],
+    "evaluation_criteria": "Answer must identify that turbo is a pruned/finetuned derivative of large-v3 and note the license difference (Apache-2.0 vs MIT).",
+    "source_url": "https://huggingface.co/openai/whisper-large-v3",
+    "source_model": "openai/whisper-large-v3",
+    "keywords": [
+      "Whisper",
+      "turbo",
+      "license"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
