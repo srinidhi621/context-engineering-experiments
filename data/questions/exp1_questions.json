@@ -5,11 +5,17 @@
     "question": "According to the Llama 3.3-70B Instruct model card, what is the model's context length?",
     "ground_truth": "The Llama 3.3-70B Instruct card specifies a 128k-token context length.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer must explicitly state a 128k-token context window.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["context length", "128k", "Llama 3.3"],
+    "keywords": [
+      "context length",
+      "128k",
+      "Llama 3.3"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -22,11 +28,17 @@
     "question": "What license governs the use of the Llama 3.3-70B Instruct model according to its card?",
     "ground_truth": "Usage is governed by the Llama 3.3 Community License Agreement provided by Meta.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer should mention the 'Llama 3.3 Community License Agreement' by name.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["license", "Llama 3.3", "community licence"],
+    "keywords": [
+      "license",
+      "Llama 3.3",
+      "community licence"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -39,11 +51,17 @@
     "question": "Does the Llama 3.3-70B Instruct card list supported languages, and if so, which language family does it cover?",
     "ground_truth": "The card lists English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai, indicating coverage of both Indo-European and Indic languages.",
     "difficulty": "synthesis",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer should list at least four of the languages given and mention the multilingual coverage (Indo-European plus Indic).",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["languages", "multilingual", "Llama 3.3"],
+    "keywords": [
+      "languages",
+      "multilingual",
+      "Llama 3.3"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
@@ -56,11 +74,16 @@
     "question": "According to the Qwen2.5-0.5B model card, what pipeline tag is associated with this model?",
     "ground_truth": "The card tags the pipeline as text-generation.",
     "difficulty": "simple_lookup",
-    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "required_docs": [
+      "Qwen/Qwen2.5-0.5B"
+    ],
     "evaluation_criteria": "Answer must state 'text-generation'.",
     "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
     "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": ["pipeline_tag", "text-generation"],
+    "keywords": [
+      "pipeline_tag",
+      "text-generation"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -73,11 +96,16 @@
     "question": "What license governs the Qwen2.5-0.5B model?",
     "ground_truth": "The Qwen2.5-0.5B model is released under the Apache 2.0 license.",
     "difficulty": "simple_lookup",
-    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "required_docs": [
+      "Qwen/Qwen2.5-0.5B"
+    ],
     "evaluation_criteria": "Answer must explicitly mention Apache-2.0.",
     "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
     "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": ["license", "Apache 2.0"],
+    "keywords": [
+      "license",
+      "Apache 2.0"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -90,11 +118,16 @@
     "question": "What training data summary does the Llama 3.3 (text-only) row provide?",
     "ground_truth": "The table states that the text-only Llama 3.3 model is trained on a new mix of publicly available online data.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer must mention \"new mix\" and that the data is publicly available online.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["training data", "publicly available"],
+    "keywords": [
+      "training data",
+      "publicly available"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -107,11 +140,17 @@
     "question": "Which input and output modalities are listed for the Llama 3.3 text-only model?",
     "ground_truth": "The table shows Multilingual Text as the input modality and Multilingual Text and code as the output modalities.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer must identify both input (multilingual text) and output (multilingual text plus code).",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["modalities", "input", "output"],
+    "keywords": [
+      "modalities",
+      "input",
+      "output"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -124,11 +163,17 @@
     "question": "What range of parameter sizes does the Qwen2.5 family release according to the 0.5B card?",
     "ground_truth": "The introduction states that Qwen2.5 releases base and instruction-tuned models ranging from 0.5 to 72 billion parameters.",
     "difficulty": "simple_lookup",
-    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "required_docs": [
+      "Qwen/Qwen2.5-0.5B"
+    ],
     "evaluation_criteria": "Answer must mention both endpoints: 0.5B and 72B parameters.",
     "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
     "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": ["parameters", "range", "Qwen2.5"],
+    "keywords": [
+      "parameters",
+      "range",
+      "Qwen2.5"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -141,11 +186,18 @@
     "question": "List two capability improvements Qwen2.5 highlights over Qwen2 in its 0.5B card.",
     "ground_truth": "The card states that Qwen2.5 adds significantly more knowledge with improved coding and mathematics experts, and also improves instruction following, long-text generation beyond 8K tokens, structured data understanding, and structured output generation.",
     "difficulty": "synthesis",
-    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "required_docs": [
+      "Qwen/Qwen2.5-0.5B"
+    ],
     "evaluation_criteria": "Answer must mention at least two specific improvements cited (e.g., better coding/maths plus improved instruction following or long-text generation).",
     "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
     "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": ["improvements", "instruction following", "coding", "math"],
+    "keywords": [
+      "improvements",
+      "instruction following",
+      "coding",
+      "math"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
@@ -158,11 +210,16 @@
     "question": "What GQA capability does the Llama 3.3 text-only model indicate in its comparison table?",
     "ground_truth": "The table marks GQA as 'Yes' for the Llama 3.3 text-only row.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer must clearly state that GQA is supported (Yes).",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["GQA", "table"],
+    "keywords": [
+      "GQA",
+      "table"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -175,11 +232,16 @@
     "question": "What knowledge cutoff is listed for Llama 3.3 in the model table?",
     "ground_truth": "The card lists December 2023 as the knowledge cutoff.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer should say 'December 2023'.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["knowledge cutoff", "December 2023"],
+    "keywords": [
+      "knowledge cutoff",
+      "December 2023"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -192,11 +254,15 @@
     "question": "How many input modalities does the Llama 3.3 text-only model expose?",
     "ground_truth": "The card lists Multilingual Text as the sole input modality.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer must mention only one input modality: multilingual text.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["input modality"],
+    "keywords": [
+      "input modality"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -209,11 +275,15 @@
     "question": "What output modalities does the Llama 3.3 text-only entry support?",
     "ground_truth": "It outputs Multilingual Text and code.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.3-70B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
     "evaluation_criteria": "Answer must mention both text and code outputs.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": ["output modalities"],
+    "keywords": [
+      "output modalities"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -226,11 +296,17 @@
     "question": "According to the Qwen2.5-0.5B card, what kinds of improvements are driven by specialized expert models?",
     "ground_truth": "The card credits specialized expert models for significantly more knowledge and greatly improved coding and mathematics capabilities.",
     "difficulty": "synthesis",
-    "required_docs": ["Qwen/Qwen2.5-0.5B"],
+    "required_docs": [
+      "Qwen/Qwen2.5-0.5B"
+    ],
     "evaluation_criteria": "Answer must mention both increased knowledge and improvements in coding/mathematics tied to expert models.",
     "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
     "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": ["experts", "coding", "math"],
+    "keywords": [
+      "experts",
+      "coding",
+      "math"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
@@ -243,11 +319,16 @@
     "question": "What license governs the use of Llama Guard 3-1B?",
     "ground_truth": "The card states that use is governed by the Llama 3.2 Community License Agreement.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-Guard-3-1B"],
+    "required_docs": [
+      "meta-llama/Llama-Guard-3-1B"
+    ],
     "evaluation_criteria": "Answer must mention the \"Llama 3.2 Community License Agreement\" by name.",
     "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-1B",
     "source_model": "meta-llama/Llama-Guard-3-1B",
-    "keywords": ["license", "Llama Guard"],
+    "keywords": [
+      "license",
+      "Llama Guard"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -260,11 +341,16 @@
     "question": "Which languages does the Llama Guard 3-1B card list as supported?",
     "ground_truth": "It lists English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-Guard-3-1B"],
+    "required_docs": [
+      "meta-llama/Llama-Guard-3-1B"
+    ],
     "evaluation_criteria": "Answer must cite at least four of the listed languages and note the multilingual coverage.",
     "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-1B",
     "source_model": "meta-llama/Llama-Guard-3-1B",
-    "keywords": ["languages", "multilingual"],
+    "keywords": [
+      "languages",
+      "multilingual"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
@@ -277,11 +363,16 @@
     "question": "What base model does the Llama Guard 3-8B card identify?",
     "ground_truth": "It states that the model is built on meta-llama/Meta-Llama-3.1-8B.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-Guard-3-8B"],
+    "required_docs": [
+      "meta-llama/Llama-Guard-3-8B"
+    ],
     "evaluation_criteria": "Answer must mention Meta-Llama-3.1-8B as the base.",
     "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-8B",
     "source_model": "meta-llama/Llama-Guard-3-8B",
-    "keywords": ["base model", "Llama Guard"],
+    "keywords": [
+      "base model",
+      "Llama Guard"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -294,11 +385,16 @@
     "question": "Which license applies to Llama Guard 3-8B?",
     "ground_truth": "The card references the Llama 3.1 Community License Agreement.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-Guard-3-8B"],
+    "required_docs": [
+      "meta-llama/Llama-Guard-3-8B"
+    ],
     "evaluation_criteria": "Answer must cite the Llama 3.1 Community License Agreement.",
     "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-8B",
     "source_model": "meta-llama/Llama-Guard-3-8B",
-    "keywords": ["license", "Llama Guard"],
+    "keywords": [
+      "license",
+      "Llama Guard"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -311,11 +407,16 @@
     "question": "According to the Llama 3.2 text-only model table, what context length is supported?",
     "ground_truth": "The table lists a 128k-token context length for Llama 3.2 text-only models.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.2-3B"],
+    "required_docs": [
+      "meta-llama/Llama-3.2-3B"
+    ],
     "evaluation_criteria": "Answer must state 128k tokens.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
     "source_model": "meta-llama/Llama-3.2-3B",
-    "keywords": ["context length", "128k"],
+    "keywords": [
+      "context length",
+      "128k"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -328,11 +429,15 @@
     "question": "What input and output modalities are listed for the Llama 3.2 text-only row?",
     "ground_truth": "Inputs are Multilingual Text, while outputs are Multilingual Text and code.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.2-3B"],
+    "required_docs": [
+      "meta-llama/Llama-3.2-3B"
+    ],
     "evaluation_criteria": "Answer must mention the Multilingual Text input and Multilingual Text plus code output.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
     "source_model": "meta-llama/Llama-3.2-3B",
-    "keywords": ["modalities"],
+    "keywords": [
+      "modalities"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -345,11 +450,17 @@
     "question": "What use cases are the Llama 3.2 instruction-tuned text-only models optimized for?",
     "ground_truth": "They are optimized for multilingual dialogue use cases, including agentic retrieval and summarization tasks.",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.2-3B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.2-3B-Instruct"
+    ],
     "evaluation_criteria": "Answer must mention multilingual dialogue plus agentic retrieval and summarization.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
     "source_model": "meta-llama/Llama-3.2-3B-Instruct",
-    "keywords": ["use cases", "agentic retrieval", "summarization"],
+    "keywords": [
+      "use cases",
+      "agentic retrieval",
+      "summarization"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
@@ -362,11 +473,16 @@
     "question": "What training techniques does the Llama 3.2 card mention for aligning the instruction-tuned models?",
     "ground_truth": "It states the tuned versions use supervised fine-tuning (SFT) and reinforcement learning with human feedback (RLHF).",
     "difficulty": "simple_lookup",
-    "required_docs": ["meta-llama/Llama-3.2-3B-Instruct"],
+    "required_docs": [
+      "meta-llama/Llama-3.2-3B-Instruct"
+    ],
     "evaluation_criteria": "Answer must mention both SFT and RLHF.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
     "source_model": "meta-llama/Llama-3.2-3B-Instruct",
-    "keywords": ["SFT", "RLHF"],
+    "keywords": [
+      "SFT",
+      "RLHF"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -379,11 +495,17 @@
     "question": "Which datasets does the Phi-3.5-mini-instruct summary say it is built upon?",
     "ground_truth": "The summary states it is built upon the datasets used for Phi-3: synthetic data and filtered publicly available websites.",
     "difficulty": "simple_lookup",
-    "required_docs": ["microsoft/Phi-3.5-mini-instruct"],
+    "required_docs": [
+      "microsoft/Phi-3.5-mini-instruct"
+    ],
     "evaluation_criteria": "Answer must mention both synthetic data and filtered publicly available websites.",
     "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
     "source_model": "microsoft/Phi-3.5-mini-instruct",
-    "keywords": ["Phi-3.5", "synthetic data", "filtered web"],
+    "keywords": [
+      "Phi-3.5",
+      "synthetic data",
+      "filtered web"
+    ],
     "answer_format": "short_fact",
     "metadata": {
       "category": "model_card",
@@ -393,18 +515,18 @@
   {
     "experiment": "exp1",
     "question_id": "exp1_q024",
-    "question": "Summarize the kinds of tasks Gemma 2-9B is designed for according to its model card description.",
-    "ground_truth": "The card says Gemma models are text-to-text decoder-only LLMs well-suited for text generation tasks such as question answering, summarization, and reasoning, and can be deployed in resource-limited environments.",
+    "question": "Compare the Gemma 2-9B base model and Gemma 2-2B instruction-tuned variant: what common design goals do they share according to their cards?",
+    "ground_truth": "Both cards describe Gemma models as lightweight text-to-text decoder-only LLMs built from Gemini research, intended for text generation tasks such as question answering, summarization, and reasoning, and suitable for deployment in resource-limited environments like laptops or personal cloud setups.",
     "difficulty": "synthesis",
-    "required_docs": ["google/gemma-2-9b"],
-    "evaluation_criteria": "Answer must mention at least two of the listed tasks (question answering, summarization, reasoning) and note deployment in resource-constrained settings.",
+    "required_docs": ["google/gemma-2-9b", "google/gemma-2-2b-it"],
+    "evaluation_criteria": "Answer must mention at least one shared design goal (text-to-text decoder-only, lightweight) and one shared use case (e.g., QA, summarization, reasoning) present in both cards, plus acknowledge deployment in resource-limited settings.",
     "source_url": "https://huggingface.co/google/gemma-2-9b",
     "source_model": "google/gemma-2-9b",
-    "keywords": ["Gemma", "tasks"],
+    "keywords": ["Gemma", "comparison"],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
-      "expected_citations": 1
+      "expected_citations": 2
     }
   }
 ]
