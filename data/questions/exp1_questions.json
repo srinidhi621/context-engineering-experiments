@@ -518,11 +518,17 @@
     "question": "Compare the Gemma 2-9B base model and Gemma 2-2B instruction-tuned variant: what common design goals do they share according to their cards?",
     "ground_truth": "Both cards describe Gemma models as lightweight text-to-text decoder-only LLMs built from Gemini research, intended for text generation tasks such as question answering, summarization, and reasoning, and suitable for deployment in resource-limited environments like laptops or personal cloud setups.",
     "difficulty": "synthesis",
-    "required_docs": ["google/gemma-2-9b", "google/gemma-2-2b-it"],
+    "required_docs": [
+      "google/gemma-2-9b",
+      "google/gemma-2-2b-it"
+    ],
     "evaluation_criteria": "Answer must mention at least one shared design goal (text-to-text decoder-only, lightweight) and one shared use case (e.g., QA, summarization, reasoning) present in both cards, plus acknowledge deployment in resource-limited settings.",
     "source_url": "https://huggingface.co/google/gemma-2-9b",
     "source_model": "google/gemma-2-9b",
-    "keywords": ["Gemma", "comparison"],
+    "keywords": [
+      "Gemma",
+      "comparison"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
@@ -535,15 +541,44 @@
     "question": "Summarize the licensing requirements and gating fields the Stable Diffusion 3.5 Large card describes before downloading the model.",
     "ground_truth": "The card says users must accept the Stability AI Community License Agreement (linked in LICENSE.md) and provide gating form information including name, email, country, organization/affiliation, marketing opt-in, intended use (research, personal, creative professional, startup, enterprise), and confirm agreement to the license and privacy policy.",
     "difficulty": "synthesis",
-    "required_docs": ["stabilityai/stable-diffusion-3.5-large"],
+    "required_docs": [
+      "stabilityai/stable-diffusion-3.5-large"
+    ],
     "evaluation_criteria": "Answer must mention the Stability AI Community License Agreement and at least three of the required gating fields (e.g., name, email, country, intended use, marketing opt-in).",
     "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
     "source_model": "stabilityai/stable-diffusion-3.5-large",
-    "keywords": ["license", "Stability AI", "gating"],
+    "keywords": [
+      "license",
+      "Stability AI",
+      "gating"
+    ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
       "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q026",
+    "question": "Contrast the stated use cases or strengths of Phi-3.5-mini-instruct versus Phi-3.5-MoE-instruct. What key differences does Microsoft highlight between the two cards?",
+    "ground_truth": "Both cards mention 128K context, synthetic plus filtered public data, and instruction tuning, but the MoE card specifically emphasizes deployment in memory/compute constrained environments with latency bounds and highlights strong reasoning (code, math, logic), whereas the mini card focuses on lightweight general-purpose text generation.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "microsoft/Phi-3.5-mini-instruct",
+      "microsoft/Phi-3.5-MoE-instruct"
+    ],
+    "evaluation_criteria": "Answer must cite at least one common trait (e.g., 128K context, synthetic + filtered data) and at least one differentiator (MoE\u2019s emphasis on memory/compute constraints or reasoning vs. mini\u2019s general lightweight focus).",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
+    "source_model": "microsoft/Phi-3.5-mini-instruct",
+    "keywords": [
+      "Phi-3.5",
+      "comparison"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
     }
   }
 ]
