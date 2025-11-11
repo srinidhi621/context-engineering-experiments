@@ -538,24 +538,25 @@
   {
     "experiment": "exp1",
     "question_id": "exp1_q025",
-    "question": "Summarize the licensing requirements and gating fields the Stable Diffusion 3.5 Large card describes before downloading the model.",
-    "ground_truth": "The card says users must accept the Stability AI Community License Agreement (linked in LICENSE.md) and provide gating form information including name, email, country, organization/affiliation, marketing opt-in, intended use (research, personal, creative professional, startup, enterprise), and confirm agreement to the license and privacy policy.",
-    "difficulty": "synthesis",
+    "question": "According to the OpenAI Whisper large-v3 and Whisper large-v3-turbo cards, which variant requires acknowledging a license/gating step, and what are the stated licensing differences?",
+    "ground_truth": "Whisper large-v3-turbo requires users to acknowledge the OpenAI license via the gated workflow, and it is released under the MIT license; Whisper large-v3 is provided under Apache-2.0 without the extra gating step.",
+    "difficulty": "contradiction",
     "required_docs": [
-      "stabilityai/stable-diffusion-3.5-large"
+      "openai/whisper-large-v3",
+      "openai/whisper-large-v3-turbo"
     ],
-    "evaluation_criteria": "Answer must mention the Stability AI Community License Agreement and at least three of the required gating fields (e.g., name, email, country, intended use, marketing opt-in).",
-    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
-    "source_model": "stabilityai/stable-diffusion-3.5-large",
+    "evaluation_criteria": "Answer must identify that the turbo model adds a gating/license acknowledgement step and that the base model uses Apache-2.0 while turbo uses MIT.",
+    "source_url": "https://huggingface.co/openai/whisper-large-v3",
+    "source_model": "openai/whisper-large-v3",
     "keywords": [
-      "license",
-      "Stability AI",
-      "gating"
+      "Whisper",
+      "turbo",
+      "license"
     ],
     "answer_format": "short_paragraph",
     "metadata": {
       "category": "model_card",
-      "expected_citations": 1
+      "expected_citations": 2
     }
   },
   {
