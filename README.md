@@ -586,6 +586,57 @@ python scripts/generate_report.py --output FINAL_REPORT.md
   - `scripts/collect_exp1_corpus.py` → Hugging Face model cards for Experiment 1.
   - `scripts/collect_padding_corpus.py` → Project Gutenberg padding corpus shared across experiments.
 
+---
+
+## 🚀 Run Guide
+
+### Current Status
+- **Phase 1A** (infrastructure + loaders): ✅ complete.
+- **Phase 1B** (pilot corpus + question + runner): in progress (data scripts + pilot runner + scoring script exist; waiting on quota increase to finish API runs).
+- **Full experiments** (Exp1/Exp2 runners + analysis): scaffolds exist but need corpora, question sets, and validation.
+
+### Environment Checklist
+1. Activate the virtualenv (every session):
+   ```bash
+   source venv/bin/activate
+   # or: source scripts/activate.sh
+   ```
+2. Confirm `.env` contains `GOOGLE_API_KEY=...` and (optionally) `PER_MINUTE_TOKEN_LIMIT=...`.
+3. Quick sanity check:
+   ```bash
+   python -c "from src.config import api_config; print(bool(api_config.google_api_key))"
+   ```
+
+### Smoke Tests & Monitoring
+- **API integration:** `python scripts/test_api_integration.py`
+- **API key verification:** `python scripts/verify_api_key.py`
+- **Monitor usage / limits:**  
+  `python scripts/monitor_costs.py`, `python scripts/generate_cost_report.py`, `python scripts/check_rate_limits.py`, `python scripts/estimate_feasibility.py`
+- **Corpus loaders:** run small snippets (examples in README “Download Corpus Data”) to ensure HF + Gutenberg fetches succeed.
+
+### What’s Ready vs Pending
+- ✅ `scripts/run_minimal_pilot.py` (with throttling) + `scripts/evaluate_pilot_manually.py`
+- ✅ Corpus collectors (`collect_pilot_corpus.py`, `collect_exp1_corpus.py`, `collect_padding_corpus.py`)
+- ⚠️ `scripts/run_experiment_1.py`, `scripts/run_experiment_2.py`, and advanced analysis scripts are scaffolds/placeholders—do not expect full functionality yet.
+
+### Pilot Workflow Snapshot (Phase 1B)
+1. `python scripts/collect_pilot_corpus.py`
+2. Populate `data/questions/pilot_question_01.json`
+3. `python scripts/build_pilot_contexts.py`
+4. `python scripts/run_minimal_pilot.py --dry-run` (until quotas ready) then run for real
+5. `python scripts/evaluate_pilot_manually.py`
+
+### Troubleshooting Cheatsheet
+- `ModuleNotFoundError: src`: ensure you’re at repo root, venv is active, and `pip install -e .` was run.
+- `GOOGLE_API_KEY environment variable not set`: confirm `.env` exists and re-source it.
+- Missing packages (e.g., `gutenbergpy`): re-run `pip install -r requirements.txt`.
+- Token quota 429s: adjust `PER_MINUTE_TOKEN_LIMIT` or wait/retry—pilot runner now surfaces these as skips.
+
+### Next Steps & References
+- Follow detailed sequencing in `PLAN.md` for upcoming tasks (Exp1 corpora, question authoring, runner integration).
+- Use `python scripts/validate_question_set.py ...` whenever editing question files.
+- Keep an eye on `results/.monitor_state.json` (auto-managed by the unified monitor) for quota/budget guardrails.
+
 **Verify setup:**
   ```bash
   # Check rate limits
