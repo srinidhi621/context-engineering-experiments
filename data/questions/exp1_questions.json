@@ -304,5 +304,73 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q019",
+    "question": "According to the Llama 3.2 text-only model table, what context length is supported?",
+    "ground_truth": "The table lists a 128k-token context length for Llama 3.2 text-only models.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.2-3B"],
+    "evaluation_criteria": "Answer must state 128k tokens.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
+    "source_model": "meta-llama/Llama-3.2-3B",
+    "keywords": ["context length", "128k"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q020",
+    "question": "What input and output modalities are listed for the Llama 3.2 text-only row?",
+    "ground_truth": "Inputs are Multilingual Text, while outputs are Multilingual Text and code.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.2-3B"],
+    "evaluation_criteria": "Answer must mention the Multilingual Text input and Multilingual Text plus code output.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
+    "source_model": "meta-llama/Llama-3.2-3B",
+    "keywords": ["modalities"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q021",
+    "question": "What use cases are the Llama 3.2 instruction-tuned text-only models optimized for?",
+    "ground_truth": "They are optimized for multilingual dialogue use cases, including agentic retrieval and summarization tasks.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.2-3B-Instruct"],
+    "evaluation_criteria": "Answer must mention multilingual dialogue plus agentic retrieval and summarization.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
+    "source_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "keywords": ["use cases", "agentic retrieval", "summarization"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q022",
+    "question": "What training techniques does the Llama 3.2 card mention for aligning the instruction-tuned models?",
+    "ground_truth": "It states the tuned versions use supervised fine-tuning (SFT) and reinforcement learning with human feedback (RLHF).",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-3.2-3B-Instruct"],
+    "evaluation_criteria": "Answer must mention both SFT and RLHF.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
+    "source_model": "meta-llama/Llama-3.2-3B-Instruct",
+    "keywords": ["SFT", "RLHF"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
