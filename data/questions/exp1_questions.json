@@ -236,5 +236,39 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q015",
+    "question": "What license governs the use of Llama Guard 3-1B?",
+    "ground_truth": "The card states that use is governed by the Llama 3.2 Community License Agreement.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-Guard-3-1B"],
+    "evaluation_criteria": "Answer must mention the \"Llama 3.2 Community License Agreement\" by name.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-1B",
+    "source_model": "meta-llama/Llama-Guard-3-1B",
+    "keywords": ["license", "Llama Guard"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q016",
+    "question": "Which languages does the Llama Guard 3-1B card list as supported?",
+    "ground_truth": "It lists English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["meta-llama/Llama-Guard-3-1B"],
+    "evaluation_criteria": "Answer must cite at least four of the listed languages and note the multilingual coverage.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-1B",
+    "source_model": "meta-llama/Llama-Guard-3-1B",
+    "keywords": ["languages", "multilingual"],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
