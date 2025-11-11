@@ -244,6 +244,25 @@ While the Gemini quota increase is pending, we can continue prepping the remaind
 - **Schema Definition:** Create templates for `data/questions/exp1_questions.json` and `data/questions/exp2_questions.json` (fields, validation rules). **Status:** Templates staged as `.template.json` files ready to duplicate.
 - **Validation Helper:** Add `scripts/validate_question_set.py` to lint question files (unique IDs, required-doc coverage) so we can iterate quickly once we start writing prompts. **Status:** Implemented; run `python scripts/validate_question_set.py data/questions/exp1_questions.template.json`.
 
+### Interim Tasks While API Quota Upgrade is Pending
+
+1. **Collect corpora now**  
+   - `python scripts/collect_exp1_corpus.py` → saves `data/raw/exp1/hf_model_cards.json` (~700k tokens).  
+   - `python scripts/collect_padding_corpus.py` → saves `data/raw/padding/gutenberg_corpus.json` (~2M tokens).
+
+2. **Expand Experiment 1 question set**  
+   - Continue adding entries to `data/questions/exp1_questions.json` until the full 50-question target (20 lookup / 20 synthesis / 10 contradiction) is reached.  
+   - Validate after each batch: `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1`.
+
+3. **Implement Experiment 1 runner (dry-run ready)**  
+   - Build `scripts/run_experiment_1.py` with CLI arguments, data loading, context assembly hooks, per-minute throttle, and JSONL logging.  
+   - Provide a `--dry-run` flag so the loop can be exercised without issuing API calls until quotas are raised.
+
+4. **Metrics/analyzer scaffolding**  
+   - Define result schemas under `results/metrics/` and stub analyzer/report scripts (e.g., `scripts/analyze_exp1_results.py`) so scoring can begin immediately once real responses exist.
+
+Completing these offline tasks keeps Experiment 1 on track; once the higher quota is live we can rerun the pilot and execute Exp1 without additional engineering delay.
+
 Executing these four threads in parallel keeps Phase 1B moving despite quota delays and positions us to jump directly into Experiment 1 as soon as the pilot rerun succeeds.
 
 ### Phase 1C: Implement Context Assemblers (Days 3-4)
