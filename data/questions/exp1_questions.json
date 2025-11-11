@@ -580,5 +580,28 @@
       "category": "model_card",
       "expected_citations": 2
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q027",
+    "question": "Contrast the stated use cases or strengths of Phi-3.5-mini-instruct versus Phi-3.5-MoE-instruct. What key differences does Microsoft highlight between the two cards?",
+    "ground_truth": "Both cards share 128K context and synthetic plus filtered data, but the MoE card specifically emphasizes deployment in memory/compute constrained and latency-bound environments with strong reasoning (code, math, logic), whereas the mini card focuses on lightweight general-purpose text generation.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "microsoft/Phi-3.5-mini-instruct",
+      "microsoft/Phi-3.5-MoE-instruct"
+    ],
+    "evaluation_criteria": "Answer must mention at least one shared trait (128K context or data sources) and at least one differentiator (MoE's emphasis on memory/compute constraints or reasoning vs. mini's general text generation focus).",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
+    "source_model": "microsoft/Phi-3.5-mini-instruct",
+    "keywords": [
+      "Phi-3.5",
+      "comparison"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 2
+    }
   }
 ]
