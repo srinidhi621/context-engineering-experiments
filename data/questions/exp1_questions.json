@@ -372,5 +372,22 @@
       "category": "model_card",
       "expected_citations": 1
     }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q023",
+    "question": "Which datasets does the Phi-3.5-mini-instruct summary say it is built upon?",
+    "ground_truth": "The summary states it is built upon the datasets used for Phi-3: synthetic data and filtered publicly available websites.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["microsoft/Phi-3.5-mini-instruct"],
+    "evaluation_criteria": "Answer must mention both synthetic data and filtered publicly available websites.",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
+    "source_model": "microsoft/Phi-3.5-mini-instruct",
+    "keywords": ["Phi-3.5", "synthetic data", "filtered web"],
+    "answer_format": "short_fact",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 1
+    }
   }
 ]
