@@ -584,6 +584,30 @@
   },
   {
     "experiment": "exp1",
+    "question_id": "exp1_q028",
+    "question": "According to the Phi-3.5-vision-instruct card, what additional capabilities does it highlight beyond the Phi-3.5 mini and MoE text-only models?",
+    "ground_truth": "The vision card explicitly highlights multimodal capabilities including general image understanding, OCR, chart/table understanding, multi-image comparison, and multi-image or video clip summarization, whereas the mini/MoE cards focus on text-only reasoning and lightweight deployment.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "microsoft/Phi-3.5-vision-instruct",
+      "microsoft/Phi-3.5-mini-instruct",
+      "microsoft/Phi-3.5-MoE-instruct"
+    ],
+    "evaluation_criteria": "Answer must mention at least two vision-specific tasks (e.g., OCR, chart understanding, multi-image comparison) that differentiate the vision card from the text-only cards.",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct",
+    "source_model": "microsoft/Phi-3.5-vision-instruct",
+    "keywords": [
+      "Phi-3.5",
+      "vision"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 3
+    }
+  },
+  {
+    "experiment": "exp1",
     "question_id": "exp1_q027",
     "question": "Contrast the stated use cases or strengths of Phi-3.5-mini-instruct versus Phi-3.5-MoE-instruct. What key differences does Microsoft highlight between the two cards?",
     "ground_truth": "Both cards share 128K context and synthetic plus filtered data, but the MoE card specifically emphasizes deployment in memory/compute constrained and latency-bound environments with strong reasoning (code, math, logic), whereas the mini card focuses on lightweight general-purpose text generation.",
@@ -607,21 +631,44 @@
   },
   {
     "experiment": "exp1",
-    "question_id": "exp1_q028",
-    "question": "According to the OpenAI Whisper large-v3 and Whisper large-v3-turbo cards, which variant is pruned and finetuned from the other, and what license difference do they highlight?",
-    "ground_truth": "The Whisper large-v3-turbo card states it is a finetuned version of a pruned Whisper large-v3 model, whereas large-v3 is the original. Whisper large-v3 is Apache-2.0 licensed, while the turbo model is MIT licensed.",
-    "difficulty": "contradiction",
+    "question_id": "exp1_q029",
+    "question": "According to the Phi-3.5-vision-instruct card, what additional capabilities does it highlight beyond the Phi-3.5 mini and MoE text-only models?",
+    "ground_truth": "The vision card explicitly highlights multimodal capabilities including general image understanding, OCR, chart/table understanding, multi-image comparison, and multi-image or video clip summarization, whereas the mini/MoE cards focus on text-only reasoning and lightweight deployment.",
+    "difficulty": "synthesis",
     "required_docs": [
-      "openai/whisper-large-v3",
-      "openai/whisper-large-v3-turbo"
+      "microsoft/Phi-3.5-vision-instruct",
+      "microsoft/Phi-3.5-mini-instruct",
+      "microsoft/Phi-3.5-MoE-instruct"
     ],
-    "evaluation_criteria": "Answer must identify that turbo is a pruned/finetuned derivative of large-v3 and note the license difference (Apache-2.0 vs MIT).",
-    "source_url": "https://huggingface.co/openai/whisper-large-v3",
-    "source_model": "openai/whisper-large-v3",
+    "evaluation_criteria": "Answer must mention at least two vision-specific tasks (e.g., OCR, chart understanding, multi-image comparison) that differentiate the vision card from the text-only cards.",
+    "source_url": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct",
+    "source_model": "microsoft/Phi-3.5-vision-instruct",
     "keywords": [
-      "Whisper",
-      "turbo",
-      "license"
+      "Phi-3.5",
+      "vision"
+    ],
+    "answer_format": "short_paragraph",
+    "metadata": {
+      "category": "model_card",
+      "expected_citations": 3
+    }
+  },
+  {
+    "experiment": "exp1",
+    "question_id": "exp1_q030",
+    "question": "Which Gemma 2 variant explicitly mentions a conversational tag and base model field, and what does this imply about its intended use compared to the base Gemma 2-9B card?",
+    "ground_truth": "The Gemma 2-9B-it (instruction-tuned) card includes the 'conversational' tag and a base_model entry referencing google/gemma-2-9b, indicating it is tuned for conversational/instruction use compared to the generic base Gemma 2-9B card.",
+    "difficulty": "synthesis",
+    "required_docs": [
+      "google/gemma-2-9b",
+      "google/gemma-2-9b-it"
+    ],
+    "evaluation_criteria": "Answer must identify that the instruction-tuned card carries the conversational tag and base_model pointer, and explain that this signals conversational instruction tuning compared to the base card.",
+    "source_url": "https://huggingface.co/google/gemma-2-9b-it",
+    "source_model": "google/gemma-2-9b-it",
+    "keywords": [
+      "Gemma",
+      "instruction tuning"
     ],
     "answer_format": "short_paragraph",
     "metadata": {
