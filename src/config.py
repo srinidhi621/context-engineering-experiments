@@ -10,9 +10,9 @@ load_dotenv()
 @dataclass
 class ExperimentConfig:
     """Base configuration for all experiments"""
-    # Primary model: Gemini 2.0 Flash Experimental (best free tier rate limits)
-    # 15 RPM, 1M TPM, 1500 RPD - allows 9K requests in ~6 days vs 36 days with 2.5 Flash
-    model_name: str = "gemini-2.0-flash-exp"
+    # Primary model: Gemini Flash Latest (latest stable Flash model with 8x more output)
+    # 15 RPM, 1M TPM, 1500 RPD - free tier with 65K output tokens vs 8K in 2.0-flash-exp
+    model_name: str = "gemini-flash-latest"
     # Embedding model: Latest production text embedding model
     embedding_model_name: str = "text-embedding-004"
     context_limit: int = 1_000_000

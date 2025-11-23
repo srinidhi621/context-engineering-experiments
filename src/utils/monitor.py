@@ -37,6 +37,13 @@ class ModelLimits:
     def get_for_model(cls, model_name: str) -> 'ModelLimits':
         """Get limits for a specific model"""
         LIMITS = {
+            'gemini-flash-latest': cls(
+                rpm=15,
+                tpm=1_000_000,
+                rpd=1_500,
+                input_cost_per_1m=0.00,  # Free tier
+                output_cost_per_1m=0.00   # Free tier
+            ),
             'gemini-2.0-flash-exp': cls(
                 rpm=15,
                 tpm=1_000_000,

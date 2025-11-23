@@ -1,26 +1,32 @@
 {
   "totals": {
-    "total_requests": 11,
-    "total_input_tokens": 795721,
+    "total_requests": 12,
+    "total_input_tokens": 795731,
     "total_output_tokens": 0,
     "total_cost": 0.0,
     "created_at": "2025-10-31T17:35:56.828917"
   },
   "current_minute": {
-    "requests": 2,
-    "tokens": 198910,
-    "reset_time": 1762445793.81513
+    "requests": 1,
+    "tokens": 10,
+    "reset_time": 1763890268.4215622
   },
   "current_day": {
-    "date": "2025-11-06",
-    "requests": 2,
-    "tokens": 198910,
+    "date": "2025-11-23",
+    "requests": 1,
+    "tokens": 10,
     "cost": 0.0
   },
   "by_model": {
     "gemini-2.0-flash-exp": {
       "calls": 11,
       "input_tokens": 795721,
+      "output_tokens": 0,
+      "cost": 0.0
+    },
+    "gemini-flash-latest": {
+      "calls": 1,
+      "input_tokens": 10,
       "output_tokens": 0,
       "cost": 0.0
     }
@@ -35,6 +41,12 @@
     "pilot": {
       "calls": 8,
       "input_tokens": 795640,
+      "output_tokens": 0,
+      "cost": 0.0
+    },
+    "config_test": {
+      "calls": 1,
+      "input_tokens": 10,
       "output_tokens": 0,
       "cost": 0.0
     }
@@ -67,6 +79,13 @@
       "output_tokens": 0,
       "cost": 0.0,
       "experiment_id": "pilot"
+    },
+    "end_to_end_test": {
+      "calls": 1,
+      "input_tokens": 10,
+      "output_tokens": 0,
+      "cost": 0.0,
+      "experiment_id": "config_test"
     }
   },
   "by_day": {
@@ -83,6 +102,11 @@
     "2025-11-06": {
       "calls": 2,
       "tokens": 198910,
+      "cost": 0.0
+    },
+    "2025-11-23": {
+      "calls": 1,
+      "tokens": 10,
       "cost": 0.0
     }
   },
@@ -229,6 +253,19 @@
       "latency": 7.6955037117004395,
       "experiment_id": "pilot",
       "session_id": "pilot_naive_fill10_rep2"
+    },
+    {
+      "timestamp": "2025-11-23T15:01:09.847909",
+      "model": "gemini-flash-latest",
+      "input_tokens": 10,
+      "output_tokens": 0,
+      "total_tokens": 10,
+      "input_cost": 0.0,
+      "output_cost": 0.0,
+      "total_cost": 0.0,
+      "latency": 1.4261910915374756,
+      "experiment_id": "config_test",
+      "session_id": "end_to_end_test"
     }
   ],
   "alerts": []

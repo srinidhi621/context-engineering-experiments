@@ -169,6 +169,8 @@ def truncate_to_tokens(text: str, max_tokens: int) -> str:
 
 ### Phase 1B: Minimal Data Collection (Day 2)
 
+**Status:** ⏳ Planned
+
 **Task 2.1: Collect pilot corpus (2 hours)**
 
 File: `scripts/collect_pilot_corpus.py` (NEW)
@@ -228,37 +230,41 @@ File: `data/questions/pilot_question_01.json` (NEW)
 While the Gemini quota increase is pending, we can continue prepping the remainder of Phase 1B and unblock Phase 1C so the experiment run can start the moment quotas are lifted.
 
 ### Step 1: Pilot Evaluation + Reporting
+- **Status:** ⏳ Planned
 - **Task 4.2 Implementation:** Build `scripts/evaluate_pilot_manually.py` as originally scoped (load JSONL responses, compare to ground truth, emit scored JSONL + markdown summary).
 - **Acceptance:** Script reports accuracy for each fill level, flags missing calls, and produces a `results/pilot_minimal_results_scored.jsonl`.
 - **Dependency:** Requires at least one successful response per fill level; the script should gracefully handle skipped entries so we can run it immediately after the quota rerun.
 
 ### Step 2: Additional Context Assemblers
+- **Status:** ⏳ Planned
 - **Structured Context (`src/context_engineering/structured.py`):** Implement metadata headers + TOC scaffolding described in Phase 1C Task 3.1; include unit tests mirroring `tests/test_context_engineering.py`.
 - **RAG Variants (`rag.py`, `advanced_rag.py`):** Wire tokenizer, retriever, and padding hooks now so only vector data needs to plug in later. Provide smoke tests with mocked retrievers.
 
 ### Step 3: Runner & CLI Integration
+- **Status:** ⏳ Planned
 - **Runner Skeletons:** Flesh out `scripts/run_experiment.py` and `scripts/run_calibration.py` with argument parsing, config loading, and placeholder experiment dispatch so pilot/Exp1 share infrastructure.
 - **Monitoring Hooks:** Ensure runners tag `experiment_id`/`session_id` consistently and respect the `PER_MINUTE_TOKEN_LIMIT` environment variable just like the pilot runner.
 
 ### Step 4: Question Set Authoring Framework
+- **Status:** ⏳ Planned
 - **Schema Definition:** Create templates for `data/questions/exp1_questions.json` and `data/questions/exp2_questions.json` (fields, validation rules). **Status:** Templates staged as `.template.json` files ready to duplicate.
 - **Validation Helper:** Add `scripts/validate_question_set.py` to lint question files (unique IDs, required-doc coverage) so we can iterate quickly once we start writing prompts. **Status:** Implemented; run `python scripts/validate_question_set.py data/questions/exp1_questions.template.json`.
 
 ### Interim Tasks While API Quota Upgrade is Pending
 
-1. **Collect corpora now**  
+1. ⏳ Planned — **Collect corpora now**  
    - `python scripts/collect_exp1_corpus.py` → saves `data/raw/exp1/hf_model_cards.json` (~700k tokens).  
    - `python scripts/collect_padding_corpus.py` → saves `data/raw/padding/gutenberg_corpus.json` (~2M tokens).
 
-2. **Expand Experiment 1 question set**  
+2. ⏳ Planned — **Expand Experiment 1 question set**  
    - Continue adding entries to `data/questions/exp1_questions.json` until the full 50-question target (20 lookup / 20 synthesis / 10 contradiction) is reached.  
    - Validate after each batch: `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1`.
 
-3. **Implement Experiment 1 runner (dry-run ready)**  
+3. ⏳ Planned — **Implement Experiment 1 runner (dry-run ready)**  
    - Build `scripts/run_experiment_1.py` with CLI arguments, data loading, context assembly hooks, per-minute throttle, and JSONL logging.  
    - Provide a `--dry-run` flag so the loop can be exercised without issuing API calls until quotas are raised.
 
-4. **Metrics/analyzer scaffolding**  
+4. ⏳ Planned — **Metrics/analyzer scaffolding**  
    - Define result schemas under `results/metrics/` and stub analyzer/report scripts (e.g., `scripts/analyze_exp1_results.py`) so scoring can begin immediately once real responses exist.
 
 Completing these offline tasks keeps Experiment 1 on track; once the higher quota is live we can rerun the pilot and execute Exp1 without additional engineering delay.
@@ -266,6 +272,8 @@ Completing these offline tasks keeps Experiment 1 on track; once the higher quot
 Executing these four threads in parallel keeps Phase 1B moving despite quota delays and positions us to jump directly into Experiment 1 as soon as the pilot rerun succeeds.
 
 ### Phase 1C: Implement Context Assemblers (Days 3-4)
+
+**Status:** ⏳ Planned
 
 **Task 3.1: Implement naive context assembler (Day 3 morning)**
 
@@ -462,7 +470,11 @@ def assemble_context_with_padding(self,
 
 ### Phase 1D: Implement Minimal Runner (Day 5)
 
+**Status:** ⏳ Planned
+
 **Task 4.1: Create pilot runner script**
+
+**Status:** ⏳ Planned
 
 File: `scripts/run_minimal_pilot.py` (NEW)
 ```python
@@ -606,6 +618,8 @@ if __name__ == "__main__":
 
 **Task 4.2: Manual evaluation of results (Day 5 evening)**
 
+**Status:** ⏳ Planned
+
 File: `scripts/evaluate_pilot_manually.py` (NEW)
 ```python
 #!/usr/bin/env python3
@@ -696,6 +710,8 @@ print("="*60)
 ---
 
 ## 🧪 EXPERIMENT 1: Needle in Multiple Haystacks (Weeks 2-4)
+
+**Status:** ⏳ Planned
 
 **Duration:** 2-3 weeks  
 **Goal:** Establish baseline and test all 4 context strategies across fill levels  
@@ -887,6 +903,8 @@ pip install faiss-cpu rank-bm25 tqdm
 
 ## 🧪 EXPERIMENT 2: Context Pollution (Weeks 5-6)
 
+**Status:** ⏳ Planned
+
 **Duration:** 1-2 weeks  
 **Goal:** Test robustness to irrelevant information  
 **Domain:** GitHub Documentation + Gutenberg Books  
@@ -999,6 +1017,8 @@ Save to: `results/exp2_analysis/`
 
 ## 🧪 EXPERIMENT 5: Cost-Latency Frontier (Weeks 7-8)
 
+**Status:** ⏳ Planned
+
 **Duration:** 3-5 days  
 **Goal:** Find optimal strategy for different constraints  
 **Data:** Analysis of Experiments 1-2 (no new API calls)  
@@ -1018,6 +1038,8 @@ Save to: `results/exp2_analysis/`
 ---
 
 ## 📊 Final Analysis & Reporting (Weeks 9-12)
+
+**Status:** ⏳ Planned
 
 **Duration:** 3-4 weeks  
 **Goal:** Complete statistical analysis and write final report
