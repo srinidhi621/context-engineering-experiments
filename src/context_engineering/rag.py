@@ -171,6 +171,30 @@ class RAGPipeline:
         
         return '\n\n'.join(context_parts)
 
+    def assemble_context_with_padding(self, 
+                                  retrieved_chunks: List[Dict],
+                                  fill_pct: float,
+                                  max_tokens: int = 1_000_000) -> str:
+        """
+        Assemble retrieved chunks and pad to match fill percentage.
+        
+        This is the KEY methodological control for H2.
+        """
+        from src.corpus.padding import PaddingGenerator
+        
+        # Assemble retrieved chunks
+        # Note: The max_tokens for RAG is typically smaller (e.g., 128k)
+        rag_max_tokens = min(max_tokens, 128_000)
+        context = self.assemble_context(retrieved_chunks, rag_max_tokens)
+        
+        # Pad to match fill percentage of the total context window
+        padder = PaddingGenerator()
+        padded_context = padder.pad_to_fill_percentage(
+            context, fill_pct, max_tokens
+        )
+        
+        return padded_context
+
     def _embed_texts(self, texts: Sequence[str]) -> Sequence[Sequence[float]]:
         if self.embed_many_fn:
             return self.embed_many_fn(texts)

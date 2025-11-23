@@ -97,3 +97,18 @@ logs/
 Thumbs.db
 Desktop.ini
 
+
+# IDE & System Files
+.idea/
+.vscode/
+*.swp
+.DS_Store
+
+# Gemini CLI state
+GEMINI.md
+*.gemini.log
+
+# Local state and results
+results/.monitor_state.json
+results/.rate_limit_status.json
+

@@ -137,19 +137,22 @@ class GeminiClient:
         model = model or self.embedding_model
         
         try:
+            start_time = time.time()
             response = genai.embed_content(
                 model=model,
                 content=text
             )
+            latency = time.time() - start_time
             
             # Track cost (embeddings are cheap, ~0.02 per 1M tokens input)
             if track_cost:
                 # Approximate token count (1 token ~ 4 chars)
                 approx_tokens = len(text) // 4
-                self.cost_monitor.record_call(
+                self.monitor.record_call(
                     model=model,
                     input_tokens=approx_tokens,
                     output_tokens=768,  # Output dimension size
+                    latency=latency,
                     prompt=text[:200]
                 )
             

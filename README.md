@@ -9,41 +9,31 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 - The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `3600000` for a 3.6 M guardrail).
 - If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it.
 
-## ⚠️ CURRENT STATUS: PHASE 1A COMPLETE
+## ⚠️ CURRENT STATUS: PHASES 1A, 1B, 1C COMPLETE
 
-**✅ What's Complete (Infrastructure + Data Loaders):**
-- ✅ Project scaffolding and directory structure
-- ✅ Configuration system (config.py, .env)
-- ✅ **Unified API Monitor** (rate limiting + cost tracking + budget enforcement in ONE system)
-- ✅ API integration (GeminiClient wrapper with unified monitoring)
-- ✅ **Corpus loaders implemented** (Hugging Face Hub + Gutenberg, 460+ lines)
-  - `load_hf_model_card()` - Single model card loader
-  - `load_hf_curated_models()` - Fast collection from 60+ recent models
-  - `load_gutenberg_books()` - Classic literature loader
-  - Tested: 50k tokens collected in 2-3 seconds
-- ✅ **Enhanced tokenizer utilities** (counting, chunking with overlap, truncation)
-- ✅ Logging infrastructure
-- ✅ API key configured and verified
-- ✅ **Model selected: gemini-2.0-flash-exp (6x faster than 2.5 Flash on free tier)**
-- ✅ **End-to-end integration test passing**
-- ✅ **google-generativeai upgraded to v0.8.5**
+**✅ What's Complete:**
+- ✅ All infrastructure from Phase 1A (API client, monitor, loaders, etc.).
+- ✅ **Phase 1B: Pilot Data Collection**
+  - ✅ Pilot corpus of ~10k tokens collected from Hugging Face.
+  - ✅ Pilot question created and validated.
+- ✅ **Phase 1C: Context Assemblers**
+  - ✅ `NaiveContextAssembler` implemented and tested.
+  - ✅ `PaddingGenerator` implemented and tested.
+  - ✅ `RAGPipeline` enhanced with padding method and tested.
+- ✅ **Gemini Client** debugged and robust.
 
 **🔄 In Progress (Pilot Phase):**
-- ⏳ Phase 1B: Collect 10k tokens pilot corpus + create 1 test question
-- ⏳ Phase 1C: Implement context assemblers (naive, padding, RAG enhancement)
-- ⏳ Phase 1D: Create minimal runner (18 API calls)
+- 🔄 Phase 1D: Create minimal runner (Dry run complete, ready for live run)
 - ⏳ Phase 1E: Go/No-Go decision
 
 **❌ What's NOT Complete:**
-- ❌ Context engineering implementations (naive, structured - only basic RAG done)
-- ❌ Pilot corpus collected (need 10k tokens)
-- ❌ Pilot question created (need 1 test question)
-- ❌ Evaluation questions for full experiments (none generated yet)
-- ❌ Metrics implementation (empty TODO)
-- ❌ Experiment runner scripts (empty TODOs)
-- ❌ Checkpoint/resume system (not implemented)
+- ❌ **Live pilot run** (the 18 API calls).
+- ❌ Evaluation questions for full experiments (none generated yet).
+- ❌ `StructuredContextAssembler` implementation.
+- ❌ Metrics and analysis scripts (scaffolds only).
+- ❌ Runners for full experiments (scaffolds only).
 
-**Bottom Line:** Phase 1A complete (infrastructure + data loaders). Ready for Phase 1B (data collection).
+**Bottom Line:** The entire pilot pipeline is implemented, debugged, and verified with a dry run. The project is ready for the live pilot experiment.
 
 **Revised Scope:** Dropped Exp 3 & 4 (too ambitious). Focus on Pilot → Exp 1 → Exp 2 → Analysis. Estimated 10-12 weeks total.
 

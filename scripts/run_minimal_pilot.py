@@ -1,218 +1,155 @@
 #!/usr/bin/env python3
-"""Run the minimal pilot experiment with pre-built contexts.
-
-This runner estimates prompt token usage and applies a local throttle to respect
-Gemini's per-minute token quotas. If a single request would exceed the configured
-per-minute limit it is skipped with a diagnostic message instead of triggering
-a 429. Set ``PER_MINUTE_TOKEN_LIMIT`` in the environment (or use the CLI flag)
-to match your project's quota. The default fallback is 240k tokens/minute,
-which aligns with the historical free-tier ceiling.
+"""
+Minimal pilot: Run 1 question with 2 strategies at 3 fill levels.
+Total: 1 × 2 × 3 × 3 reps = 18 API calls
 """
 
-from __future__ import annotations
-
-import argparse
 import json
-import os
-from datetime import datetime, timezone
+import time
+import argparse
 from pathlib import Path
-from typing import Dict, Iterable, List
-
 from src.models.gemini_client import GeminiClient
-from src.utils.tokenizer import count_tokens
-from src.utils.throttle import PerMinuteTokenThrottle, TokenLimitExceeded
+from src.context_engineering.naive import NaiveContextAssembler
+from src.context_engineering.rag import RAGPipeline
+from src.utils.logging import get_logger
 
+logger = get_logger(__name__)
 
-PROMPT_TEMPLATE = """You are validating a context-engineering pipeline. Use only the supplied context to answer the question.
+def run_minimal_pilot(dry_run: bool = False):
+    # Load corpus
+    corpus_path = "data/raw/pilot/hf_model_cards.json"
+    logger.info(f"Loading corpus from {corpus_path}...")
+    with open(corpus_path) as f:
+        corpus = json.load(f)
+    
+    # Load question
+    question_path = "data/questions/pilot_question_01.json"
+    logger.info(f"Loading question from {question_path}...")
+    with open(question_path) as f:
+        question = json.load(f)[0]  # It's an array, get the first question
+    
+    # Initialize client
+    client = GeminiClient()
+    
+    # Initialize assemblers
+    logger.info("Initializing context assemblers...")
+    naive = NaiveContextAssembler()
+    rag = RAGPipeline()
+    
+    # Index corpus for RAG
+    logger.info("Indexing corpus for RAG...")
+    documents = [doc['content'] for doc in corpus]
+    rag.chunk_documents(documents, chunk_size=512, overlap=50)
+    rag.index_chunks()
+    
+    # Configuration
+    strategies = ["naive", "rag"]
+    fill_levels = [0.3, 0.5, 0.7]
+    repetitions = 3
+    max_tokens = 1_000_000
+    
+    results = []
+    total_api_calls = len(strategies) * len(fill_levels) * repetitions
+    api_call_count = 0
+    
+    logger.info(f"Starting pilot experiment runs... (Total runs: {total_api_calls})")
+    for strategy in strategies:
+        for fill_pct in fill_levels:
+            for rep in range(repetitions):
+                api_call_count += 1
+                logger.info(f"Run {api_call_count}/{total_api_calls}: Strategy={strategy}, Fill={fill_pct*100}%, Rep={rep+1}")
+                
+                # Assemble context
+                if strategy == "naive":
+                    target_tokens = int(max_tokens * fill_pct)
+                    context = naive.assemble(corpus, target_tokens)
+                else:  # RAG
+                    retrieved = rag.retrieve(question['question'], top_k=5)
+                    context = rag.assemble_context_with_padding(
+                        retrieved, fill_pct, max_tokens
+                    )
+                
+                # Build prompt
+                prompt = f"""Answer the following question based on the provided documentation.
 
-### Context
+Question: {question['question']}
+
+Documentation:
 {context}
 
-### Question
-{question}
+Answer:"""
+                
+                if dry_run:
+                    logger.info("[DRY RUN] Skipping API call.")
+                    continue
 
-Provide a concise factual answer. Respond in plain text with no additional commentary."""
+                # Make API call
+                try:
+                    start_time = time.time()
+                    response = client.generate_content(
+                        prompt,
+                        temperature=0.0,
+                        experiment_id="pilot",
+                        session_id=f"{strategy}_fill{int(fill_pct*100)}_rep{rep}"
+                    )
+                    latency = time.time() - start_time
+                    
+                    result = {
+                        "question_id": question['question_id'],
+                        "strategy": strategy,
+                        "fill_pct": fill_pct,
+                        "repetition": rep,
+                        "response": response['text'],
+                        "tokens_input": response['tokens_input'],
+                        "tokens_output": response['tokens_output'],
+                        "latency": latency,
+                        "cost": response['cost'],
+                        "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
+                    }
+                    results.append(result)
+                    
+                    logger.info(f"Success: {response['tokens_input']:,} input tokens, "
+                               f"{response['tokens_output']:,} output tokens, "
+                               f"{latency:.2f}s latency, Cost: ${response['cost']:.6f}")
+                    
+                except Exception as e:
+                    logger.error(f"API call failed for run {api_call_count}: {e}")
+                
+                time.sleep(2) # Be polite to the API
+    
+    if dry_run:
+        logger.info(f"[DRY RUN] Simulated {api_call_count} API calls.")
+        return
 
+    # Save results
+    output_path = Path("results/pilot_minimal_results.jsonl")
+    output_path.parent.mkdir(parents=True, exist_ok=True)
+    
+    with open(output_path, 'w') as f:
+        for result in results:
+            f.write(json.dumps(result) + '\n')
+    
+    logger.info(f"Pilot complete! Saved {len(results)} results to {output_path}")
+    
+    # Print summary
+    total_cost = sum(r['cost'] for r in results)
+    total_tokens = sum(r['tokens_input'] for r in results)
+    print("\n" + "="*60)
+    print("PILOT SUMMARY")
+    print("="*60)
+    print(f"Total API calls made: {len(results)}")
+    print(f"Total input tokens: {total_tokens:,}")
+    print(f"Total cost: ${total_cost:.4f}")
+    print(f"Results saved to: {output_path}")
+    print("="*60 + "\n")
 
-def parse_args() -> argparse.Namespace:
-    env_limit = int(os.getenv("PER_MINUTE_TOKEN_LIMIT", "240000"))
-    parser = argparse.ArgumentParser(
-        description="Execute the pilot run using pre-assembled contexts."
-    )
-    parser.add_argument(
-        "--contexts",
-        default="data/processed/pilot/naive_contexts.json",
-        help="Path to JSON containing assembled contexts (default: %(default)s).",
-    )
-    parser.add_argument(
-        "--question",
-        default="data/questions/pilot_question_01.json",
-        help="Path to the pilot question JSON (default: %(default)s).",
-    )
-    parser.add_argument(
-        "--output",
-        default="results/pilot_minimal_results.jsonl",
-        help="Destination for JSONL results (default: %(default)s).",
-    )
-    parser.add_argument(
-        "--fill-pcts",
-        nargs="+",
-        type=float,
-        default=[0.1, 0.5, 0.9],
-        help="Fill percentages to execute (default: %(default)s).",
-    )
-    parser.add_argument(
-        "--repetitions",
-        type=int,
-        default=3,
-        help="Number of repetitions per fill percentage (default: %(default)s).",
-    )
-    parser.add_argument(
-        "--temperature",
-        type=float,
-        default=0.0,
-        help="Generation temperature (default: %(default)s).",
-    )
-    parser.add_argument(
-        "--max-output-tokens",
-        type=int,
-        default=256,
-        help="Maximum output tokens for each request (default: %(default)s).",
-    )
+if __name__ == "__main__":
+    parser = argparse.ArgumentParser(description="Run the minimal pilot experiment.")
     parser.add_argument(
         "--dry-run",
         action="store_true",
-        help="Print intended requests without calling the API.",
+        help="Simulate the run without making actual API calls."
     )
-    parser.add_argument(
-        "--per-minute-token-limit",
-        type=int,
-        default=env_limit,
-        help=(
-            "Maximum input tokens allowed per rolling minute. "
-            "Set slightly below the official quota to stay safe "
-            "(default: %(default)s, override with PER_MINUTE_TOKEN_LIMIT)."
-        ),
-    )
-    return parser.parse_args()
-
-
-def load_json(path: Path) -> Dict:
-    with path.open("r", encoding="utf-8") as f:
-        return json.load(f)
-
-
-def filter_contexts(contexts: List[Dict], fill_pcts: Iterable[float]) -> List[Dict]:
-    targets = {round(p, 6) for p in fill_pcts}
-    matched: List[Dict] = []
-    for ctx in contexts:
-        pct = round(float(ctx.get("fill_pct", 0.0)), 6)
-        if pct in targets:
-            matched.append(ctx)
-    if not matched:
-        raise RuntimeError("No contexts matched the requested fill percentages.")
-    return matched
-
-
-def build_prompt(context: str, question: str) -> str:
-    return PROMPT_TEMPLATE.format(context=context, question=question)
-
-
-def run_pilot(args: argparse.Namespace) -> None:
-    contexts_data = load_json(Path(args.contexts))
-    question_data = load_json(Path(args.question))
-    contexts = filter_contexts(contexts_data, args.fill_pcts)
-
-    question_text = question_data["question"]
-    question_id = question_data["question_id"]
-
-    if args.dry_run:
-        print("Dry run mode; no API calls will be made.\n")
-
-    client = None if args.dry_run else GeminiClient()
-    output_path = Path(args.output)
-    output_path.parent.mkdir(parents=True, exist_ok=True)
-
-    print(f"Pilot question: {question_id} — {question_text}")
-    print(f"Running fills: {', '.join(f'{p:.0%}' for p in args.fill_pcts)}")
-    print(f"Repetitions: {args.repetitions}\n")
-    print(
-        f"Local throttle: ≤{args.per_minute_token_limit:,} input tokens per rolling minute.\n"
-        "Calls exceeding this limit are skipped to avoid API 429 errors."
-    )
-
-    throttle = PerMinuteTokenThrottle(args.per_minute_token_limit)
-
-    with output_path.open("w", encoding="utf-8") as f_out:
-        for ctx in contexts:
-            fill_pct = float(ctx["fill_pct"])
-            context_text = ctx["context"]
-            prompt = build_prompt(context_text, question_text)
-            prompt_tokens = count_tokens(prompt)
-
-            for rep in range(1, args.repetitions + 1):
-                metadata = {
-                    "timestamp": datetime.now(timezone.utc).isoformat(),
-                    "experiment_id": "pilot",
-                    "strategy": ctx.get("strategy", "naive"),
-                    "fill_pct": fill_pct,
-                    "repetition": rep,
-                    "question_id": question_id,
-                    "prompt_tokens_est": prompt_tokens,
-                }
-
-                if args.dry_run:
-                    print(
-                        f"[DRY RUN] Would call Gemini with fill {fill_pct:.0%}, "
-                        f"rep {rep}, prompt tokens ≈ {prompt_tokens:,}"
-                    )
-                    record = {**metadata, "dry_run": True}
-                    f_out.write(json.dumps(record) + "\n")
-                    continue
-
-                print(
-                    f"Calling Gemini — fill {fill_pct:.0%}, rep {rep}, "
-                    f"prompt tokens ≈ {prompt_tokens:,}"
-                )
-
-                try:
-                    wait_seconds = throttle.wait_for_budget(prompt_tokens)
-                except TokenLimitExceeded as exc:
-                    print(f"Skipping call: {exc}")
-                    record = {**metadata, "error": str(exc)}
-                    f_out.write(json.dumps(record) + "\n")
-                    continue
-
-                response = client.generate_content(
-                    prompt=prompt,
-                    temperature=args.temperature,
-                    max_output_tokens=args.max_output_tokens,
-                    experiment_id="pilot",
-                    session_id=f"pilot_naive_fill{int(fill_pct*100)}_rep{rep}",
-                )
-
-                actual_input_tokens = response.get("tokens_input") or prompt_tokens
-                throttle.record(actual_input_tokens)
-
-                record = {
-                    **metadata,
-                    "model": response.get("model"),
-                    "tokens_input": actual_input_tokens,
-                    "tokens_output": response.get("tokens_output"),
-                    "latency": response.get("latency"),
-                    "cost": response.get("cost"),
-                    "answer": response.get("text"),
-                    "throttle_wait_seconds": wait_seconds,
-                }
-                f_out.write(json.dumps(record) + "\n")
-
-    print(f"\nResults written to {output_path.resolve()}")
-
-
-def main() -> None:
-    args = parse_args()
-    run_pilot(args)
-
-
-if __name__ == "__main__":
-    main()
+    args = parser.parse_args()
+    
+    run_minimal_pilot(dry_run=args.dry_run)

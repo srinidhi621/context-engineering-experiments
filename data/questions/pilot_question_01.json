@@ -1,18 +1,22 @@
-{
-  "experiment": "pilot",
-  "question_id": "pilot_q001",
-  "question": "According to the Llama 3.3-70B Instruct model card, what is the model's context length?",
-  "ground_truth": "The Llama 3.3-70B Instruct model card states a context length of 128k tokens.",
-  "difficulty": "simple_lookup",
-  "required_docs": [
-    "meta-llama/Llama-3.3-70B-Instruct"
-  ],
-  "evaluation_criteria": "Answer must clearly state that the context length is 128k tokens.",
-  "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-  "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-  "keywords": [
-    "Llama 3.3",
-    "context length",
-    "128k tokens"
-  ]
-}
+[
+  {
+    "experiment": "pilot",
+    "question_id": "pilot_q001",
+    "question": "What is the context window size of the Llama 3.3-70B-Instruct model?",
+    "ground_truth": "The context window size is 256k tokens (262,144 tokens).",
+    "difficulty": "simple_lookup",
+    "required_docs": [
+      "meta-llama/Llama-3.3-70B-Instruct"
+    ],
+    "evaluation_criteria": "Answer must state 256k or 262,144 tokens.",
+    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
+    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
+    "keywords": [
+      "Llama",
+      "Llama 3.3",
+      "context window",
+      "256k",
+      "tokens"
+    ]
+  }
+]

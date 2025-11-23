@@ -1,59 +1,40 @@
-"""Naive context assembly utilities."""
-
-from __future__ import annotations
-
-from dataclasses import dataclass
-from typing import Iterable, List, Mapping, Sequence
-
+from typing import List, Dict
 from src.utils.tokenizer import count_tokens, truncate_to_tokens
 
-
 class NaiveContextAssembler:
-    """Simple sequential concatenation of documents within a token budget."""
-
-    def __init__(self, separator: str = "\n\n") -> None:
-        self.separator = separator
-
-    def assemble(
-        self,
-        documents: Sequence[Mapping[str, str]],
-        max_tokens: int,
-    ) -> str:
+    """Sequential document concatenation with no structure"""
+    
+    def assemble(self, documents: List[Dict], max_tokens: int) -> str:
         """
-        Concatenate document content until the token limit is reached.
-
+        Concatenate documents sequentially.
+        
         Args:
-            documents: Sequence of dict-like objects with a ``content`` field.
-            max_tokens: Token budget for the assembled context.
-
+            documents: List of dicts with 'content', 'title', 'url'
+            max_tokens: Maximum tokens in output
+        
         Returns:
-            A string containing concatenated document contents trimmed to fit the limit.
+            Assembled context string
         """
         if max_tokens <= 0:
-            raise ValueError("max_tokens must be positive")
+            raise ValueError("max_tokens must be a positive integer.")
 
-        context_parts: List[str] = []
+        # Simply concatenate with double newline separator
+        context_parts = []
         total_tokens = 0
-
+        
         for doc in documents:
-            content = doc.get("content", "")
-            if not content:
-                continue
-
-            content_tokens = count_tokens(content)
-            if total_tokens + content_tokens <= max_tokens:
+            content = doc['content']
+            tokens = count_tokens(content)
+            
+            if total_tokens + tokens <= max_tokens:
                 context_parts.append(content)
-                total_tokens += content_tokens
-                continue
-
-            remaining = max_tokens - total_tokens
-            if remaining <= 0:
+                total_tokens += tokens
+            else:
+                # Truncate last document to fit
+                remaining = max_tokens - total_tokens
+                if remaining > 100:  # Only add if meaningful
+                    truncated = truncate_to_tokens(content, remaining)
+                    context_parts.append(truncated)
                 break
-
-            truncated = truncate_to_tokens(content, remaining)
-            if truncated.strip():
-                context_parts.append(truncated)
-                total_tokens += count_tokens(truncated)
-            break
-
-        return self.separator.join(context_parts)
+        
+        return "\n\n".join(context_parts)

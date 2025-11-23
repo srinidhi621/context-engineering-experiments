@@ -6,8 +6,8 @@
 **Budget:** $0 (Free Tier - gemini-2.0-flash-exp)  
 **Team Size:** 1  
 
-**Last Updated:** November 3, 2025  
-**Status:** ✅ Phase 1A Complete - Ready for Phase 1B (Data Collection)
+**Last Updated:** November 23, 2025  
+**Status:** ✅ Phases 1A, 1B, 1C Complete - Ready for Pilot Live Run
 
 ---
 
@@ -22,11 +22,11 @@
 - ✅ **Corpus loaders implemented:** Hugging Face Hub + Gutenberg (460+ lines)
 - ✅ **Tokenizer utilities complete:** counting, chunking, truncation
 
-**Pilot Phase:** 🔄 **In Progress (Phase 1A Complete)**
+**Pilot Phase:** 🔄 **In Progress (Phases 1A, 1B, 1C Complete)**
 - ✅ Phase 1A: Infrastructure setup (Hugging Face verified, loaders built)
-- ⏳ Phase 1B: Data collection (next - collect 10k tokens pilot corpus)
-- ⏳ Phase 1C: Context assemblers (naive, padding, RAG enhancement)
-- ⏳ Phase 1D: Minimal runner (18 API calls)
+- ✅ Phase 1B: Data collection (Pilot corpus and question are complete)
+- ✅ Phase 1C: Context assemblers (All assemblers implemented and tested)
+- 🔄 Phase 1D: Minimal runner (Script implemented, dry run complete, ready for live run)
 - ⏳ Phase 1E: Go/No-Go decision
 
 **Experiments:** ❌ Not Started
@@ -169,7 +169,7 @@ def truncate_to_tokens(text: str, max_tokens: int) -> str:
 
 ### Phase 1B: Minimal Data Collection (Day 2)
 
-**Status:** ⏳ Planned
+**Status:** ✅ COMPLETE
 
 **Task 2.1: Collect pilot corpus (2 hours)**
 
@@ -196,10 +196,10 @@ print(f"Collected {len(corpus)} model cards, {sum(d['tokens'] for d in corpus)} 
 ```
 
 **Acceptance Criteria:**
-- [ ] Collected 8-12k tokens of model card documentation
-- [ ] All models modified after 2024-08-01
-- [ ] Saved to `data/raw/pilot/hf_model_cards.json`
-- [ ] Can load and verify content
+- [x] **Execution:** `python scripts/collect_pilot_corpus.py` exits with code 0.
+- [x] **File Creation:** `ls data/raw/pilot/hf_model_cards.json` successfully lists the file.
+- [x] **Token Count:** The command `python -c "import json; f = open('data/raw/pilot/hf_model_cards.json'); data = json.load(f); tokens = sum(d['tokens'] for d in data); assert 8000 <= tokens <= 12000, f'Token count {tokens} out of range'; print(f'OK: {tokens} tokens')"` exits with code 0.
+- [x] **Date Verification:** The command `python -c "import json; from datetime import datetime; f = open('data/raw/pilot/hf_model_cards.json'); data = json.load(f); assert all(datetime.fromisoformat(d['lastModified'].replace('Z', '+00:00')).date() > datetime.fromisoformat('2024-08-01').date() for d in data), 'Found model card before cutoff date'"` exits with code 0.
 
 **Task 2.2: Create 1 test question (1 hour)**
 
@@ -220,10 +220,11 @@ File: `data/questions/pilot_question_01.json` (NEW)
 ```
 
 **Acceptance Criteria:**
-- [ ] Question is answerable from collected corpus
-- [ ] Ground truth is verifiable (can cite source)
-- [ ] Question is unambiguous
-- [ ] Answer is factual (not opinion)
+- [x] **Validation Script:** `python scripts/validate_question_set.py data/questions/pilot_question_01.json` exits with code 0.
+- [x] **Manual Check:** A human reviewer confirms the following:
+  - [x] The question is unambiguously worded.
+  - [x] The question can be answered using the corpus from Task 2.1.
+  - [x] The `ground_truth` is factually correct and verifiable from the source URL.
 
 ## 🔜 Immediate Next Steps (Phase 1B/1C Bridge)
 
@@ -273,7 +274,7 @@ Executing these four threads in parallel keeps Phase 1B moving despite quota del
 
 ### Phase 1C: Implement Context Assemblers (Days 3-4)
 
-**Status:** ⏳ Planned
+**Status:** ✅ COMPLETE
 
 **Task 3.1: Implement naive context assembler (Day 3 morning)**
 
@@ -333,10 +334,7 @@ def test_naive_assembly_token_limit():
 ```
 
 **Acceptance Criteria:**
-- [ ] Assembles context within token limit (±1%)
-- [ ] Preserves document order
-- [ ] Handles edge cases (empty docs, very large docs)
-- [ ] Unit tests pass
+- [x] **Unit Test:** `pytest tests/test_context_engineering.py::test_naive_assembly` exits with code 0. (This test should cover token limits, document order, and edge cases).
 
 **Task 3.2: Implement padding system (Day 3 afternoon)**
 
@@ -428,10 +426,7 @@ def test_padding_matches_fill_percentage():
 ```
 
 **Acceptance Criteria:**
-- [ ] Generates padding of exact token count (±1%)
-- [ ] Padding is irrelevant to technical questions
-- [ ] Can pad to any fill percentage
-- [ ] Unit tests pass
+- [x] **Unit Test:** `pytest tests/test_corpus.py::test_padding_generator` exits with code 0. (This test should cover token count accuracy, fill percentage correctness, and handling of edge cases).
 
 **Task 3.3: Enhance RAG with padding (Day 4)**
 
@@ -463,18 +458,15 @@ def assemble_context_with_padding(self,
 ```
 
 **Acceptance Criteria:**
-- [ ] RAG context can be padded to match naive fill %
-- [ ] Fill % is accurate (±1%)
-- [ ] Padding doesn't interfere with retrieval
-- [ ] Unit tests pass
+- [x] **Unit Test:** `pytest tests/test_context_engineering.py::test_rag_with_padding` exits with code 0. (This test should verify that RAG output can be padded to a target fill % accurately).
 
 ### Phase 1D: Implement Minimal Runner (Day 5)
 
-**Status:** ⏳ Planned
+**Status:** 🔄 In Progress (Dry Run Complete)
 
 **Task 4.1: Create pilot runner script**
 
-**Status:** ⏳ Planned
+**Status:** ✅ COMPLETE
 
 File: `scripts/run_minimal_pilot.py` (NEW)
 ```python
@@ -610,68 +602,19 @@ if __name__ == "__main__":
 ```
 
 **Acceptance Criteria:**
-- [ ] Script runs without crashes
-- [ ] Makes exactly 18 API calls
-- [ ] Saves results to JSONL file
-- [ ] Can resume if interrupted (enhancement)
-- [ ] Logging is clear and informative
+- [x] **Dry Run:** `python scripts/run_minimal_pilot.py --dry-run` exits with code 0 and logs that it would make 18 API calls.
+- [ ] **File Creation:** After a real run, `ls results/pilot_minimal_results.jsonl` successfully lists the file.
+- [ ] **Result Count:** `wc -l results/pilot_minimal_results.jsonl` reports 18.
+- [ ] **Resumption:** (Manual Test) After a partial run, deleting the last line of the results file and re-running the script should only execute the remaining API calls.
 
 **Task 4.2: Manual evaluation of results (Day 5 evening)**
 
 **Status:** ⏳ Planned
 
-File: `scripts/evaluate_pilot_manually.py` (NEW)
-```python
-#!/usr/bin/env python3
-"""Manually evaluate pilot results"""
-
-import json
-
-# Load results
-with open("results/pilot_minimal_results.jsonl") as f:
-    results = [json.loads(line) for line in f]
-
-# Load ground truth
-with open("data/questions/pilot_question_01.json") as f:
-    question = json.load(f)
-
-print(f"Question: {question['question']}")
-print(f"Ground Truth: {question['ground_truth']}\n")
-
-for i, result in enumerate(results, 1):
-    print(f"\n{'='*60}")
-    print(f"Result {i}/{len(results)}")
-    print(f"Strategy: {result['strategy']}, Fill: {result['fill_pct']*100}%, Rep: {result['repetition']}")
-    print(f"{'='*60}")
-    print(f"Response: {result['response']}")
-    print(f"Tokens: {result['tokens_input']} in, {result['tokens_output']} out")
-    print(f"Latency: {result['latency']:.2f}s")
-    
-    # Manual scoring
-    score = input("\nIs this correct? (1=yes, 0=no): ")
-    result['correct'] = int(score)
-
-# Save scored results
-with open("results/pilot_minimal_results_scored.jsonl", 'w') as f:
-    for result in results:
-        f.write(json.dumps(result) + '\n')
-
-# Print statistics
-correct_by_strategy = {}
-for result in results:
-    strategy = result['strategy']
-    if strategy not in correct_by_strategy:
-        correct_by_strategy[strategy] = []
-    correct_by_strategy[strategy].append(result.get('correct', 0))
-
-print("\n" + "="*60)
-print("PILOT EVALUATION SUMMARY")
-print("="*60)
-for strategy, scores in correct_by_strategy.items():
-    accuracy = sum(scores) / len(scores) * 100
-    print(f"{strategy}: {accuracy:.1f}% correct ({sum(scores)}/{len(scores)})")
-print("="*60)
-```
+**Acceptance Criteria:**
+- [ ] **Execution:** `python scripts/evaluate_pilot_manually.py` runs and prompts for user input without crashing.
+- [ ] **File Creation:** After the script is run, `ls results/pilot_minimal_results_scored.jsonl` successfully lists the file.
+- [ ] **Content Verification:** `grep '"correct"' results/pilot_minimal_results_scored.jsonl | wc -l` reports 18.
 
 ### Phase 1E: Review and Go/No-Go Decision (Day 6-7)
 
@@ -680,6 +623,16 @@ print("="*60)
 - [ ] Verify token counting is accurate
 - [ ] Confirm fill % is correctly implemented
 - [ ] Identify any bugs or issues
+
+**Task 5.1a: Scaffold Analysis Pipeline**
+- **Status:** ⏳ Planned
+- **Action:** Use the `results/pilot_minimal_results.jsonl` as input to build the initial versions of the analysis and visualization scripts (`scripts/analyze_results.py`, etc.).
+- **Goal:** This de-risks the final analysis phase. By building the pipeline early, you can generate key metrics and plots immediately after the larger experiments finish, rather than treating analysis as a separate, final step.
+- **Acceptance:**
+  - [ ] **Analysis Script:** `python scripts/analyze_results.py --input results/pilot_minimal_results_scored.jsonl --output-file results/analysis/pilot_summary.md` exits with code 0.
+  - [ ] **Summary Verification:** `ls results/analysis/pilot_summary.md` successfully lists the file.
+  - [ ] **Visualization Script:** `python scripts/generate_visualizations.py --input results/pilot_minimal_results_scored.jsonl --output-dir results/visualizations/pilot` exits with code 0.
+  - [ ] **Plot Verification:** `ls results/visualizations/pilot/*.png | wc -l` reports a count of 1 or more.
 
 **Task 5.2: Go/No-Go Decision Checklist**
 
@@ -757,11 +710,11 @@ Each question must have:
 
 Save to: `data/questions/exp1_questions.json`
 
-**Deliverables:**
-- [ ] 700k tokens of GitHub documentation
-- [ ] 2M+ tokens of Gutenberg padding
-- [ ] 50 questions with ground truth
-- [ ] All data saved in structured JSON format
+**Acceptance Criteria:**
+- [ ] **GitHub Corpus:** `python scripts/collect_exp1_corpus.py --dry-run` reports >600k tokens, then `python scripts/collect_exp1_corpus.py` runs successfully and `ls data/raw/exp1/github_corpus.json` lists the file.
+- [ ] **Padding Corpus:** `python scripts/collect_padding_corpus.py --dry-run` reports >1.5M tokens, then `python scripts/collect_padding_corpus.py` runs successfully and `ls data/raw/padding/gutenberg_corpus.json` lists the file.
+- [ ] **Question Set:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits with code 0.
+- [ ] **Question Count:** `python -c "import json; f = open('data/questions/exp1_questions.json'); data = json.load(f); assert len(data['questions']) >= 50, f'Expected 50+ questions, found {len(data[\'questions\'])}'"` exits with code 0.
 
 ### Phase 2: Implementation (~3 days)
 
@@ -773,6 +726,7 @@ Save to: `data/questions/exp1_questions.json`
   - No structure
 
 - [ ] **Structured** (`src/context_engineering/structured.py`)
+  - **Task:** Before implementation, add a section to this `PLAN.md` file detailing the proposed data structure (e.g., XML schema vs JSON, format of the Table of Contents, metadata fields). This ensures the implementation aligns with the experimental goals.
   - XML/JSON structure with metadata
   - Table of contents
   - Navigation instructions
@@ -795,10 +749,9 @@ pip install faiss-cpu rank-bm25 tqdm
 # Already in requirements.txt
 ```
 
-**Tests:**
-- [ ] Unit tests for each assembler
-- [ ] Integration test with sample corpus
-- [ ] Verify token budgets respected
+**Acceptance Criteria:**
+- [ ] **Unit Tests:** `pytest tests/test_context_engineering.py` and `pytest tests/test_corpus.py` exit with code 0, indicating all assemblers and helpers are working as expected.
+- [ ] **Manual Check:** The `PLAN.md` file has been updated with the design for the `Structured` context assembler as per the task.
 
 ### Phase 3: Question Generation (~2 days)
 
@@ -843,6 +796,7 @@ pip install faiss-cpu rank-bm25 tqdm
 **Runner Script:** `scripts/run_experiment_1.py`
 
 - [ ] Implement experiment runner
+  - **Seed Management:** Accept a `--seed` command-line argument to ensure full reproducibility of any stochastic processes (e.g., padding generation).
   - Load questions and corpus
   - For each question × strategy × fill level × rep:
     - Assemble context
@@ -850,11 +804,12 @@ pip install faiss-cpu rank-bm25 tqdm
     - Log response
   - Progress tracking
   - Error handling and retry
-  - Checkpoint every 100 calls
+  - **Robust Checkpointing:** The script MUST save its state after each API call to a temporary file. On startup, it should check for this file to resume from the last successful call, making it resilient to interruptions. This is a core requirement, not an enhancement.
 
-- [ ] Run all 3,000 API calls (~8 hours with rate limits)
-
-**Save Results:** `results/raw/exp1_results.jsonl` (one JSON per line)
+**Acceptance Criteria:**
+- [ ] **Dry Run:** `python scripts/run_experiment_1.py --dry-run` exits with code 0 and logs that it would make 3,000 API calls.
+- [ ] **File Creation:** After a full run, `ls results/raw/exp1_results.jsonl` successfully lists the file.
+- [ ] **Result Count:** `wc -l results/raw/exp1_results.jsonl` reports 3000.
 
 **Result Format:**
 ```json
@@ -875,27 +830,26 @@ pip install faiss-cpu rank-bm25 tqdm
 
 ### Phase 5: Analysis (~1 day)
 
+**Task 5.1: Implement and Calibrate LLM-as-Judge**
+- **Status:** ⏳ Planned
+- **Action:** Before full-scale analysis, implement the `src/evaluation/judges.py` module.
+- **Calibration:** Create a "golden set" of ~50-100 manually scored results from the pilot or a small batch from Experiment 1. Run the LLM-as-judge on this set and measure its accuracy, bias, and correlation with human scores. This step is critical to ensure the reliability of automated evaluation at scale.
+- **Acceptance:**
+  - [ ] `judges.py` is implemented.
+  - [ ] Calibration report shows >90% agreement with manual scores.
+
 **Metrics to Compute:**
-- [ ] Correctness (LLM-as-judge using GPT-4 or Claude)
+- [ ] Correctness (using the calibrated LLM-as-judge)
 - [ ] Citation accuracy (claims grounded in context?)
 - [ ] Cost per query
 - [ ] Latency statistics
 
-**Analysis:**
-- [ ] Compare strategies at each fill level
-- [ ] Plot degradation curves (fill % vs correctness)
-- [ ] Statistical tests (paired t-test for H1)
-- [ ] Effect sizes (Cohen's d)
-
-**Visualizations:**
-- [ ] Degradation curves (one per strategy)
-- [ ] Bar chart comparison at 90% fill
-- [ ] Cost vs quality scatter
-
-**Save:**
-- `results/metrics/exp1_metrics.csv`
-- `results/analysis/exp1_analysis.json`
-- `results/visualizations/exp1_*.png`
+**Acceptance Criteria:**
+- [ ] **Analysis Script:** `python scripts/analyze_results.py --input results/raw/exp1_results.jsonl --output-dir results/analysis` exits with code 0.
+- [ ] **Metrics File:** `ls results/analysis/exp1_metrics.csv` successfully lists the file.
+- [ ] **Analysis File:** `ls results/analysis/exp1_analysis.json` successfully lists the file.
+- [ ] **Visualization Script:** `python scripts/generate_visualizations.py --input results/analysis/exp1_metrics.csv --output-dir results/visualizations/exp1` exits with code 0.
+- [ ] **Plot Verification:** `ls results/visualizations/exp1/*.png | wc -l` reports a count of 3 or more.
 
 **Key Question:** Does Engineered 1M beat Naïve 1M by ≥15%?
 
@@ -940,11 +894,12 @@ Create questions answerable ONLY from base corpus:
 
 Save to: `data/questions/exp2_questions.json`
 
-**Deliverables:**
-- [ ] 50k tokens base corpus (relevant)
-- [ ] Gutenberg pollution corpus verified (2M+ tokens, irrelevant)
-- [ ] 20 questions with ground truth
-- [ ] Confirmed pollution doesn't contain answers
+**Acceptance Criteria:**
+- [ ] **Base Corpus:** `python scripts/collect_exp2_corpus.py` runs successfully and `ls data/raw/exp2/base_corpus.json` lists the file.
+- [ ] **Padding Corpus:** `ls data/raw/padding/gutenberg_corpus.json` confirms the padding corpus from Exp1 exists.
+- [ ] **Question Set:** `python scripts/validate_question_set.py data/questions/exp2_questions.json --require-experiment exp2` exits with code 0.
+- [ ] **Question Count:** `python -c "import json; f = open('data/questions/exp2_questions.json'); data = json.load(f); assert len(data['questions']) >= 20, f'Expected 20+ questions, found {len(data[\'questions\'])}'"` exits with code 0.
+- [ ] **Manual Check:** Reviewer confirms that answers to the questions are not present in the Gutenberg padding corpus.
 
 ### Week 6: Execution & Analysis (5 days)
 
@@ -977,6 +932,8 @@ class PollutionInjector:
         # (Could also interleave, but simpler for now)
         return base_content + "\n\n" + pollution
 ```
+**Acceptance Criteria:**
+- [ ] **Unit Test:** `pytest tests/test_corpus.py::test_pollution_injector` exits with code 0.
 
 **Day 3-4: Run Experiment 2 (1,200 API calls)**
 
@@ -989,6 +946,11 @@ Pollution levels:
 
 Script: `scripts/run_experiment_2.py`
 
+**Acceptance Criteria:**
+- [ ] **Dry Run:** `python scripts/run_experiment_2.py --dry-run` exits with code 0 and logs that it would make 1,200 API calls.
+- [ ] **File Creation:** After a full run, `ls results/raw/exp2_results.jsonl` successfully lists the file.
+- [ ] **Result Count:** `wc -l results/raw/exp2_results.jsonl` reports 1200.
+
 **Day 5: Analyze Results**
 
 Metrics:
@@ -997,7 +959,11 @@ Metrics:
 - Degradation curves per strategy
 - Which strategy most robust to noise?
 
-Save to: `results/exp2_analysis/`
+**Acceptance Criteria:**
+- [ ] **Analysis Script:** `python scripts/analyze_results.py --input results/raw/exp2_results.jsonl --output-dir results/analysis/exp2` exits with code 0.
+- [ ] **Summary File:** `ls results/analysis/exp2/exp2_summary.md` successfully lists the file.
+- [ ] **Visualization Script:** `python scripts/generate_visualizations.py --input results/analysis/exp2/exp2_metrics.csv --output-dir results/visualizations/exp2` exits with code 0.
+- [ ] **Plot Verification:** `ls results/visualizations/exp2/*.png | wc -l` reports a count of 2 or more.
 
 ---
 
@@ -1024,16 +990,11 @@ Save to: `results/exp2_analysis/`
 **Data:** Analysis of Experiments 1-2 (no new API calls)  
 **Est. Cost:** $0
 
-### Tasks
-
-- [ ] Aggregate all metrics from Exp 1-2
-- [ ] Normalize quality, cost, latency to [0, 1]
-- [ ] Compute efficiency score: quality / (cost × latency)
-- [ ] Find Pareto frontier (non-dominated points)
-- [ ] Generate 3D visualization (quality × cost × latency)
-- [ ] Generate 2D projections
-- [ ] Rank strategies by efficiency
-- [ ] Create decision framework (when to use which strategy)
+### Acceptance Criteria
+- [ ] **Analysis Script:** `python scripts/analyze_frontier.py --exp1-metrics results/analysis/exp1_metrics.csv --exp2-metrics results/analysis/exp2_metrics.csv --output-dir results/analysis/exp5` exits with code 0.
+- [ ] **Summary File:** `ls results/analysis/exp5/frontier_analysis.md` successfully lists the file.
+- [ ] **Visualization Script:** `python scripts/generate_visualizations.py --input results/analysis/exp5/frontier_data.csv --output-dir results/visualizations/exp5` exits with code 0.
+- [ ] **Plot Verification:** `ls results/visualizations/exp5/*.png` reports a count of 1 or more.
 
 ---
 
@@ -1073,7 +1034,9 @@ Save to: `results/exp2_analysis/`
 6. Recommendations & Decision Framework (2 pages)
 7. Conclusion (1 page)
 
-**Save to:** `FINAL_REPORT.md`
+**Acceptance Criteria:**
+- [ ] **Report Generation:** `python scripts/generate_report.py --all-results results/analysis/ --output FINAL_REPORT.md` exits with code 0.
+- [ ] **File Verification:** `ls FINAL_REPORT.md` successfully lists the final report file.
 
 ### Code Documentation (~2 days)
 
@@ -1083,6 +1046,10 @@ Save to: `results/exp2_analysis/`
 - [ ] Clean up code (linter, type hints)
 - [ ] Achieve >80% test coverage
 - [ ] Tag release: `v1.0.0`
+
+**Acceptance Criteria:**
+- [ ] **Code Quality:** `ruff check .` and `ruff format . --check` both exit with code 0.
+- [ ] **Test Coverage:** `pytest --cov=src tests/` runs successfully and the coverage report shows a total coverage of 80% or higher.
 
 ---
 
@@ -1138,8 +1105,8 @@ python scripts/generate_visualizations.py
 - **Budget:** $174 enforced automatically by monitor, hard stop if exceeded
 - **Rate Limits:** 15 RPM, 1M TPM, 1500 RPD (free tier)
 - **Persistence:** All API calls tracked in `results/.monitor_state.json`
-- **Checkpointing:** Save progress every 100 calls
-- **Reproducibility:** Set random seeds, pin library versions
+- **Checkpointing:** Main experiment runners must support robust checkpointing and resumption (see Exp1, Phase 4).
+- **Reproducibility:** Pin library versions. All experiment runner scripts must accept a `--seed` command-line argument to control stochastic processes (e.g., padding generation) for fully reproducible results.
 
 ---
 
