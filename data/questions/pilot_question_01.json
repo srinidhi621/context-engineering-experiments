@@ -3,19 +3,19 @@
     "experiment": "pilot",
     "question_id": "pilot_q001",
     "question": "What is the context window size of the Llama 3.3-70B-Instruct model?",
-    "ground_truth": "The context window size is 256k tokens (262,144 tokens).",
+    "ground_truth": "The context window size is 128k tokens.",
     "difficulty": "simple_lookup",
     "required_docs": [
       "meta-llama/Llama-3.3-70B-Instruct"
     ],
-    "evaluation_criteria": "Answer must state 256k or 262,144 tokens.",
+    "evaluation_criteria": "Answer must state 128k.",
     "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
     "source_model": "meta-llama/Llama-3.3-70B-Instruct",
     "keywords": [
       "Llama",
       "Llama 3.3",
       "context window",
-      "256k",
+      "128k",
       "tokens"
     ]
   }
