@@ -174,7 +174,7 @@ class RAGPipeline:
     def assemble_context_with_padding(self, 
                                   retrieved_chunks: List[Dict],
                                   fill_pct: float,
-                                  max_tokens: int = 1_000_000) -> str:
+                                  max_context_tokens: int = 1_000_000) -> str:
         """
         Assemble retrieved chunks and pad to match fill percentage.
         
@@ -184,13 +184,13 @@ class RAGPipeline:
         
         # Assemble retrieved chunks
         # Note: The max_tokens for RAG is typically smaller (e.g., 128k)
-        rag_max_tokens = min(max_tokens, 128_000)
+        rag_max_tokens = min(max_context_tokens, 128_000)
         context = self.assemble_context(retrieved_chunks, rag_max_tokens)
         
         # Pad to match fill percentage of the total context window
         padder = PaddingGenerator()
         padded_context = padder.pad_to_fill_percentage(
-            context, fill_pct, max_tokens
+            context, fill_pct, max_context_tokens
         )
         
         return padded_context

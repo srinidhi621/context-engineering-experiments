@@ -1,120 +1,92 @@
-"""Engineered context assembler with metadata and table of contents."""
-
-from __future__ import annotations
-
-from dataclasses import dataclass
-from typing import Mapping, Sequence
-
+from typing import List, Dict
 from src.utils.tokenizer import count_tokens, truncate_to_tokens
 
-
-@dataclass
 class StructuredContextAssembler:
-    """
-    Assemble contexts with metadata blocks, table of contents, and
-    per-document sections. Designed to reduce attention diffusion by
-    clearly scoping each document.
-    """
+    """Assembles context with a structured, XML-like format."""
 
-    context_title: str = "Context Package"
-    include_toc: bool = True
-    include_metadata: bool = True
+    def _format_metadata(self, doc: Dict) -> str:
+        """Helper to format metadata into a consistent string."""
+        lines = []
+        # A preferred order for common keys ensures consistency
+        preferred_keys = ['model_id', 'license', 'language', 'tags', 'last_modified']
+        
+        for key in preferred_keys:
+            if key in doc and doc[key]:
+                 lines.append(f"  - {key}: {doc[key]}")
 
-    def assemble(
-        self,
-        documents: Sequence[Mapping[str, str]],
-        max_tokens: int,
-    ) -> str:
-        if max_tokens <= 0:
-            raise ValueError("max_tokens must be positive")
-        if not documents:
-            raise ValueError("documents cannot be empty")
-
-        sections: list[str] = []
-        total_tokens = 0
-
-        preamble = self._build_preamble(documents)
-        preamble_tokens = count_tokens(preamble)
-
-        if preamble_tokens >= max_tokens:
-            return truncate_to_tokens(preamble, max_tokens)
-
-        sections.append(preamble)
-        total_tokens += preamble_tokens
-
-        if self.include_toc:
-            toc = self._build_toc(documents)
-            toc_tokens = count_tokens(toc)
-            if total_tokens + toc_tokens >= max_tokens:
-                sections.append(truncate_to_tokens(toc, max_tokens - total_tokens))
-                return "\n\n".join(sections)
-            sections.append(toc)
-            total_tokens += toc_tokens
-
-        for idx, doc in enumerate(documents, start=1):
-            section = self._build_section(idx, doc)
-            section_tokens = count_tokens(section)
-            if total_tokens + section_tokens <= max_tokens:
-                sections.append(section)
-                total_tokens += section_tokens
-                continue
-
-            remaining = max_tokens - total_tokens
-            if remaining <= 0:
-                break
-            truncated = truncate_to_tokens(section, remaining)
-            if truncated.strip():
-                sections.append(truncated)
-                total_tokens = max_tokens
-            break
-
-        return "\n\n".join(sections)
-
-    def _build_preamble(self, documents: Sequence[Mapping[str, str]]) -> str:
-        lines = [
-            f"# {self.context_title}",
-            f"Total Documents: {len(documents)}",
-        ]
-        if self.include_metadata:
-            domains = {doc.get("type", "document") for doc in documents}
-            sources = {doc.get("source", "unknown") for doc in documents}
-            lines.append(f"Domains: {', '.join(sorted(domains))}")
-            lines.append(f"Sources: {', '.join(sorted(sources))}")
+        # Add other relevant keys that might exist
+        for key, value in doc.items():
+            if key not in preferred_keys and key not in ['content', 'tokens', 'url', 'source_model', 'source_url', 'experiment', 'question_id', 'type', 'difficulty', 'question', 'ground_truth', 'required_docs', 'evaluation_criteria', 'keywords']:
+                if value:
+                    lines.append(f"  - {key}: {value}")
         return "\n".join(lines)
 
-    def _build_toc(self, documents: Sequence[Mapping[str, str]]) -> str:
-        toc_lines = ["## Table of Contents"]
-        for idx, doc in enumerate(documents, start=1):
-            title = self._doc_title(doc, idx)
-            toc_lines.append(f"{idx}. {title}")
-        return "\n".join(toc_lines)
+    def assemble(self, documents: List[Dict], max_tokens: int) -> str:
+        """
+        Assembles documents into a structured XML-like string with a TOC.
+        
+        Args:
+            documents: List of dicts with document content and metadata.
+            max_tokens: Maximum tokens for the final output string.
+            
+        Returns:
+            The assembled context string.
+        """
+        if max_tokens <= 0:
+            raise ValueError("max_tokens must be a positive integer.")
 
-    def _build_section(self, idx: int, doc: Mapping[str, str]) -> str:
-        title = self._doc_title(doc, idx)
-        header_lines = [f"## Document {idx}: {title}"]
+        doc_sections = []
+        for i, doc in enumerate(documents):
+            doc_id = f"doc_{i+1}"
+            metadata_str = self._format_metadata(doc)
+            content = doc.get('content', '')
+            
+            doc_str = (
+                f'<document id="{doc_id}">\n'
+                f'<metadata>\n{metadata_str}\n</metadata>\n'
+                f'<content>\n{content}\n</content>\n'
+                f'</document>'
+            )
+            doc_sections.append({
+                "id": doc_id,
+                "title": doc.get('model_id', f"Untitled Document {i+1}"),
+                "string": doc_str,
+                "tokens": count_tokens(doc_str)
+            })
 
-        if self.include_metadata:
-            meta_lines = []
-            if doc.get("url"):
-                meta_lines.append(f"- Source: {doc['url']}")
-            if doc.get("last_modified"):
-                meta_lines.append(f"- Last Modified: {doc['last_modified']}")
-            if doc.get("tokens"):
-                meta_lines.append(f"- Tokens: {doc['tokens']:,}")
-            if doc.get("tags"):
-                meta_lines.append(f"- Tags: {', '.join(doc['tags'])}")
-            if meta_lines:
-                header_lines.extend(meta_lines)
+        # Build header and Table of Contents
+        toc_items = [f"  - Document {i+1}: {section['title']} (id: {section['id']})" for i, section in enumerate(doc_sections)]
+        toc_str = "<table_of_contents>\n" + "\n".join(toc_items) + "\n</table_of_contents>"
+        
+        introduction = "<introduction>\nThis package contains several documents. Use the table of contents and document metadata to navigate and answer the user's question.\n</introduction>"
+        
+        header = f"<context_package>\n{introduction}\n\n{toc_str}"
+        footer = "\n</context_package>"
+        
+        header_tokens = count_tokens(header)
+        footer_tokens = count_tokens(footer)
+        
+        # Assemble the final context respecting the token limit
+        final_parts = [header]
+        current_tokens = header_tokens + footer_tokens
 
-        body = doc.get("content", "").strip()
-        section = "\n".join(header_lines) + "\n\n" + body
-        return section
+        for section in doc_sections:
+            # Add 2 tokens for the double newline separator
+            if current_tokens + section['tokens'] + 2 <= max_tokens:
+                final_parts.append(section['string'])
+                current_tokens += section['tokens'] + 2
+            else:
+                # For simplicity and to maintain structure, we don't truncate documents.
+                # If a document doesn't fit, we stop adding more.
+                break
+        
+        final_parts.append(footer)
+        
+        full_context = "\n\n".join(final_parts)
 
-    @staticmethod
-    def _doc_title(doc: Mapping[str, str], idx: int) -> str:
-        return (
-            doc.get("title")
-            or doc.get("model_id")
-            or doc.get("dataset_id")
-            or f"Document {idx}"
-        )
+        # Final check to ensure we are within the budget. This can happen if token
+        # counting has minor discrepancies. This is a safeguard.
+        if count_tokens(full_context) > max_tokens:
+            return truncate_to_tokens(full_context, max_tokens)
+
+        return full_context

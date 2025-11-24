@@ -86,14 +86,9 @@ The pilot phase was completed successfully, validating the entire experimental p
 
 ### Week 2: Data Collection & Question Generation (7 days) ✅ COMPLETE
 
-**Day 1-2: Collect GitHub Corpus (~700k tokens from 30 repos)**
+**Day 1-2: Collect Model Card Corpus (~700k tokens)**
 
-Use `scripts/collect_exp1_corpus.py` to fetch documentation from 30 popular repositories across different languages/frameworks:
-- Python ML/AI (PyTorch, TensorFlow, scikit-learn, HuggingFace)
-- JavaScript/TypeScript (Next.js, React, Node.js, TypeScript)
-- Go (Golang, Kubernetes, Docker)
-- Rust (rust-lang, tokio)
-- Other (Django, Flask, Rails, Terraform, etc.)
+Use `scripts/collect_exp1_corpus.py` to fetch model card documentation from recently updated models on Hugging Face. This provides a large, diverse, and date-filterable corpus of technical text.
 
 All docs filtered to modifications after 2025-02-01.
 Save to: `data/raw/exp1/github_corpus.json`
@@ -125,29 +120,29 @@ Save to: `data/questions/exp1_questions.json`
 - [x] **Question Set:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits with code 0.
 - [x] **Question Count:** `python -c "import json; f = open('data/questions/exp1_questions.json'); data = json.load(f); assert len(data) >= 50, f'Expected 50+ questions, found {len(data)}'"` exits with code 0.
 
-### Phase 2: Implementation (~3 days)
+### Phase 2: Implementation (~3 days) ✅ COMPLETE
 
 **Context Assemblers to Build:**
 
-- [ ] **Naïve** (`src/context_engineering/naive.py`)
+- [x] **Naïve** (`src/context_engineering/naive.py`)
   - Sequential concatenation + padding
   - Token-aware truncation
   - No structure
 
-- [ ] **Structured** (`src/context_engineering/structured.py`)
+- [x] **Structured** (`src/context_engineering/structured.py`)
   - **Task:** Before implementation, add a section to this `PLAN.md` file detailing the proposed data structure (e.g., XML schema vs JSON, format of the Table of Contents, metadata fields). This ensures the implementation aligns with the experimental goals.
   - XML/JSON structure with metadata
   - Table of contents
   - Navigation instructions
   - Hierarchical organization
 
-- [ ] **Basic RAG** (`src/context_engineering/rag.py`)
+- [x] **Basic RAG** (`src/context_engineering/rag.py`)
   - Chunking (512 tokens, 50 overlap)
   - Embeddings (text-embedding-004)
   - Vector store (FAISS/ChromaDB)
   - Top-k retrieval
 
-- [ ] **Advanced RAG** (`src/context_engineering/advanced_rag.py`)
+- [x] **Advanced RAG** (`src/context_engineering/advanced_rag.py`)
   - Hybrid search (dense + BM25)
   - Reciprocal Rank Fusion
   - Optional reranking
@@ -159,8 +154,8 @@ pip install faiss-cpu rank-bm25 tqdm
 ```
 
 **Acceptance Criteria:**
-- [ ] **Unit Tests:** `pytest tests/test_context_engineering.py` and `pytest tests/test_corpus.py` exit with code 0, indicating all assemblers and helpers are working as expected.
-- [ ] **Manual Check:** The `PLAN.md` file has been updated with the design for the `Structured` context assembler as per the task.
+- [x] **Unit Tests:** `pytest tests/test_context_engineering.py` and `pytest tests/test_corpus.py` exit with code 0, indicating all assemblers and helpers are working as expected.
+- [x] **Manual Check:** The `PLAN.md` file has been updated with the design for the `Structured` context assembler as per the task.
 
 ### Phase 3: Question Generation (~2 days)
 

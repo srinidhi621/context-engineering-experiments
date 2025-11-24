@@ -29,28 +29,38 @@ def test_naive_assembler_raises_for_invalid_budget():
         assembler.assemble([], max_tokens=0)
 
 
-def test_structured_assembler_includes_metadata_and_toc():
+def test_structured_assembler_creates_xml_structure():
     docs = [
         {
             "content": "First document body.",
-            "title": "Doc One",
-            "url": "https://example.com/one",
-            "last_modified": "2024-09-01",
-            "tokens": 20,
-            "tags": ["llm"],
+            "model_id": "model-one",
+            "license": "mit",
         },
         {
             "content": "Second document body.",
-            "model_id": "doc-two",
+            "model_id": "model-two",
         },
     ]
     assembler = StructuredContextAssembler()
     result = assembler.assemble(docs, max_tokens=500)
 
-    assert "# Context Package" in result
-    assert "## Table of Contents" in result
-    assert "Doc One" in result and "doc-two" in result
-    assert "- Source: https://example.com/one" in result
+    # Check for overall XML structure
+    assert "<context_package>" in result
+    assert "</context_package>" in result
+    assert "<table_of_contents>" in result
+    
+    # Check for TOC entries
+    assert "model-one (id: doc_1)" in result
+    assert "model-two (id: doc_2)" in result
+    
+    # Check for document structure and metadata
+    assert '<document id="doc_1">' in result
+    assert '<metadata>' in result
+    assert "- license: mit" in result
+    assert '<content>' in result
+    assert "First document body." in result
+
+    # Check token limit
     assert count_tokens(result) <= 500
 
 
@@ -127,3 +137,48 @@ def test_advanced_rag_applies_padding_and_reranker():
     )
     assert context.endswith("PAD")
     assert padding.called_with is not None
+
+
+def test_advanced_rag_hybrid_search():
+    """
+    Tests that the AdvancedRAGPipeline uses both BM25 and vector search.
+    """
+    docs = [
+        "The quick brown fox jumps over the lazy dog.", # Vector-heavy
+        "apple banana orange fruit salad", # Keyword-heavy
+    ]
+    
+    # Mock embedding functions
+    def embed_many_fn(texts):
+        # Return simple embeddings, make "fox" and "apple" very different
+        return [[1.0, 0.0] if "fox" in t else [0.0, 1.0] for t in texts]
+    def embed_one_fn(text):
+        if "animal" in text:  # Simulate semantic query for "fox"
+            return [1.0, 0.0]
+        elif "apple" in text:
+            return [0.0, 1.0]
+        return [0.0, 0.0]  # Default for other queries
+
+    pipeline = AdvancedRAGPipeline(
+        embed_many_fn=embed_many_fn, 
+        embed_one_fn=embed_one_fn, 
+        use_faiss=False
+    )
+    # Use whole docs as chunks for this simple test
+    simple_chunks = [{"text": doc, "doc_id": i, "chunk_id": 0} for i, doc in enumerate(docs)]
+    pipeline.index_chunks(simple_chunks)
+
+    # Query with a keyword that BM25 should find easily
+    keyword_query = "apple"
+    keyword_results = pipeline.retrieve(keyword_query, top_k=1)
+    assert keyword_results, "Expected results for keyword query"
+    assert "apple banana orange" in keyword_results[0]['text']
+
+    # Query with a semantic phrase that vector search should find easily
+    # We will make the query "fast brown animal"
+    # Our mock embedding will give this a vector similar to the "fox" document
+    semantic_query = "fast brown animal"
+    semantic_results = pipeline.retrieve(semantic_query, top_k=1)
+    assert semantic_results, "Expected results for semantic query"
+    assert "quick brown fox" in semantic_results[0]['text']
+
