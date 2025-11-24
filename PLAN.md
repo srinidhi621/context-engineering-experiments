@@ -84,7 +84,7 @@ The pilot phase was completed successfully, validating the entire experimental p
 
 **CRITICAL:** RAG strategies will be **padded to match fill %** of naive strategies (implemented in pilot phase).
 
-### Week 2: Data Collection & Question Generation (7 days)
+### Week 2: Data Collection & Question Generation (7 days) ✅ COMPLETE
 
 **Day 1-2: Collect GitHub Corpus (~700k tokens from 30 repos)**
 
@@ -120,10 +120,10 @@ Each question must have:
 Save to: `data/questions/exp1_questions.json`
 
 **Acceptance Criteria:**
-- [ ] **GitHub Corpus:** `python scripts/collect_exp1_corpus.py --dry-run` reports >600k tokens, then `python scripts/collect_exp1_corpus.py` runs successfully and `ls data/raw/exp1/github_corpus.json` lists the file.
-- [ ] **Padding Corpus:** `python scripts/collect_padding_corpus.py --dry-run` reports >1.5M tokens, then `python scripts/collect_padding_corpus.py` runs successfully and `ls data/raw/padding/gutenberg_corpus.json` lists the file.
-- [ ] **Question Set:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits with code 0.
-- [ ] **Question Count:** `python -c "import json; f = open('data/questions/exp1_questions.json'); data = json.load(f); assert len(data['questions']) >= 50, f'Expected 50+ questions, found {len(data[\'questions\'])}'"` exits with code 0.
+- [x] **GitHub Corpus:** `python scripts/collect_exp1_corpus.py --dry-run` reports >600k tokens, then `python scripts/collect_exp1_corpus.py` runs successfully and `ls data/raw/exp1/github_corpus.json` lists the file.
+- [x] **Padding Corpus:** `python scripts/collect_padding_corpus.py --dry-run` reports >1.5M tokens, then `python scripts/collect_padding_corpus.py` runs successfully and `ls data/raw/padding/gutenberg_corpus.json` lists the file.
+- [x] **Question Set:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits with code 0.
+- [x] **Question Count:** `python -c "import json; f = open('data/questions/exp1_questions.json'); data = json.load(f); assert len(data) >= 50, f'Expected 50+ questions, found {len(data)}'"` exits with code 0.
 
 ### Phase 2: Implementation (~3 days)
 

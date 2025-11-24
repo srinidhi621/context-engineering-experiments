@@ -1,352 +1,743 @@
 [
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q001", "type": "simple_lookup", "difficulty": "easy",
-    "question": "What is the base model for the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' model?",
-    "ground_truth": "The base model is Qwen/Qwen3-30B-A3B-Instruct-2507.",
-    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must contain 'Qwen/Qwen3-30B-A3B-Instruct-2507'."
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q001",
+    "type": "simple_lookup",
+    "difficulty": "easy",
+    "question": "What is the base model for the 'unsloth/ERNIE-4.5-21B-A3B-PT' model?",
+    "ground_truth": "The base model is baidu/ERNIE-4.5-21B-A3B-PT.",
+    "required_docs": [
+      "unsloth/ERNIE-4.5-21B-A3B-PT"
+    ],
+    "evaluation_criteria": "Answer must contain 'baidu/ERNIE-4.5-21B-A3B-PT'.",
+    "source_model": "unsloth/ERNIE-4.5-21B-A3B-PT",
+    "source_url": "https://huggingface.co/unsloth/ERNIE-4.5-21B-A3B-PT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q002", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q002",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What quantization method was used for the 'TevunahAi/NextCoder-32B-FP8' model?",
     "ground_truth": "The model was quantized using the FP8 (E4M3) method.",
-    "required_docs": ["TevunahAi/NextCoder-32B-FP8"],
-    "evaluation_criteria": "Answer must contain 'FP8' or 'E4M3'."
+    "required_docs": [
+      "TevunahAi/NextCoder-32B-FP8"
+    ],
+    "evaluation_criteria": "Answer must contain 'FP8' or 'E4M3'.",
+    "source_model": "TevunahAi/NextCoder-32B-FP8",
+    "source_url": "https://huggingface.co/TevunahAi/NextCoder-32B-FP8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q003", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q003",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "For which two languages is the 'tasal9/ZamAI-Phi-3-Mini-Pashto' model optimized?",
     "ground_truth": "The model is optimized for Pashto and English.",
-    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer must mention both 'Pashto' and 'English'."
+    "required_docs": [
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer must mention both 'Pashto' and 'English'.",
+    "source_model": "tasal9/ZamAI-Phi-3-Mini-Pashto",
+    "source_url": "https://huggingface.co/tasal9/ZamAI-Phi-3-Mini-Pashto"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q004", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q004",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What are the two distinct model types in the PromptCoT 2.0 dual-model system described in the 'PanzerBread/PromptCoT' card?",
-    "ground_truth": "The two models are the pθ (Prompt Model) and the qφ (Rationale Model).",
-    "required_docs": ["PanzerBread/PromptCoT"],
-    "evaluation_criteria": "Answer must mention both 'Prompt Model' (or 'pθ') and 'Rationale Model' (or 'qφ')."
+    "ground_truth": "The two models are the p\u03b8 (Prompt Model) and the q\u03c6 (Rationale Model).",
+    "required_docs": [
+      "PanzerBread/PromptCoT"
+    ],
+    "evaluation_criteria": "Answer must mention both 'Prompt Model' (or 'p\u03b8') and 'Rationale Model' (or 'q\u03c6').",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q005", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q005",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the license for the 'professorsynapse/nexus-tools_kto_v0.1.8' model?",
     "ground_truth": "The license for the model is apache-2.0.",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must contain 'apache-2.0'."
+    "required_docs": [
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must contain 'apache-2.0'.",
+    "source_model": "professorsynapse/nexus-tools_kto_v0.1.8",
+    "source_url": "https://huggingface.co/professorsynapse/nexus-tools_kto_v0.1.8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q006", "type": "synthesis", "difficulty": "medium",
-    "question": "Compare the licenses of the 'tasal9/ZamAI-Phi-3-Mini-Pashto' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' models. Are they the same?",
-    "ground_truth": "No, they are not the same. The 'ZamAI-Phi-3-Mini-Pashto' model uses the MIT license, while the 'Qwen3-30B-ThinkingMachines-Dakota1890' model uses the Apache 2.0 license.",
-    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must state that the licenses are different and correctly identify them as 'MIT' and 'Apache 2.0'."
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q006",
+    "type": "synthesis",
+    "difficulty": "medium",
+    "question": "Compare the licenses of the 'tasal9/ZamAI-Phi-3-Mini-Pashto' and 'mistralai/Pixtral-12B-2409' models. Are they the same?",
+    "ground_truth": "No, they are not the same. The 'ZamAI-Phi-3-Mini-Pashto' model uses the MIT license, while the 'Pixtral-12B-2409' model uses the Apache 2.0 license.",
+    "required_docs": [
+      "tasal9/ZamAI-Phi-3-Mini-Pashto",
+      "mistralai/Pixtral-12B-2409"
+    ],
+    "evaluation_criteria": "Answer must state that the licenses are different and correctly identify them as 'MIT' and 'Apache 2.0'.",
+    "source_model": "tasal9/ZamAI-Phi-3-Mini-Pashto",
+    "source_url": "https://huggingface.co/tasal9/ZamAI-Phi-3-Mini-Pashto"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q007", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q007",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the base model that 'PanzerBread/PromptCoT' was fine-tuned from?",
     "ground_truth": "The 'PanzerBread/PromptCoT' model was fine-tuned from 'Qwen/Qwen2.5-7B-Instruct'.",
-    "required_docs": ["PanzerBread/PromptCoT"],
-    "evaluation_criteria": "Answer must contain 'Qwen/Qwen2.5-7B-Instruct'."
+    "required_docs": [
+      "PanzerBread/PromptCoT"
+    ],
+    "evaluation_criteria": "Answer must contain 'Qwen/Qwen2.5-7B-Instruct'.",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q008", "type": "simple_lookup", "difficulty": "easy",
-    "question": "What is the training data source for the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' model?",
-    "ground_truth": "The model was trained on a dataset generated from Stephen Return Riggs' 1890 'Dakota Grammar & Dictionary'.",
-    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must mention 'Dakota Grammar & Dictionary' or 'Stephen Return Riggs'."
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q008",
+    "type": "simple_lookup",
+    "difficulty": "easy",
+    "question": "What is the SFT dataset used for the 'HuggingFaceTB/SmolLM2-135M' model?",
+    "ground_truth": "The SFT dataset is available at https://huggingface.co/datasets/HuggingFaceTB/smol-smoltalk.",
+    "required_docs": [
+      "HuggingFaceTB/SmolLM2-135M"
+    ],
+    "evaluation_criteria": "Answer must contain 'HuggingFaceTB/smol-smoltalk' or the full URL.",
+    "source_model": "HuggingFaceTB/SmolLM2-135M",
+    "source_url": "https://huggingface.co/HuggingFaceTB/SmolLM2-135M"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q009", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q009",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "According to its model card, what hardware is recommended for running the 'TevunahAi/NextCoder-32B-FP8' model?",
     "ground_truth": "The recommended hardware is an NVIDIA GPU with FP8 support, such as the Ada Lovelace series (RTX 40xx) or newer.",
-    "required_docs": ["TevunahAi/NextCoder-32B-FP8"],
-    "evaluation_criteria": "Answer must mention 'NVIDIA' and 'FP8' or 'Ada Lovelace' or 'RTX 40xx'."
+    "required_docs": [
+      "TevunahAi/NextCoder-32B-FP8"
+    ],
+    "evaluation_criteria": "Answer must mention 'NVIDIA' and 'FP8' or 'Ada Lovelace' or 'RTX 40xx'.",
+    "source_model": "TevunahAi/NextCoder-32B-FP8",
+    "source_url": "https://huggingface.co/TevunahAi/NextCoder-32B-FP8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q010", "type": "synthesis", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q010",
+    "type": "synthesis",
+    "difficulty": "medium",
     "question": "Summarize the 'key features' of the 'tasal9/ZamAI-Phi-3-Mini-Pashto' model.",
     "ground_truth": "Its key features are: Advanced AI based on Phi-3-mini, multilingual support for Pashto and English, high performance for production, and enterprise-grade security.",
-    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer should list several of the key features, such as being based on Phi-3, multilingual support, high performance, or security."
+    "required_docs": [
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer should list several of the key features, such as being based on Phi-3, multilingual support, high performance, or security.",
+    "source_model": "tasal9/ZamAI-Phi-3-Mini-Pashto",
+    "source_url": "https://huggingface.co/tasal9/ZamAI-Phi-3-Mini-Pashto"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q011", "type": "temporal_reasoning", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q011",
+    "type": "temporal_reasoning",
+    "difficulty": "medium",
     "question": "Of the models 'professorsynapse/nexus-tools_kto_v0.1.8', 'TevunahAi/NextCoder-32B-FP8', and 'ysn-rfd/ysnrfd-base-V2', which one was modified most recently?",
     "ground_truth": "The model modified most recently is 'professorsynapse/nexus-tools_kto_v0.1.8' (on 2025-11-23T16:58:25+00:00).",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "TevunahAi/NextCoder-32B-FP8", "ysn-rfd/ysnrfd-base-V2"],
-    "evaluation_criteria": "Answer must correctly identify 'professorsynapse/nexus-tools_kto_v0.1.8' as the most recent."
+    "required_docs": [
+      "professorsynapse/nexus-tools_kto_v0.1.8",
+      "TevunahAi/NextCoder-32B-FP8",
+      "ysn-rfd/ysnrfd-base-V2"
+    ],
+    "evaluation_criteria": "Answer must correctly identify 'professorsynapse/nexus-tools_kto_v0.1.8' as the most recent.",
+    "source_model": "professorsynapse/nexus-tools_kto_v0.1.8",
+    "source_url": "https://huggingface.co/professorsynapse/nexus-tools_kto_v0.1.8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q012", "type": "aggregation", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q012",
+    "type": "aggregation",
+    "difficulty": "medium",
     "question": "How many of the model cards for 'Clemylia/Iris-la-guepe', 'professorsynapse/nexus-tools_kto_v0.1.8', and 'tasal9/ZamAI-Phi-3-Mini-Pashto' list 'transformers' in their tags?",
     "ground_truth": "All three of the model cards list 'transformers' in their tags.",
-    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer must correctly state that 3 (or all three) of the models have the tag."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "professorsynapse/nexus-tools_kto_v0.1.8",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer must correctly state that 3 (or all three) of the models have the tag.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q013", "type": "contradiction", "difficulty": "hard",
-    "question": "According to their model cards, is it true that both the 'professorsynapse/nexus-tools_kto_v0.1.8' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' models share the same 'apache-2.0' license?",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q013",
+    "type": "contradiction",
+    "difficulty": "hard",
+    "question": "According to their model cards, is it true that both the 'mistralai/Pixtral-12B-2409' and 'HuggingFaceTB/SmolLM2-135M' models share the same 'apache-2.0' license?",
     "ground_truth": "Yes, it is true. Both model cards specify the 'apache-2.0' license.",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must correctly state 'Yes' or that the statement is true."
+    "required_docs": [
+      "mistralai/Pixtral-12B-2409",
+      "HuggingFaceTB/SmolLM2-135M"
+    ],
+    "evaluation_criteria": "Answer must correctly state 'Yes' or that the statement is true.",
+    "source_model": "mistralai/Pixtral-12B-2409",
+    "source_url": "https://huggingface.co/mistralai/Pixtral-12B-2409"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q014", "type": "cross_referencing", "difficulty": "medium",
-    "question": "For the following models, create a list indicating if their base model is from the 'Qwen' family: 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890', 'PanzerBread/PromptCoT', and 'TevunahAi/NextCoder-32B-FP8'.",
-    "ground_truth": "Yes, 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' is from the Qwen family. Yes, 'PanzerBread/PromptCoT' is from the Qwen family. No, 'TevunahAi/NextCoder-32B-FP8' is not.",
-    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890", "PanzerBread/PromptCoT", "TevunahAi/NextCoder-32B-FP8"],
-    "evaluation_criteria": "Answer must correctly identify that the first two models are from the Qwen family and the third is not."
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q014",
+    "type": "cross_referencing",
+    "difficulty": "medium",
+    "question": "For the following models, create a list indicating if their base model is from the 'Qwen' family: 'gladiy/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-extinct_tame_scorpion', 'mistralai/Mistral-Small-Instruct-2409', and 'jordialters/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-striped_noisy_caterpillar'.",
+    "ground_truth": "Yes, 'gladiy/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-extinct_tame_scorpion' is from the Qwen family. No, 'mistralai/Mistral-Small-Instruct-2409' is not from the Qwen family. Yes, 'jordialters/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-striped_noisy_caterpillar' is from the Qwen family.",
+    "required_docs": [
+      "gladiy/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-extinct_tame_scorpion",
+      "mistralai/Mistral-Small-Instruct-2409",
+      "jordialters/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-striped_noisy_caterpillar"
+    ],
+    "evaluation_criteria": "Answer must correctly identify that the first and third models are from the Qwen family and the second is not.",
+    "source_model": "gladiy/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-extinct_tame_scorpion",
+    "source_url": "https://huggingface.co/gladiy/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-extinct_tame_scorpion"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q015", "type": "synthesis", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q015",
+    "type": "synthesis",
+    "difficulty": "medium",
     "question": "What are the parameter counts for 'TevunahAi/NextCoder-32B-FP8' and 'mistralai/Pixtral-12B-2409' according to their model cards?",
     "ground_truth": "According to their names and cards, NextCoder has 32B parameters and Pixtral has 12B parameters.",
-    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "mistralai/Pixtral-12B-2409"],
-    "evaluation_criteria": "Answer must correctly state the parameter counts for both models (32B and 12B)."
+    "required_docs": [
+      "TevunahAi/NextCoder-32B-FP8",
+      "mistralai/Pixtral-12B-2409"
+    ],
+    "evaluation_criteria": "Answer must correctly state the parameter counts for both models (32B and 12B).",
+    "source_model": "TevunahAi/NextCoder-32B-FP8",
+    "source_url": "https://huggingface.co/TevunahAi/NextCoder-32B-FP8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q016", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q016",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What training regime is listed for the 'professorsynapse/nexus-tools_kto_v0.1.8' model?",
     "ground_truth": "The training regime is not explicitly stated, but it is a fine-tuned model.",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must state that the information is not provided or refer to fine-tuning."
+    "required_docs": [
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must state that the information is not provided or refer to fine-tuning.",
+    "source_model": "professorsynapse/nexus-tools_kto_v0.1.8",
+    "source_url": "https://huggingface.co/professorsynapse/nexus-tools_kto_v0.1.8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q017", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q017",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the context length of the AEGIS model described in 'zapabobouj/AEGIS-Phi3.5-Enhanced'?",
     "ground_truth": "The context length is 131,072 tokens.",
-    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced"],
-    "evaluation_criteria": "Answer must state '131,072'."
+    "required_docs": [
+      "zapabobouj/AEGIS-Phi3.5-Enhanced"
+    ],
+    "evaluation_criteria": "Answer must state '131,072'.",
+    "source_model": "zapabobouj/AEGIS-Phi3.5-Enhanced",
+    "source_url": "https://huggingface.co/zapabobouj/AEGIS-Phi3.5-Enhanced"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q018", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q018",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the training data freshness cutoff for the 'mistralai/Mistral-Small-Instruct-2409' model?",
     "ground_truth": "The training data cutoff is not explicitly mentioned in the provided text.",
-    "required_docs": ["mistralai/Mistral-Small-Instruct-2409"],
-    "evaluation_criteria": "Answer must state that the information is not available in the context."
+    "required_docs": [
+      "mistralai/Mistral-Small-Instruct-2409"
+    ],
+    "evaluation_criteria": "Answer must state that the information is not available in the context.",
+    "source_model": "mistralai/Mistral-Small-Instruct-2409",
+    "source_url": "https://huggingface.co/mistralai/Mistral-Small-Instruct-2409"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q019", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q019",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the parameter count of the 'microsoft/Phi-3.5-mini-instruct' base model used by 'tasal9/ZamAI-Phi-3-Mini-Pashto'?",
     "ground_truth": "The base model microsoft/Phi-3.5-mini-instruct has 3.8B parameters.",
-    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto", "zapabobouj/AEGIS-Phi3.5-Enhanced"],
-    "evaluation_criteria": "Answer must contain '3.8B'."
+    "required_docs": [
+      "tasal9/ZamAI-Phi-3-Mini-Pashto",
+      "zapabobouj/AEGIS-Phi3.5-Enhanced"
+    ],
+    "evaluation_criteria": "Answer must contain '3.8B'.",
+    "source_model": "tasal9/ZamAI-Phi-3-Mini-Pashto",
+    "source_url": "https://huggingface.co/tasal9/ZamAI-Phi-3-Mini-Pashto"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q020", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q020",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the primary library name mentioned in the metadata for 'professorsynapse/nexus-tools_kto_v0.1.8'?",
     "ground_truth": "The primary library name is 'unsloth'.",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must contain 'unsloth'."
+    "required_docs": [
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must contain 'unsloth'.",
+    "source_model": "professorsynapse/nexus-tools_kto_v0.1.8",
+    "source_url": "https://huggingface.co/professorsynapse/nexus-tools_kto_v0.1.8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q021", "type": "synthesis", "difficulty": "medium",
-    "question": "Which of the two models, 'TevunahAi/NextCoder-32B-FP8' or 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890', is larger in terms of parameter count?",
-    "ground_truth": "'TevunahAi/NextCoder-32B-FP8' is larger with 32B parameters compared to 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' which is based on a 30B model.",
-    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must correctly identify NextCoder as larger."
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q021",
+    "type": "synthesis",
+    "difficulty": "medium",
+    "question": "Which of the two models, 'TevunahAi/NextCoder-32B-FP8' or 'nightmedia/Qwen3-30B-A3B-YOYO-V4-MiroThinker-mxfp4-mlx', is larger in terms of parameter count?",
+    "ground_truth": "'TevunahAi/NextCoder-32B-FP8' is larger with 32B parameters compared to 'nightmedia/Qwen3-30B-A3B-YOYO-V4-MiroThinker-mxfp4-mlx' which has 30B parameters.",
+    "required_docs": [
+      "TevunahAi/NextCoder-32B-FP8",
+      "nightmedia/Qwen3-30B-A3B-YOYO-V4-MiroThinker-mxfp4-mlx"
+    ],
+    "evaluation_criteria": "Answer must correctly identify NextCoder as larger.",
+    "source_model": "TevunahAi/NextCoder-32B-FP8",
+    "source_url": "https://huggingface.co/TevunahAi/NextCoder-32B-FP8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q022", "type": "synthesis", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q022",
+    "type": "synthesis",
+    "difficulty": "medium",
     "question": "List the languages supported by both 'Clemylia/Iris-la-guepe' and 'tasal9/ZamAI-Phi-3-Mini-Pashto'.",
     "ground_truth": "'Clemylia/Iris-la-guepe' supports French ('fr'), while 'tasal9/ZamAI-Phi-3-Mini-Pashto' supports Pashto ('ps') and English ('en'). There are no languages supported by both.",
-    "required_docs": ["Clemylia/Iris-la-guepe", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer must correctly list the languages for each and state that there is no overlap."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer must correctly list the languages for each and state that there is no overlap.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q023", "type": "synthesis", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q023",
+    "type": "synthesis",
+    "difficulty": "medium",
     "question": "Do the 'PanzerBread/PromptCoT' and 'professorsynapse/nexus-tools_kto_v0.1.8' models use the same license?",
     "ground_truth": "Yes, both models use the 'apache-2.0' license.",
-    "required_docs": ["PanzerBread/PromptCoT", "professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must correctly state that both use the 'apache-2.0' license."
+    "required_docs": [
+      "PanzerBread/PromptCoT",
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must correctly state that both use the 'apache-2.0' license.",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q024", "type": "synthesis", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q024",
+    "type": "synthesis",
+    "difficulty": "medium",
     "question": "What are the two different base models used by 'PanzerBread/PromptCoT' and 'professorsynapse/nexus-tools_kto_v0.1.8'?",
     "ground_truth": "The base models are 'Qwen/Qwen2.5-7B-Instruct' for PanzerBread/PromptCoT and 'unsloth/mistral-7b-instruct-v0.3-bnb-4bit' for professorsynapse/nexus-tools_kto_v0.1.8.",
-    "required_docs": ["PanzerBread/PromptCoT", "professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must correctly identify both base models."
+    "required_docs": [
+      "PanzerBread/PromptCoT",
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must correctly identify both base models.",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q025", "type": "synthesis", "difficulty": "hard",
-    "question": "Between 'professorsynapse/nexus-tools_kto_v0.1.8' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890', which model card provides more detailed information about its training reward function?",
-    "ground_truth": "The model card for 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' provides detailed information about its composite reward function, while the card for 'professorsynapse/nexus-tools_kto_v0.1.8' does not.",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must correctly identify the HarleyCooper model as having more detail on the reward function."
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q025",
+    "type": "synthesis",
+    "difficulty": "hard",
+    "question": "Between 'professorsynapse/nexus-tools_kto_v0.1.8' and 'HarleyCooper/Qwen3-30B-Dakota1890', which model card provides more detailed information about its training reward function?",
+    "ground_truth": "The model card for 'HarleyCooper/Qwen3-30B-Dakota1890' provides detailed information about its composite reward function, while the card for 'professorsynapse/nexus-tools_kto_v0.1.8' does not.",
+    "required_docs": [
+      "professorsynapse/nexus-tools_kto_v0.1.8",
+      "HarleyCooper/Qwen3-30B-Dakota1890"
+    ],
+    "evaluation_criteria": "Answer must correctly identify the HarleyCooper model as having more detail on the reward function.",
+    "source_model": "professorsynapse/nexus-tools_kto_v0.1.8",
+    "source_url": "https://huggingface.co/professorsynapse/nexus-tools_kto_v0.1.8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q026", "type": "contradiction", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q026",
+    "type": "contradiction",
+    "difficulty": "hard",
     "question": "The model card for 'tasal9/ZamAI-Phi-3-Mini-Pashto' states it is based on 'microsoft/Phi-3-mini-4k-instruct'. Is it true that the 'zapabobouj/AEGIS-Phi3.5-Enhanced' model is based on the exact same model?",
     "ground_truth": "No, it is not. The AEGIS model is based on 'Microsoft Phi-3.5-mini-instruct', a different model.",
-    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto", "zapabobouj/AEGIS-Phi3.5-Enhanced"],
-    "evaluation_criteria": "Answer must state that the base models are different."
+    "required_docs": [
+      "tasal9/ZamAI-Phi-3-Mini-Pashto",
+      "zapabobouj/AEGIS-Phi3.5-Enhanced"
+    ],
+    "evaluation_criteria": "Answer must state that the base models are different.",
+    "source_model": "tasal9/ZamAI-Phi-3-Mini-Pashto",
+    "source_url": "https://huggingface.co/tasal9/ZamAI-Phi-3-Mini-Pashto"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q027", "type": "contradiction", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q027",
+    "type": "contradiction",
+    "difficulty": "hard",
     "question": "Both 'TevunahAi/NextCoder-32B-FP8' and 'professorsynapse/nexus-tools_kto_v0.1.8' are listed with a 'transformers' library tag. Is it true they both also share the 'unsloth' tag?",
     "ground_truth": "No, this is not true. Only 'professorsynapse/nexus-tools_kto_v0.1.8' has the 'unsloth' tag.",
-    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must state that only one of the models has the 'unsloth' tag."
+    "required_docs": [
+      "TevunahAi/NextCoder-32B-FP8",
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must state that only one of the models has the 'unsloth' tag.",
+    "source_model": "TevunahAi/NextCoder-32B-FP8",
+    "source_url": "https://huggingface.co/TevunahAi/NextCoder-32B-FP8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q028", "type": "contradiction", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q028",
+    "type": "contradiction",
+    "difficulty": "hard",
     "question": "Is the license for 'TevunahAi/NextCoder-32B-FP8' the same as the license for 'tasal9/ZamAI-Phi-3-Mini-Pashto'?",
     "ground_truth": "Yes, both models use the MIT license.",
-    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer must correctly state that the licenses are the same (MIT)."
+    "required_docs": [
+      "TevunahAi/NextCoder-32B-FP8",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer must correctly state that the licenses are the same (MIT).",
+    "source_model": "TevunahAi/NextCoder-32B-FP8",
+    "source_url": "https://huggingface.co/TevunahAi/NextCoder-32B-FP8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q029", "type": "contradiction", "difficulty": "hard",
-    "question": "The 'PanzerBread/PromptCoT' model card describes an Expectation-Maximization (EM) training loop. Does the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' card describe the same training method?",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q029",
+    "type": "contradiction",
+    "difficulty": "hard",
+    "question": "The 'PanzerBread/PromptCoT' model card describes an Expectation-Maximization (EM) training loop. Does the 'HarleyCooper/Qwen3-30B-Dakota1890' card describe the same training method?",
     "ground_truth": "No, it does not. The 'HarleyCooper' model was trained using Group Relative Policy Optimization (GRPO), not an EM loop.",
-    "required_docs": ["PanzerBread/PromptCoT", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must state the training methods are different and correctly identify GRPO."
+    "required_docs": [
+      "PanzerBread/PromptCoT",
+      "HarleyCooper/Qwen3-30B-Dakota1890"
+    ],
+    "evaluation_criteria": "Answer must state the training methods are different and correctly identify GRPO.",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q030", "type": "contradiction", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q030",
+    "type": "contradiction",
+    "difficulty": "hard",
     "question": "Is it correct to say that both 'zapabobouj/AEGIS-Phi3.5-Enhanced' and 'tasal9/ZamAI-Phi-3-Mini-Pashto' are optimized for the Japanese language?",
     "ground_truth": "No, that is incorrect. 'zapabobouj/AEGIS-Phi3.5-Enhanced' supports Japanese, but 'tasal9/ZamAI-Phi-3-Mini-Pashto' is optimized for Pashto and English.",
-    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer must state the claim is incorrect and identify the correct languages."
+    "required_docs": [
+      "zapabobouj/AEGIS-Phi3.5-Enhanced",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer must state the claim is incorrect and identify the correct languages.",
+    "source_model": "zapabobouj/AEGIS-Phi3.5-Enhanced",
+    "source_url": "https://huggingface.co/zapabobouj/AEGIS-Phi3.5-Enhanced"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q031", "type": "temporal_reasoning", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q031",
+    "type": "temporal_reasoning",
+    "difficulty": "medium",
     "question": "Which model was updated more recently: 'shallowtensr/affine-af' or 'professorsynapse/nexus-tools_kto_v0.1.7'?",
     "ground_truth": "'shallowtensr/affine-af' was updated more recently (2025-11-23T16:25:38+00:00) than 'professorsynapse/nexus-tools_kto_v0.1.7' (2025-11-23T16:13:07+00:00).",
-    "required_docs": ["shallowtensr/affine-af", "professorsynapse/nexus-tools_kto_v0.1.7"],
-    "evaluation_criteria": "Answer must correctly identify 'shallowtensr/affine-af' as more recent."
+    "required_docs": [
+      "shallowtensr/affine-af",
+      "professorsynapse/nexus-tools_kto_v0.1.7"
+    ],
+    "evaluation_criteria": "Answer must correctly identify 'shallowtensr/affine-af' as more recent.",
+    "source_model": "shallowtensr/affine-af",
+    "source_url": "https://huggingface.co/shallowtensr/affine-af"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q032", "type": "temporal_reasoning", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q032",
+    "type": "temporal_reasoning",
+    "difficulty": "medium",
     "question": "List all the models from the provided context that were last modified on '2025-11-23'.",
     "ground_truth": "Multiple models were modified on this date, including 'Clemylia/Iris-la-guepe', 'professorsynapse/nexus-tools_kto_v0.1.8', 'hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis', etc.",
-    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8", "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis"],
-    "evaluation_criteria": "Answer must list at least two of the models modified on the specified date."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "professorsynapse/nexus-tools_kto_v0.1.8",
+      "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis"
+    ],
+    "evaluation_criteria": "Answer must list at least two of the models modified on the specified date.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q033", "type": "temporal_reasoning", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q033",
+    "type": "temporal_reasoning",
+    "difficulty": "hard",
     "question": "What is the time difference in minutes between the last modification of 'Clemylia/Iris-la-guepe' and 'professorsynapse/nexus-tools_kto_v0.1.8'?",
     "ground_truth": "The time difference is approximately 35 minutes ('Clemylia/Iris-la-guepe' at 17:03:37 and 'professorsynapse/nexus-tools_kto_v0.1.8' at 16:58:25).",
-    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must provide a time difference that is approximately 35 minutes."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must provide a time difference that is approximately 35 minutes.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q034", "type": "temporal_reasoning", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q034",
+    "type": "temporal_reasoning",
+    "difficulty": "medium",
     "question": "Was the model 'ysn-rfd/ysnrfd-base-V2' last modified before or after 'TevunahAi/NextCoder-32B-FP8'?",
     "ground_truth": "'ysn-rfd/ysnrfd-base-V2' was modified before 'TevunahAi/NextCoder-32B-FP8'.",
-    "required_docs": ["ysn-rfd/ysnrfd-base-V2", "TevunahAi/NextCoder-32B-FP8"],
-    "evaluation_criteria": "Answer must correctly state 'before'."
+    "required_docs": [
+      "ysn-rfd/ysnrfd-base-V2",
+      "TevunahAi/NextCoder-32B-FP8"
+    ],
+    "evaluation_criteria": "Answer must correctly state 'before'.",
+    "source_model": "ysn-rfd/ysnrfd-base-V2",
+    "source_url": "https://huggingface.co/ysn-rfd/ysnrfd-base-V2"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q035", "type": "temporal_reasoning", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q035",
+    "type": "temporal_reasoning",
+    "difficulty": "easy",
     "question": "What is the last modified date of the 'small-blue/pos-207' model?",
     "ground_truth": "The last modified date is 2025-11-23T16:42:20+00:00.",
-    "required_docs": ["small-blue/pos-207"],
-    "evaluation_criteria": "Answer must contain '2025-11-23'."
+    "required_docs": [
+      "small-blue/pos-207"
+    ],
+    "evaluation_criteria": "Answer must contain '2025-11-23'.",
+    "source_model": "small-blue/pos-207",
+    "source_url": "https://huggingface.co/small-blue/pos-207"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q036", "type": "aggregation", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q036",
+    "type": "aggregation",
+    "difficulty": "medium",
     "question": "How many of the provided model cards have the 'safetensors' tag?",
     "ground_truth": "At least 5 models listed have the 'safetensors' tag.",
-    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8", "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis", "tasal9/ZamAI-Phi-3-Mini-Pashto", "hirundo-io/telecom-ft-500-persons-llama-3.2-3b_misha_unlearned_1"],
-    "evaluation_criteria": "Answer must provide a count of 5 or more."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "professorsynapse/nexus-tools_kto_v0.1.8",
+      "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto",
+      "hirundo-io/telecom-ft-500-persons-llama-3.2-3b_misha_unlearned_1"
+    ],
+    "evaluation_criteria": "Answer must provide a count of 5 or more.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q037", "type": "aggregation", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q037",
+    "type": "aggregation",
+    "difficulty": "hard",
     "question": "What is the sum of tokens for the models 'Clemylia/Iris-la-guepe' and 'professorsynapse/nexus-tools_kto_v0.1.8'?",
     "ground_truth": "The sum of tokens is 1188 + 1071 = 2259.",
-    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must be 2259."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must be 2259.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q038", "type": "aggregation", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q038",
+    "type": "aggregation",
+    "difficulty": "medium",
     "question": "Count how many models in the provided context list 'qwen2' as a tag.",
     "ground_truth": "At least three models ('hanmock/...', 'small-blue/pos-207', 'Samuell43/...') have the 'qwen2' tag.",
-    "required_docs": ["hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis", "small-blue/pos-207", "Samuell43/Qwen2.5-Coder-1.5B-Instruct-Gensyn-Swarm-dappled_territorial_mule"],
-    "evaluation_criteria": "Answer must state a count of 3 or more."
+    "required_docs": [
+      "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis",
+      "small-blue/pos-207",
+      "Samuell43/Qwen2.5-Coder-1.5B-Instruct-Gensyn-Swarm-dappled_territorial_mule"
+    ],
+    "evaluation_criteria": "Answer must state a count of 3 or more.",
+    "source_model": "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis",
+    "source_url": "https://huggingface.co/hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q039", "type": "aggregation", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q039",
+    "type": "aggregation",
+    "difficulty": "hard",
     "question": "What is the total number of languages explicitly supported by 'Clemylia/Iris-la-guepe' and 'tasal9/ZamAI-Phi-3-Mini-Pashto' combined?",
     "ground_truth": "A total of 3 languages are supported (French from the first, Pashto and English from the second).",
-    "required_docs": ["Clemylia/Iris-la-guepe", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
-    "evaluation_criteria": "Answer must correctly identify the total as 3."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto"
+    ],
+    "evaluation_criteria": "Answer must correctly identify the total as 3.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q040", "type": "aggregation", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q040",
+    "type": "aggregation",
+    "difficulty": "medium",
     "question": "How many models in the context list 'peft' in their tags?",
-    "ground_truth": "At least 3 models have the 'peft' tag ('shallowtensr/affine-af', 'PanzerBread/PromptCoT', 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890').",
-    "required_docs": ["shallowtensr/affine-af", "PanzerBread/PromptCoT", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must be a count of 3 or more."
+    "ground_truth": "At least 3 models have the 'peft' tag ('shallowtensr/affine-af', 'PanzerBread/PromptCoT', 'HarleyCooper/Qwen3-30B-Dakota1890').",
+    "required_docs": [
+      "shallowtensr/affine-af",
+      "PanzerBread/PromptCoT",
+      "HarleyCooper/Qwen3-30B-Dakota1890"
+    ],
+    "evaluation_criteria": "Answer must be a count of 3 or more.",
+    "source_model": "shallowtensr/affine-af",
+    "source_url": "https://huggingface.co/shallowtensr/affine-af"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q041", "type": "cross_referencing", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q041",
+    "type": "cross_referencing",
+    "difficulty": "medium",
     "question": "For the models 'Clemylia/Iris-la-guepe' and 'professorsynapse/nexus-tools_kto_v0.1.8', list their respective licenses.",
     "ground_truth": "'Clemylia/Iris-la-guepe' license is 'mit', and 'professorsynapse/nexus-tools_kto_v0.1.8' license is 'apache-2.0'.",
-    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8"],
-    "evaluation_criteria": "Answer must list both licenses correctly next to their model."
+    "required_docs": [
+      "Clemylia/Iris-la-guepe",
+      "professorsynapse/nexus-tools_kto_v0.1.8"
+    ],
+    "evaluation_criteria": "Answer must list both licenses correctly next to their model.",
+    "source_model": "Clemylia/Iris-la-guepe",
+    "source_url": "https://huggingface.co/Clemylia/Iris-la-guepe"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q042", "type": "cross_referencing", "difficulty": "hard",
-    "question": "Create a list of the 'base_model' for each of these three models: 'professorsynapse/nexus-tools_kto_v0.1.8', 'tasal9/ZamAI-Phi-3-Mini-Pashto', 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890'.",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q042",
+    "type": "cross_referencing",
+    "difficulty": "hard",
+    "question": "Create a list of the 'base_model' for each of these three models: 'professorsynapse/nexus-tools_kto_v0.1.8', 'tasal9/ZamAI-Phi-3-Mini-Pashto', 'HarleyCooper/Qwen3-30B-Dakota1890'.",
     "ground_truth": "nexus-tools: unsloth/mistral-7b-instruct-v0.3-bnb-4bit; ZamAI: microsoft/Phi-3-mini-4k-instruct; Qwen3: Qwen/Qwen3-30B-A3B-Instruct-2507.",
-    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "tasal9/ZamAI-Phi-3-Mini-Pashto", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must correctly list all three base models."
+    "required_docs": [
+      "professorsynapse/nexus-tools_kto_v0.1.8",
+      "tasal9/ZamAI-Phi-3-Mini-Pashto",
+      "HarleyCooper/Qwen3-30B-Dakota1890"
+    ],
+    "evaluation_criteria": "Answer must correctly list all three base models.",
+    "source_model": "professorsynapse/nexus-tools_kto_v0.1.8",
+    "source_url": "https://huggingface.co/professorsynapse/nexus-tools_kto_v0.1.8"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q043", "type": "cross_referencing", "difficulty": "medium",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q043",
+    "type": "cross_referencing",
+    "difficulty": "medium",
     "question": "Which of the models 'adpretko/ml815-model9' and 'shallowtensr/affine-af' specifies 'peft' as a library?",
     "ground_truth": "'shallowtensr/affine-af' specifies 'peft' as a library in its card, while 'adpretko/ml815-model9' does not.",
-    "required_docs": ["adpretko/ml815-model9", "shallowtensr/affine-af"],
-    "evaluation_criteria": "Answer must correctly identify 'shallowtensr/affine-af'."
+    "required_docs": [
+      "adpretko/ml815-model9",
+      "shallowtensr/affine-af"
+    ],
+    "evaluation_criteria": "Answer must correctly identify 'shallowtensr/affine-af'.",
+    "source_model": "adpretko/ml815-model9",
+    "source_url": "https://huggingface.co/adpretko/ml815-model9"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q044", "type": "cross_referencing", "difficulty": "hard",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q044",
+    "type": "cross_referencing",
+    "difficulty": "hard",
     "question": "For 'zapabobouj/AEGIS-Phi3.5-Enhanced' and 'TevunahAi/NextCoder-32B-FP8', list the hardware mentioned for either training or inference.",
     "ground_truth": "AEGIS mentions no specific hardware. NextCoder recommends an NVIDIA GPU with FP8 support (e.g., Ada Lovelace series) for inference and was quantized on an NVIDIA RTX 5000 Ada.",
-    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced", "TevunahAi/NextCoder-32B-FP8"],
-    "evaluation_criteria": "Answer must mention the NVIDIA hardware for NextCoder and state none is listed for AEGIS."
+    "required_docs": [
+      "zapabobouj/AEGIS-Phi3.5-Enhanced",
+      "TevunahAi/NextCoder-32B-FP8"
+    ],
+    "evaluation_criteria": "Answer must mention the NVIDIA hardware for NextCoder and state none is listed for AEGIS.",
+    "source_model": "zapabobouj/AEGIS-Phi3.5-Enhanced",
+    "source_url": "https://huggingface.co/zapabobouj/AEGIS-Phi3.5-Enhanced"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q045", "type": "cross_referencing", "difficulty": "medium",
-    "question": "Do the model cards for 'PanzerBread/PromptCoT' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' both cite a paper on arxiv.org?",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q045",
+    "type": "cross_referencing",
+    "difficulty": "medium",
+    "question": "Do the model cards for 'PanzerBread/PromptCoT' and 'HarleyCooper/Qwen3-30B-Dakota1890' both cite a paper on arxiv.org?",
     "ground_truth": "No, only the PanzerBread/PromptCoT card cites an arxiv paper. The HarleyCooper card cites a book from 1890.",
-    "required_docs": ["PanzerBread/PromptCoT", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must correctly state that only one cites an arxiv paper."
+    "required_docs": [
+      "PanzerBread/PromptCoT",
+      "HarleyCooper/Qwen3-30B-Dakota1890"
+    ],
+    "evaluation_criteria": "Answer must correctly state that only one cites an arxiv paper.",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q046", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q046",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the training data for the 'ysn-rfd/ysnrfd-base-V2' model?",
     "ground_truth": "The training data is wikitext2-raw-v1.",
-    "required_docs": ["ysn-rfd/ysnrfd-base-V2"],
-    "evaluation_criteria": "Answer must mention 'wikitext2-raw-v1'."
+    "required_docs": [
+      "ysn-rfd/ysnrfd-base-V2"
+    ],
+    "evaluation_criteria": "Answer must mention 'wikitext2-raw-v1'.",
+    "source_model": "ysn-rfd/ysnrfd-base-V2",
+    "source_url": "https://huggingface.co/ysn-rfd/ysnrfd-base-V2"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q047", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q047",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the parameter count for the AEGIS model from 'zapabobouj/AEGIS-Phi3.5-Enhanced'?",
     "ground_truth": "The AEGIS model has 3.8B parameters.",
-    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced"],
-    "evaluation_criteria": "Answer must contain '3.8B'."
+    "required_docs": [
+      "zapabobouj/AEGIS-Phi3.5-Enhanced"
+    ],
+    "evaluation_criteria": "Answer must contain '3.8B'.",
+    "source_model": "zapabobouj/AEGIS-Phi3.5-Enhanced",
+    "source_url": "https://huggingface.co/zapabobouj/AEGIS-Phi3.5-Enhanced"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q048", "type": "simple_lookup", "difficulty": "easy",
-    "question": "What training method is listed for the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' model?",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q048",
+    "type": "simple_lookup",
+    "difficulty": "easy",
+    "question": "What training method is listed for the 'HarleyCooper/Qwen3-30B-Dakota1890' model?",
     "ground_truth": "The training method is GRPO (Group Relative Policy Optimization).",
-    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
-    "evaluation_criteria": "Answer must contain 'GRPO' or 'Group Relative Policy Optimization'."
+    "required_docs": [
+      "HarleyCooper/Qwen3-30B-Dakota1890"
+    ],
+    "evaluation_criteria": "Answer must contain 'GRPO' or 'Group Relative Policy Optimization'.",
+    "source_model": "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890",
+    "source_url": ""
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q049", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q049",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the model type of 'PanzerBread/PromptCoT'?",
     "ground_truth": "It is a LoRA fine-tuned Causal Language Model.",
-    "required_docs": ["PanzerBread/PromptCoT"],
-    "evaluation_criteria": "Answer must mention 'LoRA' or 'Causal Language Model'."
+    "required_docs": [
+      "PanzerBread/PromptCoT"
+    ],
+    "evaluation_criteria": "Answer must mention 'LoRA' or 'Causal Language Model'.",
+    "source_model": "PanzerBread/PromptCoT",
+    "source_url": "https://huggingface.co/PanzerBread/PromptCoT"
   },
   {
-    "experiment": "exp1_needle", "question_id": "exp1_q050", "type": "simple_lookup", "difficulty": "easy",
+    "experiment": "exp1_needle",
+    "question_id": "exp1_q050",
+    "type": "simple_lookup",
+    "difficulty": "easy",
     "question": "What is the 'last_modified' date for the 'shallowtensr/affine-af' model card?",
     "ground_truth": "The last modified date is 2025-11-23T16:25:38+00:00.",
-    "required_docs": ["shallowtensr/affine-af"],
-    "evaluation_criteria": "Answer must contain the date '2025-11-23'."
+    "required_docs": [
+      "shallowtensr/affine-af"
+    ],
+    "evaluation_criteria": "Answer must contain the date '2025-11-23'.",
+    "source_model": "shallowtensr/affine-af",
+    "source_url": "https://huggingface.co/shallowtensr/affine-af"
   }
 ]
