@@ -18,7 +18,7 @@ def parse_args() -> argparse.Namespace:
     )
     parser.add_argument(
         "--after-date",
-        default="2024-08-01",
+        default="2025-02-01",
         help="Minimum lastModified date for model cards.",
     )
     parser.add_argument(

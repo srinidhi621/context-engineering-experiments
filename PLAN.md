@@ -95,7 +95,7 @@ Use `scripts/collect_exp1_corpus.py` to fetch documentation from 30 popular repo
 - Rust (rust-lang, tokio)
 - Other (Django, Flask, Rails, Terraform, etc.)
 
-All docs filtered to modifications after 2024-08-01.
+All docs filtered to modifications after 2025-02-01.
 Save to: `data/raw/exp1/github_corpus.json`
 
 **Day 3: Collect Gutenberg Padding Corpus (2M+ tokens)**

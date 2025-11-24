@@ -1,1151 +1,352 @@
 [
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q001",
-    "question": "According to the Llama 3.3-70B Instruct model card, what is the model's context length?",
-    "ground_truth": "The Llama 3.3-70B Instruct card specifies a 128k-token context length.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must explicitly state a 128k-token context window.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "context length",
-      "128k",
-      "Llama 3.3"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q001", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the base model for the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' model?",
+    "ground_truth": "The base model is Qwen/Qwen3-30B-A3B-Instruct-2507.",
+    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must contain 'Qwen/Qwen3-30B-A3B-Instruct-2507'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q002",
-    "question": "What license governs the use of the Llama 3.3-70B Instruct model according to its card?",
-    "ground_truth": "Usage is governed by the Llama 3.3 Community License Agreement provided by Meta.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer should mention the 'Llama 3.3 Community License Agreement' by name.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "license",
-      "Llama 3.3",
-      "community licence"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q002", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What quantization method was used for the 'TevunahAi/NextCoder-32B-FP8' model?",
+    "ground_truth": "The model was quantized using the FP8 (E4M3) method.",
+    "required_docs": ["TevunahAi/NextCoder-32B-FP8"],
+    "evaluation_criteria": "Answer must contain 'FP8' or 'E4M3'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q003",
-    "question": "Does the Llama 3.3-70B Instruct card list supported languages, and if so, which language family does it cover?",
-    "ground_truth": "The card lists English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai, indicating coverage of both Indo-European and Indic languages.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer should list at least four of the languages given and mention the multilingual coverage (Indo-European plus Indic).",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "languages",
-      "multilingual",
-      "Llama 3.3"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q003", "type": "simple_lookup", "difficulty": "easy",
+    "question": "For which two languages is the 'tasal9/ZamAI-Phi-3-Mini-Pashto' model optimized?",
+    "ground_truth": "The model is optimized for Pashto and English.",
+    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer must mention both 'Pashto' and 'English'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q004",
-    "question": "According to the Qwen2.5-0.5B model card, what pipeline tag is associated with this model?",
-    "ground_truth": "The card tags the pipeline as text-generation.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "Qwen/Qwen2.5-0.5B"
-    ],
-    "evaluation_criteria": "Answer must state 'text-generation'.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
-    "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": [
-      "pipeline_tag",
-      "text-generation"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q004", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What are the two distinct model types in the PromptCoT 2.0 dual-model system described in the 'PanzerBread/PromptCoT' card?",
+    "ground_truth": "The two models are the pθ (Prompt Model) and the qφ (Rationale Model).",
+    "required_docs": ["PanzerBread/PromptCoT"],
+    "evaluation_criteria": "Answer must mention both 'Prompt Model' (or 'pθ') and 'Rationale Model' (or 'qφ')."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q005",
-    "question": "What license governs the Qwen2.5-0.5B model?",
-    "ground_truth": "The Qwen2.5-0.5B model is released under the Apache 2.0 license.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "Qwen/Qwen2.5-0.5B"
-    ],
-    "evaluation_criteria": "Answer must explicitly mention Apache-2.0.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
-    "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": [
-      "license",
-      "Apache 2.0"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q005", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the license for the 'professorsynapse/nexus-tools_kto_v0.1.8' model?",
+    "ground_truth": "The license for the model is apache-2.0.",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must contain 'apache-2.0'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q006",
-    "question": "What training data summary does the Llama 3.3 (text-only) row provide?",
-    "ground_truth": "The table states that the text-only Llama 3.3 model is trained on a new mix of publicly available online data.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention \"new mix\" and that the data is publicly available online.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "training data",
-      "publicly available"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q006", "type": "synthesis", "difficulty": "medium",
+    "question": "Compare the licenses of the 'tasal9/ZamAI-Phi-3-Mini-Pashto' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' models. Are they the same?",
+    "ground_truth": "No, they are not the same. The 'ZamAI-Phi-3-Mini-Pashto' model uses the MIT license, while the 'Qwen3-30B-ThinkingMachines-Dakota1890' model uses the Apache 2.0 license.",
+    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must state that the licenses are different and correctly identify them as 'MIT' and 'Apache 2.0'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q007",
-    "question": "Which input and output modalities are listed for the Llama 3.3 text-only model?",
-    "ground_truth": "The table shows Multilingual Text as the input modality and Multilingual Text and code as the output modalities.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must identify both input (multilingual text) and output (multilingual text plus code).",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "modalities",
-      "input",
-      "output"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q007", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the base model that 'PanzerBread/PromptCoT' was fine-tuned from?",
+    "ground_truth": "The 'PanzerBread/PromptCoT' model was fine-tuned from 'Qwen/Qwen2.5-7B-Instruct'.",
+    "required_docs": ["PanzerBread/PromptCoT"],
+    "evaluation_criteria": "Answer must contain 'Qwen/Qwen2.5-7B-Instruct'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q008",
-    "question": "What range of parameter sizes does the Qwen2.5 family release according to the 0.5B card?",
-    "ground_truth": "The introduction states that Qwen2.5 releases base and instruction-tuned models ranging from 0.5 to 72 billion parameters.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "Qwen/Qwen2.5-0.5B"
-    ],
-    "evaluation_criteria": "Answer must mention both endpoints: 0.5B and 72B parameters.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
-    "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": [
-      "parameters",
-      "range",
-      "Qwen2.5"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q008", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the training data source for the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' model?",
+    "ground_truth": "The model was trained on a dataset generated from Stephen Return Riggs' 1890 'Dakota Grammar & Dictionary'.",
+    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must mention 'Dakota Grammar & Dictionary' or 'Stephen Return Riggs'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q009",
-    "question": "List two capability improvements Qwen2.5 highlights over Qwen2 in its 0.5B card.",
-    "ground_truth": "The card states that Qwen2.5 adds significantly more knowledge with improved coding and mathematics experts, and also improves instruction following, long-text generation beyond 8K tokens, structured data understanding, and structured output generation.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-0.5B"
-    ],
-    "evaluation_criteria": "Answer must mention at least two specific improvements cited (e.g., better coding/maths plus improved instruction following or long-text generation).",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
-    "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": [
-      "improvements",
-      "instruction following",
-      "coding",
-      "math"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q009", "type": "simple_lookup", "difficulty": "easy",
+    "question": "According to its model card, what hardware is recommended for running the 'TevunahAi/NextCoder-32B-FP8' model?",
+    "ground_truth": "The recommended hardware is an NVIDIA GPU with FP8 support, such as the Ada Lovelace series (RTX 40xx) or newer.",
+    "required_docs": ["TevunahAi/NextCoder-32B-FP8"],
+    "evaluation_criteria": "Answer must mention 'NVIDIA' and 'FP8' or 'Ada Lovelace' or 'RTX 40xx'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q010",
-    "question": "What GQA capability does the Llama 3.3 text-only model indicate in its comparison table?",
-    "ground_truth": "The table marks GQA as 'Yes' for the Llama 3.3 text-only row.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must clearly state that GQA is supported (Yes).",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "GQA",
-      "table"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q010", "type": "synthesis", "difficulty": "medium",
+    "question": "Summarize the 'key features' of the 'tasal9/ZamAI-Phi-3-Mini-Pashto' model.",
+    "ground_truth": "Its key features are: Advanced AI based on Phi-3-mini, multilingual support for Pashto and English, high performance for production, and enterprise-grade security.",
+    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer should list several of the key features, such as being based on Phi-3, multilingual support, high performance, or security."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q011",
-    "question": "What knowledge cutoff is listed for Llama 3.3 in the model table?",
-    "ground_truth": "The card lists December 2023 as the knowledge cutoff.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer should say 'December 2023'.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "knowledge cutoff",
-      "December 2023"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q011", "type": "temporal_reasoning", "difficulty": "medium",
+    "question": "Of the models 'professorsynapse/nexus-tools_kto_v0.1.8', 'TevunahAi/NextCoder-32B-FP8', and 'ysn-rfd/ysnrfd-base-V2', which one was modified most recently?",
+    "ground_truth": "The model modified most recently is 'professorsynapse/nexus-tools_kto_v0.1.8' (on 2025-11-23T16:58:25+00:00).",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "TevunahAi/NextCoder-32B-FP8", "ysn-rfd/ysnrfd-base-V2"],
+    "evaluation_criteria": "Answer must correctly identify 'professorsynapse/nexus-tools_kto_v0.1.8' as the most recent."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q012",
-    "question": "How many input modalities does the Llama 3.3 text-only model expose?",
-    "ground_truth": "The card lists Multilingual Text as the sole input modality.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention only one input modality: multilingual text.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "input modality"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q012", "type": "aggregation", "difficulty": "medium",
+    "question": "How many of the model cards for 'Clemylia/Iris-la-guepe', 'professorsynapse/nexus-tools_kto_v0.1.8', and 'tasal9/ZamAI-Phi-3-Mini-Pashto' list 'transformers' in their tags?",
+    "ground_truth": "All three of the model cards list 'transformers' in their tags.",
+    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer must correctly state that 3 (or all three) of the models have the tag."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q013",
-    "question": "What output modalities does the Llama 3.3 text-only entry support?",
-    "ground_truth": "It outputs Multilingual Text and code.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.3-70B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention both text and code outputs.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.3-70B-Instruct",
-    "source_model": "meta-llama/Llama-3.3-70B-Instruct",
-    "keywords": [
-      "output modalities"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q013", "type": "contradiction", "difficulty": "hard",
+    "question": "According to their model cards, is it true that both the 'professorsynapse/nexus-tools_kto_v0.1.8' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' models share the same 'apache-2.0' license?",
+    "ground_truth": "Yes, it is true. Both model cards specify the 'apache-2.0' license.",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must correctly state 'Yes' or that the statement is true."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q014",
-    "question": "According to the Qwen2.5-0.5B card, what kinds of improvements are driven by specialized expert models?",
-    "ground_truth": "The card credits specialized expert models for significantly more knowledge and greatly improved coding and mathematics capabilities.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-0.5B"
-    ],
-    "evaluation_criteria": "Answer must mention both increased knowledge and improvements in coding/mathematics tied to expert models.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-0.5B",
-    "source_model": "Qwen/Qwen2.5-0.5B",
-    "keywords": [
-      "experts",
-      "coding",
-      "math"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q014", "type": "cross_referencing", "difficulty": "medium",
+    "question": "For the following models, create a list indicating if their base model is from the 'Qwen' family: 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890', 'PanzerBread/PromptCoT', and 'TevunahAi/NextCoder-32B-FP8'.",
+    "ground_truth": "Yes, 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' is from the Qwen family. Yes, 'PanzerBread/PromptCoT' is from the Qwen family. No, 'TevunahAi/NextCoder-32B-FP8' is not.",
+    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890", "PanzerBread/PromptCoT", "TevunahAi/NextCoder-32B-FP8"],
+    "evaluation_criteria": "Answer must correctly identify that the first two models are from the Qwen family and the third is not."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q015",
-    "question": "What license governs the use of Llama Guard 3-1B?",
-    "ground_truth": "The card states that use is governed by the Llama 3.2 Community License Agreement.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-Guard-3-1B"
-    ],
-    "evaluation_criteria": "Answer must mention the \"Llama 3.2 Community License Agreement\" by name.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-1B",
-    "source_model": "meta-llama/Llama-Guard-3-1B",
-    "keywords": [
-      "license",
-      "Llama Guard"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q015", "type": "synthesis", "difficulty": "medium",
+    "question": "What are the parameter counts for 'TevunahAi/NextCoder-32B-FP8' and 'mistralai/Pixtral-12B-2409' according to their model cards?",
+    "ground_truth": "According to their names and cards, NextCoder has 32B parameters and Pixtral has 12B parameters.",
+    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "mistralai/Pixtral-12B-2409"],
+    "evaluation_criteria": "Answer must correctly state the parameter counts for both models (32B and 12B)."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q016",
-    "question": "Which languages does the Llama Guard 3-1B card list as supported?",
-    "ground_truth": "It lists English, German, French, Italian, Portuguese, Hindi, Spanish, and Thai.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-Guard-3-1B"
-    ],
-    "evaluation_criteria": "Answer must cite at least four of the listed languages and note the multilingual coverage.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-1B",
-    "source_model": "meta-llama/Llama-Guard-3-1B",
-    "keywords": [
-      "languages",
-      "multilingual"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q016", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What training regime is listed for the 'professorsynapse/nexus-tools_kto_v0.1.8' model?",
+    "ground_truth": "The training regime is not explicitly stated, but it is a fine-tuned model.",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must state that the information is not provided or refer to fine-tuning."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q017",
-    "question": "What base model does the Llama Guard 3-8B card identify?",
-    "ground_truth": "It states that the model is built on meta-llama/Meta-Llama-3.1-8B.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-Guard-3-8B"
-    ],
-    "evaluation_criteria": "Answer must mention Meta-Llama-3.1-8B as the base.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-8B",
-    "source_model": "meta-llama/Llama-Guard-3-8B",
-    "keywords": [
-      "base model",
-      "Llama Guard"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q017", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the context length of the AEGIS model described in 'zapabobouj/AEGIS-Phi3.5-Enhanced'?",
+    "ground_truth": "The context length is 131,072 tokens.",
+    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced"],
+    "evaluation_criteria": "Answer must state '131,072'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q018",
-    "question": "Which license applies to Llama Guard 3-8B?",
-    "ground_truth": "The card references the Llama 3.1 Community License Agreement.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-Guard-3-8B"
-    ],
-    "evaluation_criteria": "Answer must cite the Llama 3.1 Community License Agreement.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-Guard-3-8B",
-    "source_model": "meta-llama/Llama-Guard-3-8B",
-    "keywords": [
-      "license",
-      "Llama Guard"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q018", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the training data freshness cutoff for the 'mistralai/Mistral-Small-Instruct-2409' model?",
+    "ground_truth": "The training data cutoff is not explicitly mentioned in the provided text.",
+    "required_docs": ["mistralai/Mistral-Small-Instruct-2409"],
+    "evaluation_criteria": "Answer must state that the information is not available in the context."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q019",
-    "question": "According to the Llama 3.2 text-only model table, what context length is supported?",
-    "ground_truth": "The table lists a 128k-token context length for Llama 3.2 text-only models.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.2-3B"
-    ],
-    "evaluation_criteria": "Answer must state 128k tokens.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
-    "source_model": "meta-llama/Llama-3.2-3B",
-    "keywords": [
-      "context length",
-      "128k"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q019", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the parameter count of the 'microsoft/Phi-3.5-mini-instruct' base model used by 'tasal9/ZamAI-Phi-3-Mini-Pashto'?",
+    "ground_truth": "The base model microsoft/Phi-3.5-mini-instruct has 3.8B parameters.",
+    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto", "zapabobouj/AEGIS-Phi3.5-Enhanced"],
+    "evaluation_criteria": "Answer must contain '3.8B'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q020",
-    "question": "What input and output modalities are listed for the Llama 3.2 text-only row?",
-    "ground_truth": "Inputs are Multilingual Text, while outputs are Multilingual Text and code.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.2-3B"
-    ],
-    "evaluation_criteria": "Answer must mention the Multilingual Text input and Multilingual Text plus code output.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B",
-    "source_model": "meta-llama/Llama-3.2-3B",
-    "keywords": [
-      "modalities"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q020", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the primary library name mentioned in the metadata for 'professorsynapse/nexus-tools_kto_v0.1.8'?",
+    "ground_truth": "The primary library name is 'unsloth'.",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must contain 'unsloth'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q021",
-    "question": "What use cases are the Llama 3.2 instruction-tuned text-only models optimized for?",
-    "ground_truth": "They are optimized for multilingual dialogue use cases, including agentic retrieval and summarization tasks.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.2-3B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention multilingual dialogue plus agentic retrieval and summarization.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
-    "source_model": "meta-llama/Llama-3.2-3B-Instruct",
-    "keywords": [
-      "use cases",
-      "agentic retrieval",
-      "summarization"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q021", "type": "synthesis", "difficulty": "medium",
+    "question": "Which of the two models, 'TevunahAi/NextCoder-32B-FP8' or 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890', is larger in terms of parameter count?",
+    "ground_truth": "'TevunahAi/NextCoder-32B-FP8' is larger with 32B parameters compared to 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' which is based on a 30B model.",
+    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must correctly identify NextCoder as larger."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q022",
-    "question": "What training techniques does the Llama 3.2 card mention for aligning the instruction-tuned models?",
-    "ground_truth": "It states the tuned versions use supervised fine-tuning (SFT) and reinforcement learning with human feedback (RLHF).",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "meta-llama/Llama-3.2-3B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention both SFT and RLHF.",
-    "source_url": "https://huggingface.co/meta-llama/Llama-3.2-3B-Instruct",
-    "source_model": "meta-llama/Llama-3.2-3B-Instruct",
-    "keywords": [
-      "SFT",
-      "RLHF"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q022", "type": "synthesis", "difficulty": "medium",
+    "question": "List the languages supported by both 'Clemylia/Iris-la-guepe' and 'tasal9/ZamAI-Phi-3-Mini-Pashto'.",
+    "ground_truth": "'Clemylia/Iris-la-guepe' supports French ('fr'), while 'tasal9/ZamAI-Phi-3-Mini-Pashto' supports Pashto ('ps') and English ('en'). There are no languages supported by both.",
+    "required_docs": ["Clemylia/Iris-la-guepe", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer must correctly list the languages for each and state that there is no overlap."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q023",
-    "question": "Which datasets does the Phi-3.5-mini-instruct summary say it is built upon?",
-    "ground_truth": "The summary states it is built upon the datasets used for Phi-3: synthetic data and filtered publicly available websites.",
-    "difficulty": "simple_lookup",
-    "required_docs": [
-      "microsoft/Phi-3.5-mini-instruct"
-    ],
-    "evaluation_criteria": "Answer must mention both synthetic data and filtered publicly available websites.",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
-    "source_model": "microsoft/Phi-3.5-mini-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "synthetic data",
-      "filtered web"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 1
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q023", "type": "synthesis", "difficulty": "medium",
+    "question": "Do the 'PanzerBread/PromptCoT' and 'professorsynapse/nexus-tools_kto_v0.1.8' models use the same license?",
+    "ground_truth": "Yes, both models use the 'apache-2.0' license.",
+    "required_docs": ["PanzerBread/PromptCoT", "professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must correctly state that both use the 'apache-2.0' license."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q024",
-    "question": "Compare the Gemma 2-9B base model and Gemma 2-2B instruction-tuned variant: what common design goals do they share according to their cards?",
-    "ground_truth": "Both cards describe Gemma models as lightweight text-to-text decoder-only LLMs built from Gemini research, intended for text generation tasks such as question answering, summarization, and reasoning, and suitable for deployment in resource-limited environments like laptops or personal cloud setups.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "google/gemma-2-9b",
-      "google/gemma-2-2b-it"
-    ],
-    "evaluation_criteria": "Answer must mention at least one shared design goal (text-to-text decoder-only, lightweight) and one shared use case (e.g., QA, summarization, reasoning) present in both cards, plus acknowledge deployment in resource-limited settings.",
-    "source_url": "https://huggingface.co/google/gemma-2-9b",
-    "source_model": "google/gemma-2-9b",
-    "keywords": [
-      "Gemma",
-      "comparison"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q024", "type": "synthesis", "difficulty": "medium",
+    "question": "What are the two different base models used by 'PanzerBread/PromptCoT' and 'professorsynapse/nexus-tools_kto_v0.1.8'?",
+    "ground_truth": "The base models are 'Qwen/Qwen2.5-7B-Instruct' for PanzerBread/PromptCoT and 'unsloth/mistral-7b-instruct-v0.3-bnb-4bit' for professorsynapse/nexus-tools_kto_v0.1.8.",
+    "required_docs": ["PanzerBread/PromptCoT", "professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must correctly identify both base models."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q025",
-    "question": "According to the OpenAI Whisper large-v3 and Whisper large-v3-turbo cards, which variant requires acknowledging a license/gating step, and what are the stated licensing differences?",
-    "ground_truth": "Whisper large-v3-turbo requires users to acknowledge the OpenAI license via the gated workflow, and it is released under the MIT license; Whisper large-v3 is provided under Apache-2.0 without the extra gating step.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "openai/whisper-large-v3",
-      "openai/whisper-large-v3-turbo"
-    ],
-    "evaluation_criteria": "Answer must identify that the turbo model adds a gating/license acknowledgement step and that the base model uses Apache-2.0 while turbo uses MIT.",
-    "source_url": "https://huggingface.co/openai/whisper-large-v3",
-    "source_model": "openai/whisper-large-v3",
-    "keywords": [
-      "Whisper",
-      "turbo",
-      "license"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q025", "type": "synthesis", "difficulty": "hard",
+    "question": "Between 'professorsynapse/nexus-tools_kto_v0.1.8' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890', which model card provides more detailed information about its training reward function?",
+    "ground_truth": "The model card for 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' provides detailed information about its composite reward function, while the card for 'professorsynapse/nexus-tools_kto_v0.1.8' does not.",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must correctly identify the HarleyCooper model as having more detail on the reward function."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q026",
-    "question": "Contrast the stated use cases or strengths of Phi-3.5-mini-instruct versus Phi-3.5-MoE-instruct. What key differences does Microsoft highlight between the two cards?",
-    "ground_truth": "Both cards mention 128K context, synthetic plus filtered public data, and instruction tuning, but the MoE card specifically emphasizes deployment in memory/compute constrained environments with latency bounds and highlights strong reasoning (code, math, logic), whereas the mini card focuses on lightweight general-purpose text generation.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "microsoft/Phi-3.5-mini-instruct",
-      "microsoft/Phi-3.5-MoE-instruct"
-    ],
-    "evaluation_criteria": "Answer must cite at least one common trait (e.g., 128K context, synthetic + filtered data) and at least one differentiator (MoE\u2019s emphasis on memory/compute constraints or reasoning vs. mini\u2019s general lightweight focus).",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
-    "source_model": "microsoft/Phi-3.5-mini-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "comparison"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q026", "type": "contradiction", "difficulty": "hard",
+    "question": "The model card for 'tasal9/ZamAI-Phi-3-Mini-Pashto' states it is based on 'microsoft/Phi-3-mini-4k-instruct'. Is it true that the 'zapabobouj/AEGIS-Phi3.5-Enhanced' model is based on the exact same model?",
+    "ground_truth": "No, it is not. The AEGIS model is based on 'Microsoft Phi-3.5-mini-instruct', a different model.",
+    "required_docs": ["tasal9/ZamAI-Phi-3-Mini-Pashto", "zapabobouj/AEGIS-Phi3.5-Enhanced"],
+    "evaluation_criteria": "Answer must state that the base models are different."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q028",
-    "question": "According to the Phi-3.5-vision-instruct card, what additional capabilities does it highlight beyond the Phi-3.5 mini and MoE text-only models?",
-    "ground_truth": "The vision card explicitly highlights multimodal capabilities including general image understanding, OCR, chart/table understanding, multi-image comparison, and multi-image or video clip summarization, whereas the mini/MoE cards focus on text-only reasoning and lightweight deployment.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "microsoft/Phi-3.5-vision-instruct",
-      "microsoft/Phi-3.5-mini-instruct",
-      "microsoft/Phi-3.5-MoE-instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least two vision-specific tasks (e.g., OCR, chart understanding, multi-image comparison) that differentiate the vision card from the text-only cards.",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct",
-    "source_model": "microsoft/Phi-3.5-vision-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "vision"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 3
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q027", "type": "contradiction", "difficulty": "hard",
+    "question": "Both 'TevunahAi/NextCoder-32B-FP8' and 'professorsynapse/nexus-tools_kto_v0.1.8' are listed with a 'transformers' library tag. Is it true they both also share the 'unsloth' tag?",
+    "ground_truth": "No, this is not true. Only 'professorsynapse/nexus-tools_kto_v0.1.8' has the 'unsloth' tag.",
+    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must state that only one of the models has the 'unsloth' tag."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q027",
-    "question": "Contrast the stated use cases or strengths of Phi-3.5-mini-instruct versus Phi-3.5-MoE-instruct. What key differences does Microsoft highlight between the two cards?",
-    "ground_truth": "Both cards share 128K context and synthetic plus filtered data, but the MoE card specifically emphasizes deployment in memory/compute constrained and latency-bound environments with strong reasoning (code, math, logic), whereas the mini card focuses on lightweight general-purpose text generation.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "microsoft/Phi-3.5-mini-instruct",
-      "microsoft/Phi-3.5-MoE-instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least one shared trait (128K context or data sources) and at least one differentiator (MoE's emphasis on memory/compute constraints or reasoning vs. mini's general text generation focus).",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-mini-instruct",
-    "source_model": "microsoft/Phi-3.5-mini-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "comparison"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q028", "type": "contradiction", "difficulty": "hard",
+    "question": "Is the license for 'TevunahAi/NextCoder-32B-FP8' the same as the license for 'tasal9/ZamAI-Phi-3-Mini-Pashto'?",
+    "ground_truth": "Yes, both models use the MIT license.",
+    "required_docs": ["TevunahAi/NextCoder-32B-FP8", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer must correctly state that the licenses are the same (MIT)."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q029",
-    "question": "According to the Phi-3.5-vision-instruct card, what additional capabilities does it highlight beyond the Phi-3.5 mini and MoE text-only models?",
-    "ground_truth": "The vision card explicitly highlights multimodal capabilities including general image understanding, OCR, chart/table understanding, multi-image comparison, and multi-image or video clip summarization, whereas the mini/MoE cards focus on text-only reasoning and lightweight deployment.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "microsoft/Phi-3.5-vision-instruct",
-      "microsoft/Phi-3.5-mini-instruct",
-      "microsoft/Phi-3.5-MoE-instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least two vision-specific tasks (e.g., OCR, chart understanding, multi-image comparison) that differentiate the vision card from the text-only cards.",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct",
-    "source_model": "microsoft/Phi-3.5-vision-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "vision"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 3
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q029", "type": "contradiction", "difficulty": "hard",
+    "question": "The 'PanzerBread/PromptCoT' model card describes an Expectation-Maximization (EM) training loop. Does the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' card describe the same training method?",
+    "ground_truth": "No, it does not. The 'HarleyCooper' model was trained using Group Relative Policy Optimization (GRPO), not an EM loop.",
+    "required_docs": ["PanzerBread/PromptCoT", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must state the training methods are different and correctly identify GRPO."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q030",
-    "question": "Which Gemma 2 variant explicitly mentions a conversational tag and base model field, and what does this imply about its intended use compared to the base Gemma 2-9B card?",
-    "ground_truth": "The Gemma 2-9B-it (instruction-tuned) card includes the 'conversational' tag and a base_model entry referencing google/gemma-2-9b, indicating it is tuned for conversational/instruction use compared to the generic base Gemma 2-9B card.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "google/gemma-2-9b",
-      "google/gemma-2-9b-it"
-    ],
-    "evaluation_criteria": "Answer must identify that the instruction-tuned card carries the conversational tag and base_model pointer, and explain that this signals conversational instruction tuning compared to the base card.",
-    "source_url": "https://huggingface.co/google/gemma-2-9b-it",
-    "source_model": "google/gemma-2-9b-it",
-    "keywords": [
-      "Gemma",
-      "instruction tuning"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q030", "type": "contradiction", "difficulty": "hard",
+    "question": "Is it correct to say that both 'zapabobouj/AEGIS-Phi3.5-Enhanced' and 'tasal9/ZamAI-Phi-3-Mini-Pashto' are optimized for the Japanese language?",
+    "ground_truth": "No, that is incorrect. 'zapabobouj/AEGIS-Phi3.5-Enhanced' supports Japanese, but 'tasal9/ZamAI-Phi-3-Mini-Pashto' is optimized for Pashto and English.",
+    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer must state the claim is incorrect and identify the correct languages."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q031",
-    "question": "Compare Mistral-Small-Instruct-2409 and Pixtral-12B-2409: what licensing and modality differences do their cards highlight?",
-    "ground_truth": "Mistral-Small-Instruct-2409 uses the Mistral Research License (MRL) and targets multilingual text generation, while Pixtral-12B-2409 is Apache-2.0 licensed, multimodal (text + images) with a 12B decoder and 400M vision encoder, emphasizing image-related benchmarks.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "mistralai/Mistral-Small-Instruct-2409",
-      "mistralai/Pixtral-12B-2409"
-    ],
-    "evaluation_criteria": "Answer must mention the different licenses (MRL vs Apache-2.0) and note Pixtral's multimodal design in contrast to the text-focused Mistral Small Instruct card.",
-    "source_url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
-    "source_model": "mistralai/Pixtral-12B-2409",
-    "keywords": [
-      "Mistral",
-      "Pixtral",
-      "license",
-      "multimodal"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q031", "type": "temporal_reasoning", "difficulty": "medium",
+    "question": "Which model was updated more recently: 'shallowtensr/affine-af' or 'professorsynapse/nexus-tools_kto_v0.1.7'?",
+    "ground_truth": "'shallowtensr/affine-af' was updated more recently (2025-11-23T16:25:38+00:00) than 'professorsynapse/nexus-tools_kto_v0.1.7' (2025-11-23T16:13:07+00:00).",
+    "required_docs": ["shallowtensr/affine-af", "professorsynapse/nexus-tools_kto_v0.1.7"],
+    "evaluation_criteria": "Answer must correctly identify 'shallowtensr/affine-af' as more recent."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q032",
-    "question": "What additions does the Qwen2.5-7B-Instruct card mention compared to the base Qwen2.5-7B entry?",
-    "ground_truth": "Both share the same architecture and improvements, but the Instruct card explicitly tags the model for chat use, references the Chat Qwen link, and notes that it is an instruction-tuned variant built on the base model, targeting improved instruction following and chatbot condition-setting.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-7B",
-      "Qwen/Qwen2.5-7B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least one instruct-specific element (e.g., chat tag, instruction tuning, Qwen Chat link) absent from the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-    "source_model": "Qwen/Qwen2.5-7B-Instruct",
-    "keywords": [
-      "Qwen",
-      "instruction"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q032", "type": "temporal_reasoning", "difficulty": "medium",
+    "question": "List all the models from the provided context that were last modified on '2025-11-23'.",
+    "ground_truth": "Multiple models were modified on this date, including 'Clemylia/Iris-la-guepe', 'professorsynapse/nexus-tools_kto_v0.1.8', 'hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis', etc.",
+    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8", "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis"],
+    "evaluation_criteria": "Answer must list at least two of the models modified on the specified date."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q033",
-    "question": "Qwen2.5-7B vs Qwen2.5-7B-Instruct: what explicit chat-optimized additions does the instruct card mention?",
-    "ground_truth": "The instruct card carries the chat tag, links to Qwen Chat, and states it is an instruction-tuned variant built on the base model to improve instruction following and system prompt resilience, which is not emphasized in the base 7B card.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-7B",
-      "Qwen/Qwen2.5-7B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least one instruct-specific detail (chat tag, Qwen Chat link, instruction tuning emphasis) absent from the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-    "source_model": "Qwen/Qwen2.5-7B-Instruct",
-    "keywords": [
-      "Qwen",
-      "chat"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q033", "type": "temporal_reasoning", "difficulty": "hard",
+    "question": "What is the time difference in minutes between the last modification of 'Clemylia/Iris-la-guepe' and 'professorsynapse/nexus-tools_kto_v0.1.8'?",
+    "ground_truth": "The time difference is approximately 35 minutes ('Clemylia/Iris-la-guepe' at 17:03:37 and 'professorsynapse/nexus-tools_kto_v0.1.8' at 16:58:25).",
+    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must provide a time difference that is approximately 35 minutes."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q034",
-    "question": "Summarize how Qwen2.5-7B-Instruct positions itself for chatbot/system-prompt scenarios compared to the base Qwen2.5-7B card.",
-    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and explicitly mentions improved resilience to diverse system prompts and enhanced instruction following, whereas the base card only lists the architecture and improvements without the chat focus.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-7B",
-      "Qwen/Qwen2.5-7B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention the instruct card's chat/link additions and system prompt resilience relative to the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-    "source_model": "Qwen/Qwen2.5-7B-Instruct",
-    "keywords": [
-      "Qwen",
-      "chat"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q034", "type": "temporal_reasoning", "difficulty": "medium",
+    "question": "Was the model 'ysn-rfd/ysnrfd-base-V2' last modified before or after 'TevunahAi/NextCoder-32B-FP8'?",
+    "ground_truth": "'ysn-rfd/ysnrfd-base-V2' was modified before 'TevunahAi/NextCoder-32B-FP8'.",
+    "required_docs": ["ysn-rfd/ysnrfd-base-V2", "TevunahAi/NextCoder-32B-FP8"],
+    "evaluation_criteria": "Answer must correctly state 'before'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q035",
-    "question": "Summarize how Qwen2.5-7B-Instruct positions itself for chatbot/system-prompt scenarios compared to the base Qwen2.5-7B card.",
-    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and explicitly mentions improved resilience to diverse system prompts and enhanced instruction following, whereas the base card only lists the architecture and improvements without the chat focus.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-7B",
-      "Qwen/Qwen2.5-7B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention the instruct card's chat/link additions and system prompt resilience relative to the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-7B-Instruct",
-    "source_model": "Qwen/Qwen2.5-7B-Instruct",
-    "keywords": [
-      "Qwen",
-      "chat"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q035", "type": "temporal_reasoning", "difficulty": "easy",
+    "question": "What is the last modified date of the 'small-blue/pos-207' model?",
+    "ground_truth": "The last modified date is 2025-11-23T16:42:20+00:00.",
+    "required_docs": ["small-blue/pos-207"],
+    "evaluation_criteria": "Answer must contain '2025-11-23'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q036",
-    "question": "How does the Gemma 2-27B instruction-tuned card differentiate itself from the base 27B entry?",
-    "ground_truth": "The instruction-tuned card includes a base_model reference to google/gemma-2-27b and is tagged for conversational use, signalling that it is specifically tuned for chat/instruction tasks compared to the generic base card.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "google/gemma-2-27b",
-      "google/gemma-2-27b-it"
-    ],
-    "evaluation_criteria": "Answer must mention the base_model pointer or conversational tagging unique to the instruct card, distinguishing it from the base card.",
-    "source_url": "https://huggingface.co/google/gemma-2-27b-it",
-    "source_model": "google/gemma-2-27b-it",
-    "keywords": [
-      "Gemma",
-      "27B",
-      "instruction"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q036", "type": "aggregation", "difficulty": "medium",
+    "question": "How many of the provided model cards have the 'safetensors' tag?",
+    "ground_truth": "At least 5 models listed have the 'safetensors' tag.",
+    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8", "hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis", "tasal9/ZamAI-Phi-3-Mini-Pashto", "hirundo-io/telecom-ft-500-persons-llama-3.2-3b_misha_unlearned_1"],
+    "evaluation_criteria": "Answer must provide a count of 5 or more."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q037",
-    "question": "How does the Qwen2.5-32B-Instruct card position itself differently from the base 32B entry?",
-    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and notes it is an instruction-tuned variant built on the base model to improve instruction following and chatbot role-play, which the base 32B card does not emphasize.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-32B",
-      "Qwen/Qwen2.5-32B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least one instruct-specific detail (chat tag, Qwen Chat link, explicit instruction tuning) absent from the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct",
-    "source_model": "Qwen/Qwen2.5-32B-Instruct",
-    "keywords": [
-      "Qwen",
-      "32B",
-      "instruction"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q037", "type": "aggregation", "difficulty": "hard",
+    "question": "What is the sum of tokens for the models 'Clemylia/Iris-la-guepe' and 'professorsynapse/nexus-tools_kto_v0.1.8'?",
+    "ground_truth": "The sum of tokens is 1188 + 1071 = 2259.",
+    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must be 2259."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q038",
-    "question": "Which model can be used under the MIT license without additional gating, and which requires acceptance of the Stability Community License before download?",
-    "ground_truth": "Phi-3.5-vision-instruct is MIT licensed with no extra gating, while Stable Diffusion 3.5 Large requires acknowledging the Stability AI Community License via the gating form before access.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "microsoft/Phi-3.5-vision-instruct",
-      "stabilityai/stable-diffusion-3.5-large"
-    ],
-    "evaluation_criteria": "Answer must clearly state that Phi-3.5 vision is MIT licensed and ungated, whereas SD 3.5 Large needs the Stability Community License acknowledgement and gating form.",
-    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
-    "source_model": "stabilityai/stable-diffusion-3.5-large",
-    "keywords": [
-      "license",
-      "Stability AI",
-      "Phi-3.5"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q038", "type": "aggregation", "difficulty": "medium",
+    "question": "Count how many models in the provided context list 'qwen2' as a tag.",
+    "ground_truth": "At least three models ('hanmock/...', 'small-blue/pos-207', 'Samuell43/...') have the 'qwen2' tag.",
+    "required_docs": ["hanmock/Qwen2.5-Coder-0.5B-Instruct-Gensyn-Swarm-amphibious_savage_mantis", "small-blue/pos-207", "Samuell43/Qwen2.5-Coder-1.5B-Instruct-Gensyn-Swarm-dappled_territorial_mule"],
+    "evaluation_criteria": "Answer must state a count of 3 or more."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q039",
-    "question": "Which release uses the proprietary Mistral Research License versus Apache-2.0, according to the Mistral-Small-Instruct-2409 and Pixtral-12B-2409 cards?",
-    "ground_truth": "Mistral-Small-Instruct-2409 is distributed under the Mistral Research License (MRL) with additional restrictions, whereas Pixtral-12B-2409 is Apache-2.0 licensed.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "mistralai/Mistral-Small-Instruct-2409",
-      "mistralai/Pixtral-12B-2409"
-    ],
-    "evaluation_criteria": "Answer must identify which model uses MRL and which uses Apache-2.0.",
-    "source_url": "https://huggingface.co/mistralai/Mistral-Small-Instruct-2409",
-    "source_model": "mistralai/Mistral-Small-Instruct-2409",
-    "keywords": [
-      "Mistral",
-      "license"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q039", "type": "aggregation", "difficulty": "hard",
+    "question": "What is the total number of languages explicitly supported by 'Clemylia/Iris-la-guepe' and 'tasal9/ZamAI-Phi-3-Mini-Pashto' combined?",
+    "ground_truth": "A total of 3 languages are supported (French from the first, Pashto and English from the second).",
+    "required_docs": ["Clemylia/Iris-la-guepe", "tasal9/ZamAI-Phi-3-Mini-Pashto"],
+    "evaluation_criteria": "Answer must correctly identify the total as 3."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q040",
-    "question": "What multi-image or video-specific tasks does Phi-3.5-vision-instruct emphasize that are absent from the Phi-3.5 mini/MoE text-only cards?",
-    "ground_truth": "The vision card calls out general image understanding, OCR, chart/table understanding, multi-image comparison, and multi-image or video clip summarization, tasks not described in the mini or MoE text-only cards.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "microsoft/Phi-3.5-vision-instruct",
-      "microsoft/Phi-3.5-mini-instruct",
-      "microsoft/Phi-3.5-MoE-instruct"
-    ],
-    "evaluation_criteria": "Answer must list at least two vision/video tasks unique to the vision card.",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-vision-instruct",
-    "source_model": "microsoft/Phi-3.5-vision-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "vision",
-      "video"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 3
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q040", "type": "aggregation", "difficulty": "medium",
+    "question": "How many models in the context list 'peft' in their tags?",
+    "ground_truth": "At least 3 models have the 'peft' tag ('shallowtensr/affine-af', 'PanzerBread/PromptCoT', 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890').",
+    "required_docs": ["shallowtensr/affine-af", "PanzerBread/PromptCoT", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must be a count of 3 or more."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q041",
-    "question": "Which Whisper variant explicitly states it prunes decoder layers for speed, and how does that contrast with the base model's architecture description?",
-    "ground_truth": "Whisper large-v3-turbo states it is a finetuned version of a pruned Whisper large-v3 with decoding layers reduced from 32 to 4 for speed, while the base large-v3 card describes the standard architecture without that pruning.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "openai/whisper-large-v3",
-      "openai/whisper-large-v3-turbo"
-    ],
-    "evaluation_criteria": "Answer must mention the pruning (32 to 4 layers) unique to turbo and note that the base card lacks that modification.",
-    "source_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
-    "source_model": "openai/whisper-large-v3-turbo",
-    "keywords": [
-      "Whisper",
-      "pruned"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q041", "type": "cross_referencing", "difficulty": "medium",
+    "question": "For the models 'Clemylia/Iris-la-guepe' and 'professorsynapse/nexus-tools_kto_v0.1.8', list their respective licenses.",
+    "ground_truth": "'Clemylia/Iris-la-guepe' license is 'mit', and 'professorsynapse/nexus-tools_kto_v0.1.8' license is 'apache-2.0'.",
+    "required_docs": ["Clemylia/Iris-la-guepe", "professorsynapse/nexus-tools_kto_v0.1.8"],
+    "evaluation_criteria": "Answer must list both licenses correctly next to their model."
   },
   {
-    "question": "According to the Qwen2.5-32B-Instruct card, what additions differentiate it from the base 32B entry?",
-    "ground_truth": "The instruct card adds the chat tag, links to Qwen Chat, and explicitly positions it as an instruction-tuned variant built on the base model for chatbot use, unlike the base Qwen2.5-32B card which simply lists architecture details.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-32B",
-      "Qwen/Qwen2.5-32B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must mention at least one instruct-specific detail (chat tag, instruction tuning, Qwen Chat link) absent from the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-32B-Instruct",
-    "source_model": "Qwen/Qwen2.5-32B-Instruct",
-    "keywords": [
-      "Qwen",
-      "32B",
-      "instruction"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    },
-    "experiment": "exp1",
-    "question_id": "exp1_q042"
+    "experiment": "exp1_needle", "question_id": "exp1_q042", "type": "cross_referencing", "difficulty": "hard",
+    "question": "Create a list of the 'base_model' for each of these three models: 'professorsynapse/nexus-tools_kto_v0.1.8', 'tasal9/ZamAI-Phi-3-Mini-Pashto', 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890'.",
+    "ground_truth": "nexus-tools: unsloth/mistral-7b-instruct-v0.3-bnb-4bit; ZamAI: microsoft/Phi-3-mini-4k-instruct; Qwen3: Qwen/Qwen3-30B-A3B-Instruct-2507.",
+    "required_docs": ["professorsynapse/nexus-tools_kto_v0.1.8", "tasal9/ZamAI-Phi-3-Mini-Pashto", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must correctly list all three base models."
   },
   {
-    "question": "Which model in the StabilityAI vs Phi-3.5 comparison requires a gating form and Stability Community License acknowledgement before download?",
-    "ground_truth": "Stable Diffusion 3.5 Large requires acknowledging the Stability Community License via the gating form, while Phi-3.5-vision-instruct is MIT licensed without additional gating.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "stabilityai/stable-diffusion-3.5-large",
-      "microsoft/Phi-3.5-vision-instruct"
-    ],
-    "evaluation_criteria": "Answer must state that SD 3.5 Large requires gating and Stability Community License, whereas Phi-3.5 vision does not.",
-    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
-    "source_model": "stabilityai/stable-diffusion-3.5-large",
-    "keywords": [
-      "Stability AI",
-      "license"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    },
-    "experiment": "exp1",
-    "question_id": "exp1_q043"
+    "experiment": "exp1_needle", "question_id": "exp1_q043", "type": "cross_referencing", "difficulty": "medium",
+    "question": "Which of the models 'adpretko/ml815-model9' and 'shallowtensr/affine-af' specifies 'peft' as a library?",
+    "ground_truth": "'shallowtensr/affine-af' specifies 'peft' as a library in its card, while 'adpretko/ml815-model9' does not.",
+    "required_docs": ["adpretko/ml815-model9", "shallowtensr/affine-af"],
+    "evaluation_criteria": "Answer must correctly identify 'shallowtensr/affine-af'."
   },
   {
-    "question": "Which Mistral release is governed by the Mistral Research License versus Apache-2.0?",
-    "ground_truth": "Mistral-Small-Instruct-2409 uses the Mistral Research License (MRL) with additional restrictions, whereas Pixtral-12B-2409 is Apache-2.0 licensed.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "mistralai/Mistral-Small-Instruct-2409",
-      "mistralai/Pixtral-12B-2409"
-    ],
-    "evaluation_criteria": "Answer must identify which model uses MRL and which uses Apache-2.0.",
-    "source_url": "https://huggingface.co/mistralai/Mistral-Small-Instruct-2409",
-    "source_model": "mistralai/Mistral-Small-Instruct-2409",
-    "keywords": [
-      "Mistral",
-      "license"
-    ],
-    "answer_format": "short_fact",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    },
-    "experiment": "exp1",
-    "question_id": "exp1_q044"
+    "experiment": "exp1_needle", "question_id": "exp1_q044", "type": "cross_referencing", "difficulty": "hard",
+    "question": "For 'zapabobouj/AEGIS-Phi3.5-Enhanced' and 'TevunahAi/NextCoder-32B-FP8', list the hardware mentioned for either training or inference.",
+    "ground_truth": "AEGIS mentions no specific hardware. NextCoder recommends an NVIDIA GPU with FP8 support (e.g., Ada Lovelace series) for inference and was quantized on an NVIDIA RTX 5000 Ada.",
+    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced", "TevunahAi/NextCoder-32B-FP8"],
+    "evaluation_criteria": "Answer must mention the NVIDIA hardware for NextCoder and state none is listed for AEGIS."
   },
   {
-    "question": "Which Whisper variant explicitly states it prunes decoder layers for faster inference?",
-    "ground_truth": "The Whisper large-v3-turbo card states it is a finetuned version of a pruned Whisper large-v3 with decoder layers reduced from 32 to 4 for speed, whereas the base card does not mention pruning.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "openai/whisper-large-v3",
-      "openai/whisper-large-v3-turbo"
-    ],
-    "evaluation_criteria": "Answer must mention the pruning detail unique to turbo and contrast with the base card.",
-    "source_url": "https://huggingface.co/openai/whisper-large-v3-turbo",
-    "source_model": "openai/whisper-large-v3-turbo",
-    "keywords": [
-      "Whisper",
-      "pruned"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    },
-    "experiment": "exp1",
-    "question_id": "exp1_q045"
+    "experiment": "exp1_needle", "question_id": "exp1_q045", "type": "cross_referencing", "difficulty": "medium",
+    "question": "Do the model cards for 'PanzerBread/PromptCoT' and 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' both cite a paper on arxiv.org?",
+    "ground_truth": "No, only the PanzerBread/PromptCoT card cites an arxiv paper. The HarleyCooper card cites a book from 1890.",
+    "required_docs": ["PanzerBread/PromptCoT", "HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must correctly state that only one cites an arxiv paper."
   },
   {
-    "question": "According to the Phi-3.5-MoE card, which scenarios does it emphasize compared to the Phi-3.5-mini card?",
-    "ground_truth": "The MoE card specifically highlights memory/compute constrained environments, latency-bound scenarios, and strong reasoning (code, math, logic), whereas the mini card simply states lightweight general-purpose text generation.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "microsoft/Phi-3.5-MoE-instruct",
-      "microsoft/Phi-3.5-mini-instruct"
-    ],
-    "evaluation_criteria": "Answer must mention the MoE card's focus on memory/compute constraints, latency, or strong reasoning relative to mini.",
-    "source_url": "https://huggingface.co/microsoft/Phi-3.5-MoE-instruct",
-    "source_model": "microsoft/Phi-3.5-MoE-instruct",
-    "keywords": [
-      "Phi-3.5",
-      "MoE"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    },
-    "experiment": "exp1",
-    "question_id": "exp1_q046"
+    "experiment": "exp1_needle", "question_id": "exp1_q046", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the training data for the 'ysn-rfd/ysnrfd-base-V2' model?",
+    "ground_truth": "The training data is wikitext2-raw-v1.",
+    "required_docs": ["ysn-rfd/ysnrfd-base-V2"],
+    "evaluation_criteria": "Answer must mention 'wikitext2-raw-v1'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q047",
-    "question": "What additions does the Qwen2.5-72B-Instruct card mention compared to the base 72B entry?",
-    "ground_truth": "The instruct card is tagged for chat, links to Qwen Chat, and explicitly states it is an instruction-tuned variant built on the base model for improved instruction following and role-play, whereas the base 72B card simply enumerates architecture and capability improvements.",
-    "difficulty": "synthesis",
-    "required_docs": [
-      "Qwen/Qwen2.5-72B",
-      "Qwen/Qwen2.5-72B-Instruct"
-    ],
-    "evaluation_criteria": "Answer must cite at least one instruct-specific detail (chat tag, instruction tuning, Qwen Chat link) not present in the base card.",
-    "source_url": "https://huggingface.co/Qwen/Qwen2.5-72B-Instruct",
-    "source_model": "Qwen/Qwen2.5-72B-Instruct",
-    "keywords": [
-      "Qwen",
-      "72B",
-      "instruction"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q047", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the parameter count for the AEGIS model from 'zapabobouj/AEGIS-Phi3.5-Enhanced'?",
+    "ground_truth": "The AEGIS model has 3.8B parameters.",
+    "required_docs": ["zapabobouj/AEGIS-Phi3.5-Enhanced"],
+    "evaluation_criteria": "Answer must contain '3.8B'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q048",
-    "question": "Which card describes a text-to-image pipeline versus an automatic speech recognition pipeline (StabilityAI SD 3.5 Large vs Whisper large-v3)?",
-    "ground_truth": "Stable Diffusion 3.5 Large lists pipeline_tag=text-to-image, while Whisper large-v3 lists pipeline_tag=automatic-speech-recognition, indicating SD 3.5 generates images from text whereas Whisper performs ASR.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "stabilityai/stable-diffusion-3.5-large",
-      "openai/whisper-large-v3"
-    ],
-    "evaluation_criteria": "Answer must mention SD 3.5 Large as text-to-image and Whisper large-v3 as ASR.",
-    "source_url": "https://huggingface.co/stabilityai/stable-diffusion-3.5-large",
-    "source_model": "stabilityai/stable-diffusion-3.5-large",
-    "keywords": [
-      "pipeline",
-      "text-to-image",
-      "ASR"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q048", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What training method is listed for the 'HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890' model?",
+    "ground_truth": "The training method is GRPO (Group Relative Policy Optimization).",
+    "required_docs": ["HarleyCooper/Qwen3-30B-ThinkingMachines-Dakota1890"],
+    "evaluation_criteria": "Answer must contain 'GRPO' or 'Group Relative Policy Optimization'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q049",
-    "question": "Which Mistral release handles multimodal image inputs according to the cards, and which is text-only under the Mistral Research License?",
-    "ground_truth": "Pixtral-12B-2409 is Apache-2.0 licensed with a multimodal text+image pipeline, whereas Mistral-Small-Instruct-2409 is text-only and distributed under the Mistral Research License.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "mistralai/Pixtral-12B-2409",
-      "mistralai/Mistral-Small-Instruct-2409"
-    ],
-    "evaluation_criteria": "Answer must note Pixtral's multimodal capabilities and Apache-2.0 license versus Mistral Small Instruct's text focus and MRL license.",
-    "source_url": "https://huggingface.co/mistralai/Pixtral-12B-2409",
-    "source_model": "mistralai/Pixtral-12B-2409",
-    "keywords": [
-      "Mistral",
-      "Pixtral",
-      "multimodal"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q049", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the model type of 'PanzerBread/PromptCoT'?",
+    "ground_truth": "It is a LoRA fine-tuned Causal Language Model.",
+    "required_docs": ["PanzerBread/PromptCoT"],
+    "evaluation_criteria": "Answer must mention 'LoRA' or 'Causal Language Model'."
   },
   {
-    "experiment": "exp1",
-    "question_id": "exp1_q050",
-    "question": "Which Gemma and Qwen cards highlight different licensing requirements (Gemma license vs Apache-2.0)?",
-    "ground_truth": "Gemma 2-27B (and instruct) require agreeing to the Gemma usage license via the gating prompt, while Qwen2.5-32B models are released under Apache-2.0 with no additional gating mentioned.",
-    "difficulty": "contradiction",
-    "required_docs": [
-      "google/gemma-2-27b",
-      "Qwen/Qwen2.5-32B"
-    ],
-    "evaluation_criteria": "Answer must state that Gemma card requires the Gemma license agreement while the Qwen card references Apache-2.0.",
-    "source_url": "https://huggingface.co/google/gemma-2-27b",
-    "source_model": "google/gemma-2-27b",
-    "keywords": [
-      "Gemma",
-      "Qwen",
-      "license"
-    ],
-    "answer_format": "short_paragraph",
-    "metadata": {
-      "category": "model_card",
-      "expected_citations": 2
-    }
+    "experiment": "exp1_needle", "question_id": "exp1_q050", "type": "simple_lookup", "difficulty": "easy",
+    "question": "What is the 'last_modified' date for the 'shallowtensr/affine-af' model card?",
+    "ground_truth": "The last modified date is 2025-11-23T16:25:38+00:00.",
+    "required_docs": ["shallowtensr/affine-af"],
+    "evaluation_criteria": "Answer must contain the date '2025-11-23'."
   }
 ]
