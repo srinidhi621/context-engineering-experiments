@@ -7,7 +7,7 @@
 **Team Size:** 1  
 
 **Last Updated:** November 24, 2025  
-**Status:** ✅ Pilot Complete - Ready for Experiment 1
+**Status:** ✅ Pilot Complete – ⛔ Experiment 1 blocked by readiness tasks
 
 ---
 
@@ -29,32 +29,74 @@
 - ✅ Phase 1D: Minimal runner execution
 - ✅ Phase 1E: Go/No-Go Decision (Decision: GO)
 
-**Experiments:** ⏳ **Ready to Start**
-- ⏳ Experiment 1: Needle in Multiple Haystacks (Next)
-- ⏳ Experiment 2: Context Pollution
-- ⏳ Experiment 5: Cost-Latency Frontier
+**Experiments:** ⏸️ **On Hold pending readiness fixes**
+- Experiment 1: Needle in Multiple Haystacks – **Blocked** (rate limits, runners, evaluation)
+- Experiment 2: Context Pollution – **Queued** (begin only after Exp 1 results)
+- Experiment 5: Cost-Latency Frontier – **Queued** (analysis after Exp 1–2)
 
 **Time Spent:** ~28 hours on infrastructure & pilot  
 **Remaining:** ~9-11 weeks for experiments + analysis
 
 **Repository:** https://github.com/srinidhi621/context-engineering-experiments
 
+### 🔍 Readiness Gaps (Nov 25, 2025)
+
+- **Rate-limit accounting blocks Experiment 1:** The shared `APIMonitor` counts `text-embedding-004` calls toward the 1,500 RPD cap (`src/models/gemini_client.py`, `src/utils/monitor.py`), so the ~17k chunk embeddings exhaust quota before any generations run (`results/.monitor_state.json`, `experiment1.log`).
+- **Config/model mismatch:** `config.model_name` still defaults to `gemini-flash-latest` even though the plan and feasibility work assume `gemini-2.0-flash-exp`, risking incompatible context limits if not corrected.
+- **Experiment orchestration gaps:** `scripts/run_experiment.py` only triggers the pilot runner and forwards flags that `run_minimal_pilot.py` ignores; Experiment 1 lacks a resumable CLI entry point and pauses when the RPD stop occurs instead of checkpointing.
+- **Evaluation & analysis placeholders:** `src/experiments/*.py` (beyond assemblers), `src/evaluation/*`, and scripts such as `scripts/analyze_results.py` and `scripts/generate_report.py` remain TODOs—no automated scoring exists yet.
+- **Data/padding misalignment:** The collected Exp 1 corpus is ~574k tokens, so naïve/structured assemblers cannot reach 70–90% fill of a 1M window; `PaddingGenerator` redownloads Gutenberg books every instantiation instead of reusing the 2 M-token cache.
+- **Packaging/test coverage gaps:** `setup.py` omits dependencies actually used by Experiment 1 (Hugging Face Hub, Gutenberg, FAISS, BM25, tqdm, etc.), and several pytest modules are empty, so regressions will be hard to catch before long API runs.
+
+---
+
+## 🛠️ Immediate Readiness Sprint (Week 0–1)
+
+Goal: unblock Experiment 1 by fixing infrastructure gaps. All items below are prerequisites for any large-scale run.
+
+1. **Separate monitoring for embeddings vs. generations**
+   - Update `GeminiClient` so `text-embedding-004` calls use their own monitor (or bypass RPD accounting) and create persistent embedding caches to avoid reusing quota.
+   - Add regression tests confirming mixed workloads respect limits.
+   - *Exit criteria:* indexing the Exp 1 corpus completes without tripping the generation RPD hard stop.
+
+2. **Persist & resume embeddings + padding**
+   - Cache FAISS/BM25 indexes and chunk vectors under `results/cache/` and load them when present.
+   - Switch `PaddingGenerator` to reuse `data/raw/padding/gutenberg_corpus.json` rather than re-downloading books.
+   - *Exit criteria:* restarting Exp 1 skips embedding recomputation and performs no network calls for padding.
+
+3. **Align configuration and experiment runners**
+   - Set `config.model_name = "gemini-2.0-flash-exp"`, update docs, and extend `scripts/run_experiment.py` with explicit handlers for pilot/exp1/exp2.
+   - Harden `scripts/run_experiment_1.py` with `PerMinuteTokenThrottle`, persistent status files, and automatic sleep/resume when RPM/RPD/TPM limits trigger.
+   - *Exit criteria:* `python scripts/run_experiment.py --experiment exp1 --dry-run` validates orchestration; live runs checkpoint and resume after quota resets.
+
+4. **Implement scoring & analysis stack**
+   - Finish `src/experiments/base_experiment.py` + `exp1_needle.py`, implement evaluation utilities (metrics, judges, human eval hooks), and ship `scripts/analyze_results.py` + `scripts/generate_report.py`.
+   - Add pytest coverage for evaluation logic.
+   - *Exit criteria:* given sample results, `scripts/analyze_results.py` outputs metrics/visualization data; tests pass.
+
+5. **Packaging & validation**
+   - Expand `setup.py` to include all experiment dependencies and flesh out placeholder pytest modules plus lint/format tooling (e.g., `ruff`).
+   - Document a pre-flight checklist (pytest + lint) to run before API traffic.
+   - *Exit criteria:* clean `pip install -e .` on a fresh venv; `python -m pytest` succeeds locally/CI.
+
+Completion of this sprint is the gate to start Experiment 1.
+
 ---
 
 ## 🎯 Execution Strategy: Iterative & Practical
 
-**Philosophy:** Validate small, then scale. Build incrementally with continuous validation.
+**Philosophy:** Validate small, fix infrastructure, then run each experiment end-to-end (collect → run → analyze → document) before advancing.
 
 **Approach:**
 ```
-Pilot (18 calls) → Validate → Build Core → Validate → Full Scale (4,380 calls)
+Pilot ✅ → Readiness Sprint → Exp1 (run+analyze) → Retrospective → Exp2 (run+analyze) → Frontier Analysis
 ```
 
-**Revised Scope (Focused & Achievable):**
-1. **Pilot Phase** - 1 question, 2 strategies, validate entire pipeline (18 API calls)
-2. **Experiment 1** - Needle in Haystacks (establishes baseline, tests all 4 strategies)
-3. **Experiment 2** - Context Pollution (tests robustness)
-4. **Experiment 5** - Cost-Latency Frontier (analysis of Exp 1-2)
+**Revised Scope (Focused & Iterative):**
+1. **Pilot Phase** – already complete; serves as regression harness.
+2. **Experiment 1** – Needle in Haystacks (full loop: execute, score, analyze, publish findings).
+3. **Experiment 2** – Context Pollution (repeat loop, incorporate Exp 1 learnings).
+4. **Experiment 5** – Cost-Latency Frontier (analysis-only using Exp 1–2 outputs).
 
 **Experiments DROPPED (Too Ambitious):**
 - ❌ Experiment 3 - Multi-Turn Memory (complex, limited generalizability)
@@ -71,12 +113,12 @@ Pilot (18 calls) → Validate → Build Core → Validate → Full Scale (4,380 
 The pilot phase was completed successfully, validating the entire experimental pipeline. Key learnings and a full summary are documented in [results/pilot_summary.md](./results/pilot_summary.md).
 
 ---
-## 🧪 EXPERIMENT 1: Needle in Multiple Haystacks (Weeks 2-4)
+## 🧪 EXPERIMENT 1: Needle in Multiple Haystacks (Weeks 1–3 after readiness)
 
-**Status:** ⏳ Planned
+**Status:** ⏸️ Blocked – waiting on readiness sprint
 
-**Duration:** 2-3 weeks  
-**Goal:** Establish baseline and test all 4 context strategies across fill levels  
+**Duration:** 2–3 weeks once unblocked  
+**Goal:** Establish baseline and test all 4 context strategies across fill levels, then immediately analyze/document findings before advancing.  
 **Hypothesis:** Engineered 1M > Naïve 1M by ≥15% at high fill %  
 **Domain:** GitHub Repository Documentation  
 **API Calls:** 3,000 (50 questions × 4 strategies × 5 fill levels × 3 reps)  
@@ -84,184 +126,28 @@ The pilot phase was completed successfully, validating the entire experimental p
 
 **CRITICAL:** RAG strategies will be **padded to match fill %** of naive strategies (implemented in pilot phase).
 
-### Week 2: Data Collection & Question Generation (7 days) ✅ COMPLETE
+### Phase Breakdown
 
-**Day 1-2: Collect Model Card Corpus (~700k tokens)**
+1. **Data readiness (complete):** Corpora and question set already collected (see acceptance checklist).
+2. **Readiness sprint (Week 0–1):** Finish the blocking tasks described above (rate-limit separation, caching, runner resiliency, scoring stack, packaging/tests).
+3. **Experiment run (Week 1–2):** Build/reuse embedding cache, run 3,000 calls with checkpointing and quota-aware throttling, append to `results/raw/exp1_results.jsonl`.
+4. **Analysis & publication (Week 2–3):** Score outputs, generate metrics/visualizations, write `results/analysis/exp1_summary.md`, and update README/PLAN before starting Exp 2.
 
-Use `scripts/collect_exp1_corpus.py` to fetch model card documentation from recently updated models on Hugging Face. This provides a large, diverse, and date-filterable corpus of technical text.
+### Acceptance Checklist
 
-All docs filtered to modifications after 2025-02-01.
-Save to: `data/raw/exp1/github_corpus.json`
-
-**Day 3: Collect Gutenberg Padding Corpus (2M+ tokens)**
-
-Use `scripts/collect_padding_corpus.py` to fetch 15+ classic books from Project Gutenberg.
-Books: Pride & Prejudice, Frankenstein, Tale of Two Cities, Sherlock Holmes, etc.
-Save to: `data/raw/padding/gutenberg_corpus.json`
-
-**Day 4-7: Generate 50 Questions with Ground Truth**
-
-Manually/semi-automatically create questions by reading the collected docs:
-- 20 simple lookups (single fact from single doc)
-- 20 synthesis (combine info from 2-3 docs)
-- 10 contradiction detection (find conflicts or compare statements)
-
-Each question must have:
-- Ground truth answer (verifiable from docs)
-- Required documents list
-- Evaluation criteria
-- Keywords for retrieval testing
-
-Save to: `data/questions/exp1_questions.json`
-
-**Acceptance Criteria:**
-- [x] **GitHub Corpus:** `python scripts/collect_exp1_corpus.py --dry-run` reports >600k tokens, then `python scripts/collect_exp1_corpus.py` runs successfully and `ls data/raw/exp1/github_corpus.json` lists the file.
-- [x] **Padding Corpus:** `python scripts/collect_padding_corpus.py --dry-run` reports >1.5M tokens, then `python scripts/collect_padding_corpus.py` runs successfully and `ls data/raw/padding/gutenberg_corpus.json` lists the file.
-- [x] **Question Set:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits with code 0.
-- [x] **Question Count:** `python -c "import json; f = open('data/questions/exp1_questions.json'); data = json.load(f); assert len(data) >= 50, f'Expected 50+ questions, found {len(data)}'"` exits with code 0.
-
-### Phase 2: Implementation (~3 days) ✅ COMPLETE
-
-**Context Assemblers to Build:**
-
-- [x] **Naïve** (`src/context_engineering/naive.py`)
-  - Sequential concatenation + padding
-  - Token-aware truncation
-  - No structure
-
-- [x] **Structured** (`src/context_engineering/structured.py`)
-  - **Task:** Before implementation, add a section to this `PLAN.md` file detailing the proposed data structure (e.g., XML schema vs JSON, format of the Table of Contents, metadata fields). This ensures the implementation aligns with the experimental goals.
-  - XML/JSON structure with metadata
-  - Table of contents
-  - Navigation instructions
-  - Hierarchical organization
-
-- [x] **Basic RAG** (`src/context_engineering/rag.py`)
-  - Chunking (512 tokens, 50 overlap)
-  - Embeddings (text-embedding-004)
-  - Vector store (FAISS/ChromaDB)
-  - Top-k retrieval
-
-- [x] **Advanced RAG** (`src/context_engineering/advanced_rag.py`)
-  - Hybrid search (dense + BM25)
-  - Reciprocal Rank Fusion
-  - Optional reranking
-
-**Dependencies:**
-```bash
-pip install faiss-cpu rank-bm25 tqdm
-# Already in requirements.txt
-```
-
-**Acceptance Criteria:**
-- [x] **Unit Tests:** `pytest tests/test_context_engineering.py` and `pytest tests/test_corpus.py` exit with code 0, indicating all assemblers and helpers are working as expected.
-- [x] **Manual Check:** The `PLAN.md` file has been updated with the design for the `Structured` context assembler as per the task.
-
-### Phase 3: Question Generation (~2 days)
-
-**Create 50 Questions:**
-- [ ] 20 simple lookups (e.g., "What is default Lambda timeout?")
-- [ ] 20 synthesis (e.g., "Compare AWS/GCP/Azure authentication")
-- [ ] 10 complex (e.g., resolve contradictions in docs)
-
-**For Each Question:**
-- Ground truth answer (100-200 words)
-- Required source documents
-- Evaluation criteria
-- Difficulty level
-- Answer type (factual/comparative/analytical)
-
-**Save to:** `data/questions/exp1_questions.json`
-
-**Format:**
-```json
-{
-  "experiment": "exp1_needle",
-  "questions": [
-    {
-      "id": "exp1_q001",
-      "question": "...",
-      "ground_truth": "...",
-      "difficulty": "simple_lookup | synthesis | complex",
-      "required_docs": ["doc1.txt"],
-      "evaluation_criteria": "..."
-    }
-  ]
-}
-```
-
-### Phase 4: Execution (~2 days)
-
-**Configuration:**
-- Fill levels: [0.1, 0.3, 0.5, 0.7, 0.9]
-- Target tokens: 1M for full-context, 128k for RAG
-- Repetitions: 3 per configuration
-
-**Runner Script:** `scripts/run_experiment_1.py`
-
-- [ ] Implement experiment runner
-  - **Seed Management:** Accept a `--seed` command-line argument to ensure full reproducibility of any stochastic processes (e.g., padding generation).
-  - Load questions and corpus
-  - For each question × strategy × fill level × rep:
-    - Assemble context
-    - Query model
-    - Log response
-  - Progress tracking
-  - Error handling and retry
-  - **Robust Checkpointing:** The script MUST save its state after each API call to a temporary file. On startup, it should check for this file to resume from the last successful call, making it resilient to interruptions. This is a core requirement, not an enhancement.
-
-**Acceptance Criteria:**
-- [ ] **Dry Run:** `python scripts/run_experiment_1.py --dry-run` exits with code 0 and logs that it would make 3,000 API calls.
-- [ ] **File Creation:** After a full run, `ls results/raw/exp1_results.jsonl` successfully lists the file.
-- [ ] **Result Count:** `wc -l results/raw/exp1_results.jsonl` reports 3000.
-
-**Result Format:**
-```json
-{
-  "experiment": "exp1",
-  "question_id": "exp1_q001",
-  "strategy": "naive_1m",
-  "fill_pct": 0.7,
-  "repetition": 1,
-  "response": "...",
-  "tokens_input": 700000,
-  "tokens_output": 150,
-  "latency": 2.5,
-  "cost": 0.015,
-  "timestamp": "2025-11-02T10:30:00"
-}
-```
-
-### Phase 5: Analysis (~1 day)
-
-**Task 5.1: Implement and Calibrate LLM-as-Judge**
-- **Status:** ⏳ Planned
-- **Action:** Before full-scale analysis, implement the `src/evaluation/judges.py` module.
-- **Calibration:** Create a "golden set" of ~50-100 manually scored results from the pilot or a small batch from Experiment 1. Run the LLM-as-judge on this set and measure its accuracy, bias, and correlation with human scores. This step is critical to ensure the reliability of automated evaluation at scale.
-- **Acceptance:**
-  - [ ] `judges.py` is implemented.
-  - [ ] Calibration report shows >90% agreement with manual scores.
-
-**Metrics to Compute:**
-- [ ] Correctness (using the calibrated LLM-as-judge)
-- [ ] Citation accuracy (claims grounded in context?)
-- [ ] Cost per query
-- [ ] Latency statistics
-
-**Acceptance Criteria:**
-- [ ] **Analysis Script:** `python scripts/analyze_results.py --input results/raw/exp1_results.jsonl --output-dir results/analysis` exits with code 0.
-- [ ] **Metrics File:** `ls results/analysis/exp1_metrics.csv` successfully lists the file.
-- [ ] **Analysis File:** `ls results/analysis/exp1_analysis.json` successfully lists the file.
-- [ ] **Visualization Script:** `python scripts/generate_visualizations.py --input results/analysis/exp1_metrics.csv --output-dir results/visualizations/exp1` exits with code 0.
-- [ ] **Plot Verification:** `ls results/visualizations/exp1/*.png | wc -l` reports a count of 3 or more.
-
-**Key Question:** Does Engineered 1M beat Naïve 1M by ≥15%?
+- [x] **GitHub corpus available:** `data/raw/exp1/github_corpus.json` (>600k tokens) exists.
+- [x] **Padding corpus available:** `data/raw/padding/gutenberg_corpus.json` (>1.5M tokens) exists.
+- [x] **Questions validated:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits 0 with ≥50 entries.
+- [ ] **Embedding cache built once:** first run emits `results/cache/exp1_index.*`; reruns reuse cache without consuming embedding RPD quota.
+- [ ] **Runner completion:** `python scripts/run_experiment.py --experiment exp1` yields 3,000 lines in `results/raw/exp1_results.jsonl` and records checkpoints (`results/exp1_status.json` or similar).
+- [ ] **Automated scoring:** `python scripts/analyze_results.py --input results/raw/exp1_results.jsonl --output-dir results/analysis/exp1` produces metrics CSV + markdown summary; visualizations generated via `scripts/generate_visualizations.py`.
+- [ ] **Documentation:** README + PLAN updated with Exp 1 findings, rate-limit notes, and learnings before Experiment 2 begins.
 
 ---
 
-## 🧪 EXPERIMENT 2: Context Pollution (Weeks 5-6)
+## 🧪 EXPERIMENT 2: Context Pollution (Weeks 3–6)
 
-**Status:** ⏳ Planned
+**Status:** 🚫 Do not start until Exp 1 analysis + documentation complete
 
 **Duration:** 1-2 weeks  
 **Goal:** Test robustness to irrelevant information  
@@ -299,6 +185,7 @@ Create questions answerable ONLY from base corpus:
 Save to: `data/questions/exp2_questions.json`
 
 **Acceptance Criteria:**
+- [ ] **Gate check:** `results/analysis/exp1_summary.md` exists and README/PLAN include Exp 1 outcomes.
 - [ ] **Base Corpus:** `python scripts/collect_exp2_corpus.py` runs successfully and `ls data/raw/exp2/base_corpus.json` lists the file.
 - [ ] **Padding Corpus:** `ls data/raw/padding/gutenberg_corpus.json` confirms the padding corpus from Exp1 exists.
 - [ ] **Question Set:** `python scripts/validate_question_set.py data/questions/exp2_questions.json --require-experiment exp2` exits with code 0.
@@ -385,7 +272,7 @@ Metrics:
 
 ---
 
-## 🧪 EXPERIMENT 5: Cost-Latency Frontier (Weeks 7-8)
+## 🧪 EXPERIMENT 5: Cost-Latency Frontier (Weeks 6-8)
 
 **Status:** ⏳ Planned
 
@@ -402,7 +289,7 @@ Metrics:
 
 ---
 
-## 📊 Final Analysis & Reporting (Weeks 9-12)
+## 📊 Final Analysis & Reporting (Weeks 8-12)
 
 **Status:** ⏳ Planned
 
