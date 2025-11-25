@@ -9,33 +9,23 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 - The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `3600000` for a 3.6 M guardrail).
 - If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it.
 
-## ⚠️ CURRENT STATUS: PHASES 1A, 1B, 1C COMPLETE
+## ⚠️ CURRENT STATUS: PILOT COMPLETE – READINESS SPRINT UNDERWAY
 
 **✅ What's Complete:**
-- ✅ All infrastructure from Phase 1A (API client, monitor, loaders, etc.).
-- ✅ **Phase 1B: Pilot Data Collection**
-  - ✅ Pilot corpus of ~10k tokens collected from Hugging Face.
-  - ✅ Pilot question created and validated.
-- ✅ **Phase 1C: Context Assemblers**
-  - ✅ `NaiveContextAssembler` implemented and tested.
-  - ✅ `PaddingGenerator` implemented and tested.
-  - ✅ `RAGPipeline` enhanced with padding method and tested.
-- ✅ **Gemini Client** debugged and robust.
+- ✅ Pilot phase (18-call dry run) validated the end-to-end pipeline.
+- ✅ Experiment 1 data assets (700k Hugging Face corpus, Gutenberg padding, 50-question set).
+- ✅ Context assemblers (Naive, Structured, Basic RAG, Advanced RAG) plus corpora loaders, tokenizer utilities, and Gemini client.
 
-**🔄 In Progress (Pilot Phase):**
-- 🔄 Phase 1D: Create minimal runner (Dry run complete, ready for live run)
-- ⏳ Phase 1E: Go/No-Go decision
+**🛠️ Immediate Focus: Readiness Sprint**
+- Separate monitoring for embeddings vs generations so RPD guardrails stop blocking runs.
+- Cache embeddings/vector indexes and reuse local padding to avoid re-downloads.
+- Align configuration/runners (default to `gemini-2.0-flash-exp`, checkpoint runs, pause/resume on rate limits).
+- Finish evaluation stack and reporting scripts.
+- Expand packaging/tests to cover the experiment code paths.
 
-**❌ What's NOT Complete:**
-- ❌ **Live pilot run** (the 18 API calls).
-- ❌ Evaluation questions for full experiments (none generated yet).
-- ❌ `StructuredContextAssembler` implementation.
-- ❌ Metrics and analysis scripts (scaffolds only).
-- ❌ Runners for full experiments (scaffolds only).
+**🚫 Until These Are Done:** Experiment 1 remains blocked; Experiment 2 and downstream analysis wait on Exp 1 results.
 
-**Bottom Line:** The entire pilot pipeline is implemented, debugged, and verified with a dry run. The project is ready for the live pilot experiment.
-
-**Revised Scope:** Dropped Exp 3 & 4 (too ambitious). Focus on Pilot → Exp 1 → Exp 2 → Analysis. Estimated 10-12 weeks total.
+**Bottom Line:** Infrastructure foundation is solid, but we’re closing the remaining readiness gaps before launching the 3,000-call Experiment 1 run. Scope remains Pilot → Exp 1 → Exp 2 → Frontier analysis, across ~10–12 weeks.
 
 ## 🎯 Data Strategy: Hugging Face + Gutenberg
 
