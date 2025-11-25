@@ -1,10 +1,14 @@
 """Gemini API client wrapper with comprehensive monitoring"""
 
 import google.generativeai as genai
+from google.api_core import exceptions
 from src.config import api_config, config
 from src.utils.monitor import get_monitor
+from src.utils.logging import get_logger
 from typing import Optional, List, Dict, Any
 import time
+
+logger = get_logger(__name__)
 
 
 class GeminiClient:
@@ -36,130 +40,118 @@ class GeminiClient:
         max_output_tokens: Optional[int] = None,
         experiment_id: Optional[str] = None,
         session_id: Optional[str] = None,
+        retries: int = 3,
+        initial_delay: int = 5,
         **kwargs
     ) -> Dict[str, Any]:
         """
-        Generate content using Gemini model with comprehensive monitoring.
-        
-        All calls are tracked and persisted to disk:
-        - Tokens in/out counted
-        - Costs calculated
-        - Tagged with experiment_id and session_id
-        - Saved to results/.monitor_state.json
-        
-        Args:
-            prompt: Input prompt/question
-            model: Model to use (defaults to configured model)
-            temperature: Sampling temperature (0.0 = deterministic)
-            max_output_tokens: Maximum tokens in response
-            experiment_id: Optional experiment ID for tracking
-            session_id: Optional session ID for tracking
-            **kwargs: Additional arguments to pass to generate_content
-            
-        Returns:
-            dict with 'text', 'tokens_input', 'tokens_output', 'latency', 'cost'
+        Generate content using Gemini model with comprehensive monitoring and retries.
         """
         model = model or self.generation_model
         
-        # Estimate token count (rough approximation: 1 token ~ 0.75 words)
         estimated_input_tokens = int(len(prompt.split()) * 1.33)
         estimated_output_tokens = max_output_tokens or 2048
         
-        # Wait if rate limit approaching (enforces free tier limits & budget)
         self.monitor.wait_if_needed(
             estimated_input_tokens=estimated_input_tokens,
             estimated_output_tokens=estimated_output_tokens
         )
         
-        try:
-            start_time = time.time()
-            
-            model_instance = genai.GenerativeModel(model)
-            response = model_instance.generate_content(
-                prompt,
-                generation_config={
-                    "temperature": temperature,
-                    "max_output_tokens": max_output_tokens or 2048,
-                },
-                **kwargs
-            )
-            
-            end_time = time.time()
-            latency = end_time - start_time
-            
-            # Extract token counts
-            input_tokens = getattr(response.usage_metadata, 'prompt_token_count', 0)
-            output_tokens = getattr(response.usage_metadata, 'completion_token_count', 0)
-            
-            # Record in monitor (tracks everything and saves to disk)
-            call_record = self.monitor.record_call(
-                model=model,
-                input_tokens=input_tokens,
-                output_tokens=output_tokens,
-                latency=latency,
-                prompt=prompt[:200] if len(prompt) > 200 else prompt,
-                response=response.text[:200] if response.text and len(response.text) > 200 else response.text,
-                experiment_id=experiment_id,
-                session_id=session_id
-            )
-            
-            result = {
-                'text': response.text,
-                'tokens_input': input_tokens,
-                'tokens_output': output_tokens,
-                'latency': latency,
-                'cost': call_record['total_cost'],
-                'model': model
-            }
-            
-            return result
-            
-        except Exception as e:
-            raise RuntimeError(f"Failed to generate content: {str(e)}")
+        delay = initial_delay
+        for attempt in range(retries):
+            try:
+                start_time = time.time()
+                
+                model_instance = genai.GenerativeModel(model)
+                response = model_instance.generate_content(
+                    prompt,
+                    generation_config={
+                        "temperature": temperature,
+                        "max_output_tokens": max_output_tokens or 2048,
+                    },
+                    **kwargs
+                )
+                
+                latency = time.time() - start_time
+                
+                input_tokens = getattr(response.usage_metadata, 'prompt_token_count', 0)
+                output_tokens = getattr(response.usage_metadata, 'completion_token_count', 0)
+                
+                call_record = self.monitor.record_call(
+                    model=model,
+                    input_tokens=input_tokens,
+                    output_tokens=output_tokens,
+                    latency=latency,
+                    prompt=prompt[:200] if len(prompt) > 200 else prompt,
+                    response=response.text[:200] if response.text and len(response.text) > 200 else response.text,
+                    experiment_id=experiment_id,
+                    session_id=session_id
+                )
+                
+                return {
+                    'text': response.text,
+                    'tokens_input': input_tokens,
+                    'tokens_output': output_tokens,
+                    'latency': latency,
+                    'cost': call_record['total_cost'],
+                    'model': model
+                }
+            except (exceptions.DeadlineExceeded, exceptions.ServiceUnavailable) as e:
+                logger.warning(f"API call failed with {type(e).__name__} on attempt {attempt + 1}/{retries}. Retrying in {delay}s...")
+                time.sleep(delay)
+                delay *= 2
+            except Exception as e:
+                raise RuntimeError(f"Failed to generate content after non-retryable error: {str(e)}")
+        
+        raise RuntimeError(f"Failed to generate content after {retries} attempts.")
     
     def embed_text(
         self, 
         text: str,
         model: Optional[str] = None,
-        track_cost: bool = True
+        track_cost: bool = True,
+        retries: int = 3,
+        initial_delay: int = 5
     ) -> List[float]:
         """
-        Generate embeddings for text using Gemini embedding model.
-        
-        Args:
-            text: Text to embed
-            model: Embedding model to use (defaults to configured model)
-            track_cost: Whether to track this call in cost monitor
-            
-        Returns:
-            List of floats representing the embedding vector
+        Generate embeddings for text, with retries for transient errors.
         """
         model = model or self.embedding_model
-        
-        try:
-            start_time = time.time()
-            response = genai.embed_content(
-                model=model,
-                content=text
-            )
-            latency = time.time() - start_time
-            
-            # Track cost (embeddings are cheap, ~0.02 per 1M tokens input)
-            if track_cost:
-                # Approximate token count (1 token ~ 4 chars)
-                approx_tokens = len(text) // 4
-                self.monitor.record_call(
+        delay = initial_delay
+
+        for attempt in range(retries):
+            try:
+                start_time = time.time()
+                response = genai.embed_content(
                     model=model,
-                    input_tokens=approx_tokens,
-                    output_tokens=768,  # Output dimension size
-                    latency=latency,
-                    prompt=text[:200]
+                    content=text
                 )
+                latency = time.time() - start_time
+                
+                if track_cost:
+                    approx_tokens = len(text) // 4
+                    self.monitor.record_call(
+                        model=model,
+                        input_tokens=approx_tokens,
+                        output_tokens=768,
+                        latency=latency,
+                        prompt=text[:200]
+                    )
+                
+                return response['embedding']
             
-            return response['embedding']
-            
-        except Exception as e:
-            raise RuntimeError(f"Failed to generate embedding: {str(e)}")
+            except Exception as e:
+                # Check for specific, retryable gRPC error codes if possible, 
+                # but DeadlineExceeded is a good one to catch.
+                if "DeadlineExceeded" in str(e) or "504" in str(e):
+                    logger.warning(f"API call failed with DeadlineExceeded on attempt {attempt + 1}/{retries}. Retrying in {delay}s...")
+                    time.sleep(delay)
+                    delay *= 2  # Exponential backoff
+                else:
+                    # For other errors, fail immediately
+                    raise RuntimeError(f"Failed to generate embedding: {str(e)}")
+
+        raise RuntimeError(f"Failed to generate embedding after {retries} attempts.")
     
     def batch_embed_text(
         self,

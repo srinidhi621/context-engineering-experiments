@@ -29,6 +29,7 @@ class RAGPipeline:
         embed_one_fn: Optional[EmbedOneFn] = None,
         client: Optional[GeminiClient] = None,
         use_faiss: bool = True,
+        padding_generator: Optional[Any] = None,
     ):
         """
         Initialize the pipeline.
@@ -38,12 +39,14 @@ class RAGPipeline:
             embed_many_fn: Optional injection for batch embedding.
             embed_one_fn: Optional injection for single-text embedding.
             client: Optional GeminiClient (created lazily otherwise).
+            padding_generator: Optional pre-initialized PaddingGenerator.
         """
         self.embedding_model = embedding_model
         self.embed_many_fn = embed_many_fn
         self.embed_one_fn = embed_one_fn
         self.client = client
         self.use_faiss = use_faiss and faiss is not None
+        self.padding_generator = padding_generator
         self.chunks: List[Dict[str, any]] = []
         self.embeddings: Optional[np.ndarray] = None
         self.index: Optional[faiss.IndexFlatL2] = None
@@ -180,15 +183,17 @@ class RAGPipeline:
         
         This is the KEY methodological control for H2.
         """
-        from src.corpus.padding import PaddingGenerator
-        
         # Assemble retrieved chunks
-        # Note: The max_tokens for RAG is typically smaller (e.g., 128k)
         rag_max_tokens = min(max_context_tokens, 128_000)
         context = self.assemble_context(retrieved_chunks, rag_max_tokens)
         
-        # Pad to match fill percentage of the total context window
-        padder = PaddingGenerator()
+        # Use the injected padding generator if it exists, otherwise create a new one.
+        if self.padding_generator:
+            padder = self.padding_generator
+        else:
+            from src.corpus.padding import PaddingGenerator
+            padder = PaddingGenerator()
+
         padded_context = padder.pad_to_fill_percentage(
             context, fill_pct, max_context_tokens
         )
