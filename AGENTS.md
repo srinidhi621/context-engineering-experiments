@@ -32,3 +32,8 @@
 - Follow the existing imperative, sentence-case style (`Clean up documentation: fix inconsistencies and duplications`). Keep subjects ≤72 characters and add a short clarifying clause when helpful.
 - PRs should explain experiment impact, link to the relevant issue or roadmap phase, and include proof of validation (pytest output, feasibility check results, or monitor snapshots). Add screenshots only when notebook visuals change.
 - Confirm tests pass, generated files are ignored via `.gitignore`, and large datasets remain out of Git history before requesting review.
+
+## Task Execution & Alignment
+- **Mandatory Review:** Before starting any new task or phase, you MUST list your proposed ToDos and get explicit confirmation from the user.
+- **Alignment First:** Do not proceed with implementation until the user has reviewed and approved the plan.
+- **Updates:** If the plan changes significantly during execution, pause and re-align with the user.
