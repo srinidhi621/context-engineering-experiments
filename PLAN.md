@@ -6,8 +6,8 @@
 **Budget:** $0 (Free Tier - gemini-2.0-flash-exp)  
 **Team Size:** 1  
 
-**Last Updated:** November 24, 2025  
-**Status:** ✅ Pilot Complete – ⛔ Experiment 1 blocked by readiness tasks
+**Last Updated:** November 26, 2025  
+**Status:** ✅ Readiness Sprint Complete – 🚀 Experiment 1 Ready to Launch
 
 ---
 
@@ -29,54 +29,57 @@
 - ✅ Phase 1D: Minimal runner execution
 - ✅ Phase 1E: Go/No-Go Decision (Decision: GO)
 
-**Experiments:** ⏸️ **On Hold pending readiness fixes**
-- Experiment 1: Needle in Multiple Haystacks – **Blocked** (rate limits, runners, evaluation)
+**Experiments:**
+- Experiment 1: Needle in Multiple Haystacks – 🚀 **Ready to Launch**
 - Experiment 2: Context Pollution – **Queued** (begin only after Exp 1 results)
 - Experiment 5: Cost-Latency Frontier – **Queued** (analysis after Exp 1–2)
 
-**Time Spent:** ~28 hours on infrastructure & pilot  
+**Time Spent:** ~32 hours on infrastructure, pilot & readiness  
 **Remaining:** ~9-11 weeks for experiments + analysis
 
 **Repository:** https://github.com/srinidhi621/context-engineering-experiments
 
-### 🔍 Readiness Gaps (Nov 25, 2025)
+### ✅ Readiness Sprint (Completed Nov 26, 2025)
 
-- **Rate-limit accounting blocks Experiment 1:** The shared `APIMonitor` counts `text-embedding-004` calls toward the 1,500 RPD cap (`src/models/gemini_client.py`, `src/utils/monitor.py`), so the ~17k chunk embeddings exhaust quota before any generations run (`results/.monitor_state.json`, `experiment1.log`).
-- **Config/model mismatch:** `config.model_name` still defaults to `gemini-flash-latest` even though the plan and feasibility work assume `gemini-2.0-flash-exp`, risking incompatible context limits if not corrected.
-- **Experiment orchestration gaps:** `scripts/run_experiment.py` only triggers the pilot runner and forwards flags that `run_minimal_pilot.py` ignores; Experiment 1 lacks a resumable CLI entry point and pauses when the RPD stop occurs instead of checkpointing.
-- **Evaluation & analysis placeholders:** `src/experiments/*.py` (beyond assemblers), `src/evaluation/*`, and scripts such as `scripts/analyze_results.py` and `scripts/generate_report.py` remain TODOs—no automated scoring exists yet.
-- **Data/padding misalignment:** The collected Exp 1 corpus is ~574k tokens, so naïve/structured assemblers cannot reach 70–90% fill of a 1M window; `PaddingGenerator` redownloads Gutenberg books every instantiation instead of reusing the 2 M-token cache.
-- **Packaging/test coverage gaps:** `setup.py` omits dependencies actually used by Experiment 1 (Hugging Face Hub, Gutenberg, FAISS, BM25, tqdm, etc.), and several pytest modules are empty, so regressions will be hard to catch before long API runs.
+All blocking issues for Experiment 1 have been resolved:
+
+1.  ✅ **Rate Limits Fixed:** Separated `text-embedding-004` and `gemini-2.0-flash-exp` monitors.
+2.  ✅ **Persistence Added:** RAG chunks, embeddings, and FAISS/BM25 indexes are now cached to `results/cache/` to prevent re-computation.
+3.  ✅ **Data Collected:** 700k+ tokens of model cards collected to `data/raw/exp1/`.
+4.  ✅ **Analysis Stack Built:** Implemented `metrics.py`, `judges.py` (LLM-as-a-Judge), and `analyze_results.py`.
+5.  ✅ **End-to-End Verification:**
+    *   Synthetic run proved the analysis pipeline works.
+    *   Live smoke test (limit=2) proved the API integration works.
 
 ---
 
-## 🛠️ Immediate Readiness Sprint (Week 0–1)
+## 🛠️ Immediate Readiness Sprint (Week 0–1) - ✅ COMPLETE
 
 Goal: unblock Experiment 1 by fixing infrastructure gaps. All items below are prerequisites for any large-scale run.
 
 1. **Separate monitoring for embeddings vs. generations**
-   - Update `GeminiClient` so `text-embedding-004` calls use their own monitor (or bypass RPD accounting) and create persistent embedding caches to avoid reusing quota.
-   - Add regression tests confirming mixed workloads respect limits.
+   - ✅ Update `GeminiClient` so `text-embedding-004` calls use their own monitor (or bypass RPD accounting) and create persistent embedding caches to avoid reusing quota.
+   - ✅ Add regression tests confirming mixed workloads respect limits.
    - *Exit criteria:* indexing the Exp 1 corpus completes without tripping the generation RPD hard stop.
 
 2. **Persist & resume embeddings + padding**
-   - Cache FAISS/BM25 indexes and chunk vectors under `results/cache/` and load them when present.
-   - Switch `PaddingGenerator` to reuse `data/raw/padding/gutenberg_corpus.json` rather than re-downloading books.
+   - ✅ Cache FAISS/BM25 indexes and chunk vectors under `results/cache/` and load them when present.
+   - ✅ Switch `PaddingGenerator` to reuse `data/raw/padding/gutenberg_corpus.json` rather than re-downloading books.
    - *Exit criteria:* restarting Exp 1 skips embedding recomputation and performs no network calls for padding.
 
 3. **Align configuration and experiment runners**
-   - Set `config.model_name = "gemini-2.0-flash-exp"`, update docs, and extend `scripts/run_experiment.py` with explicit handlers for pilot/exp1/exp2.
-   - Harden `scripts/run_experiment_1.py` with `PerMinuteTokenThrottle`, persistent status files, and automatic sleep/resume when RPM/RPD/TPM limits trigger.
+   - ✅ Set `config.model_name = "gemini-2.0-flash-exp"`, update docs, and extend `scripts/run_experiment.py` with explicit handlers for pilot/exp1/exp2.
+   - ✅ Harden `scripts/run_experiment_1.py` with `PerMinuteTokenThrottle`, persistent status files, and automatic sleep/resume when RPM/RPD/TPM limits trigger.
    - *Exit criteria:* `python scripts/run_experiment.py --experiment exp1 --dry-run` validates orchestration; live runs checkpoint and resume after quota resets.
 
 4. **Implement scoring & analysis stack**
-   - Finish `src/experiments/base_experiment.py` + `exp1_needle.py`, implement evaluation utilities (metrics, judges, human eval hooks), and ship `scripts/analyze_results.py` + `scripts/generate_report.py`.
-   - Add pytest coverage for evaluation logic.
+   - ✅ Finish `src/experiments/base_experiment.py` + `exp1_needle.py`, implement evaluation utilities (metrics, judges, human eval hooks), and ship `scripts/analyze_results.py` + `scripts/generate_report.py`.
+   - ✅ Add pytest coverage for evaluation logic.
    - *Exit criteria:* given sample results, `scripts/analyze_results.py` outputs metrics/visualization data; tests pass.
 
 5. **Packaging & validation**
-   - Expand `setup.py` to include all experiment dependencies and flesh out placeholder pytest modules plus lint/format tooling (e.g., `ruff`).
-   - Document a pre-flight checklist (pytest + lint) to run before API traffic.
+   - ✅ Expand `setup.py` to include all experiment dependencies and flesh out placeholder pytest modules plus lint/format tooling (e.g., `ruff`).
+   - ✅ Document a pre-flight checklist (pytest + lint) to run before API traffic.
    - *Exit criteria:* clean `pip install -e .` on a fresh venv; `python -m pytest` succeeds locally/CI.
 
 Completion of this sprint is the gate to start Experiment 1.
