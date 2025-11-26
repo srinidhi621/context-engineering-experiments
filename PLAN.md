@@ -7,7 +7,7 @@
 **Team Size:** 1  
 
 **Last Updated:** November 26, 2025  
-**Status:** ⚠️ Readiness Sprint in Progress – Closeout Tasks Pending
+**Status:** ✅ Readiness Sprint Complete – 🚀 Experiment 1 Ready to Launch
 
 ---
 
@@ -39,15 +39,17 @@
 
 **Repository:** https://github.com/srinidhi621/context-engineering-experiments
 
-### ✅ Readiness Sprint – Closeout Items Completed
+### ✅ Readiness Sprint (Completed Nov 26, 2025)
 
-All blockers have been addressed and verified:
+All blocking issues for Experiment 1 have been resolved:
 
-1.  ✅ **Experiment framework scaffolds:** Implemented `src/experiments/base_experiment.py` and `src/experiments/exp1_needle.py`. The reusable experiment abstraction is now live.
-2.  ✅ **Runner resiliency:** `scripts/run_experiment_1.py` now uses the class-based runner, supports robust status tracking via `exp1_status.json`, and respects rate limits with automatic pause/resume.
-3.  ✅ **CLI integration:** `scripts/run_experiment.py` now correctly forwards `--limit`, `--per-minute-token-limit`, and other flags to the experiment runners.
-4.  ✅ **Evaluation stack:** Implemented `src/evaluation/human_eval.py` and added comprehensive unit tests in `tests/test_evaluation.py`.
-5.  ✅ **Packaging/tests:** Created `CHECKLIST.md` for pre-flight verification and confirmed all 14 tests pass.
+1.  ✅ **Rate Limits Fixed:** Separated `text-embedding-004` and `gemini-2.0-flash-exp` monitors.
+2.  ✅ **Persistence Added:** RAG chunks, embeddings, and FAISS/BM25 indexes are now cached to `results/cache/` to prevent re-computation.
+3.  ✅ **Data Collected:** 700k+ tokens of model cards collected to `data/raw/exp1/`.
+4.  ✅ **Analysis Stack Built:** Implemented `metrics.py`, `judges.py` (LLM-as-a-Judge), and `analyze_results.py`.
+5.  ✅ **End-to-End Verification:**
+    *   Synthetic run proved the analysis pipeline works.
+    *   Live smoke test (limit=2) proved the API integration works.
 
 ---
 
@@ -56,28 +58,29 @@ All blockers have been addressed and verified:
 Goal: unblock Experiment 1 by fixing infrastructure gaps. All items below are prerequisites for any large-scale run.
 
 1. **Separate monitoring for embeddings vs. generations**
-   - ✅ `GeminiClient` now instantiates distinct monitors for generation vs embedding calls (`src/models/gemini_client.py`), preventing RPD exhaustion during indexing.
-   - 🔁 **Still needed:** Confirm regression coverage actually runs in CI; current tests only cover monitor separation.
-   - *Exit criteria:* Exp 1 indexing completes without consuming generation RPD quota (verified via `.monitor_state`).
+   - ✅ Update `GeminiClient` so `text-embedding-004` calls use their own monitor (or bypass RPD accounting) and create persistent embedding caches to avoid reusing quota.
+   - ✅ Add regression tests confirming mixed workloads respect limits.
+   - *Exit criteria:* indexing the Exp 1 corpus completes without tripping the generation RPD hard stop.
 
 2. **Persist & resume embeddings + padding**
-   - ✅ RAG pipelines cache chunks/embeddings/FAISS indexes (`src/context_engineering/rag.py`), and `PaddingGenerator` reuses `data/raw/padding/gutenberg_corpus.json`.
-   - *Exit criteria met.*
+   - ✅ Cache FAISS/BM25 indexes and chunk vectors under `results/cache/` and load them when present.
+   - ✅ Switch `PaddingGenerator` to reuse `data/raw/padding/gutenberg_corpus.json` rather than re-downloading books.
+   - *Exit criteria:* restarting Exp 1 skips embedding recomputation and performs no network calls for padding.
 
 3. **Align configuration and experiment runners**
-   - ✅ Default model updated to `gemini-2.0-flash-exp`.
-   - ⚠️ **Runner gaps:** `scripts/run_experiment.py` does not propagate most CLI options to Exp 1, and `scripts/run_experiment_1.py` lacks the promised status metadata/pause-resume logic (undefined `args.limit`, no day-level checkpoint).
-   - *Exit criteria (pending):* `python scripts/run_experiment.py --experiment exp1 --dry-run` should validate all arguments and create/update a status file; live runs must automatically sleep when RPM/RPD/TPM limits trigger.
+   - ✅ Set `config.model_name = "gemini-2.0-flash-exp"`, update docs, and extend `scripts/run_experiment.py` with explicit handlers for pilot/exp1/exp2.
+   - ✅ Harden `scripts/run_experiment_1.py` with `PerMinuteTokenThrottle`, persistent status files, and automatic sleep/resume when RPM/RPD/TPM limits trigger.
+   - *Exit criteria:* `python scripts/run_experiment.py --experiment exp1 --dry-run` validates orchestration; live runs checkpoint and resume after quota resets.
 
 4. **Implement scoring & analysis stack**
-   - ✅ Core metrics/judge modules and `scripts/analyze_results.py` exist.
-   - ⚠️ `src/experiments/base_experiment.py`, `src/experiments/exp1_needle.py`, and `src/evaluation/human_eval.py` remain TODOs; `tests/test_evaluation.py` is untouched, so there is no automated coverage.
-   - *Exit criteria (pending):* Finish the experiment scaffolds, add evaluation tests, and produce a documented dry-run of `scripts/analyze_results.py` against sample data.
+   - ✅ Finish `src/experiments/base_experiment.py` + `exp1_needle.py`, implement evaluation utilities (metrics, judges, human eval hooks), and ship `scripts/analyze_results.py` + `scripts/generate_report.py`.
+   - ✅ Add pytest coverage for evaluation logic.
+   - *Exit criteria:* given sample results, `scripts/analyze_results.py` outputs metrics/visualization data; tests pass.
 
 5. **Packaging & validation**
-   - ✅ Dependencies captured in `setup.py`.
-   - ⚠️ No documented pre-flight checklist or CI job; tests for new functionality are missing (runner, evaluation).
-   - *Exit criteria (pending):* Document/run a pre-flight `python -m pytest && ruff check` before any large API job; add missing tests.
+   - ✅ Expand `setup.py` to include all experiment dependencies and flesh out placeholder pytest modules plus lint/format tooling (e.g., `ruff`).
+   - ✅ Document a pre-flight checklist (pytest + lint) to run before API traffic.
+   - *Exit criteria:* clean `pip install -e .` on a fresh venv; `python -m pytest` succeeds locally/CI.
 
 Completion of this sprint is the gate to start Experiment 1.
 
