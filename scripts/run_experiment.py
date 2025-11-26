@@ -70,6 +70,12 @@ def parse_args() -> argparse.Namespace:
         action="store_true",
         help="Plan the run without executing API calls.",
     )
+    parser.add_argument(
+        "--limit",
+        type=int,
+        default=None,
+        help="Limit number of successful runs (for testing).",
+    )
     return parser.parse_args()
 
 
@@ -80,6 +86,7 @@ def main() -> None:
         f"Model: {config.model_name}\n"
         f"Fill %s: {', '.join(f'{p:.0%}' for p in args.fill_pcts)}\n"
         f"Per-minute token limit: {args.per_minute_token_limit:,}\n"
+        f"Run limit: {args.limit}\n"
     )
 
     if args.experiment == "pilot":
@@ -124,6 +131,9 @@ def run_exp1_handler(args: argparse.Namespace) -> None:
     script = Path(__file__).with_name("run_experiment_1.py")
     cmd: List[str] = [sys.executable, str(script)]
 
+    cmd.extend(["--per-minute-token-limit", str(args.per_minute_token_limit)])
+    if args.limit is not None:
+        cmd.extend(["--limit", str(args.limit)])
     if args.dry_run:
         cmd.append("--dry-run")
 
