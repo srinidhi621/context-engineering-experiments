@@ -62,19 +62,36 @@ print_header "Context Engineering Experiments - Setup"
 print_header "Step 1: Checking Prerequisites"
 
 print_step "Checking Python version..."
-if check_command python3; then
-    PYTHON_VERSION=$(python3 --version 2>&1 | awk '{print $2}')
-    PYTHON_MAJOR=$(echo $PYTHON_VERSION | cut -d. -f1)
-    PYTHON_MINOR=$(echo $PYTHON_VERSION | cut -d. -f2)
-    
-    if [ "$PYTHON_MAJOR" -ge 3 ] && [ "$PYTHON_MINOR" -ge 10 ]; then
-        print_success "Python $PYTHON_VERSION found"
-    else
-        print_error "Python 3.10+ required, found $PYTHON_VERSION"
-        exit 1
+
+# Function to check version of a python executable
+check_python_version() {
+    local cmd=$1
+    if check_command "$cmd"; then
+        local version=$($cmd --version 2>&1 | awk '{print $2}')
+        local major=$(echo $version | cut -d. -f1)
+        local minor=$(echo $version | cut -d. -f2)
+        if [ "$major" -eq 3 ] && [ "$minor" -ge 10 ]; then
+            echo "$cmd"
+            return 0
+        fi
     fi
+    return 1
+}
+
+# Try to find a suitable python executable, preferring newer versions
+PYTHON_EXEC=""
+for cmd in python3.13 python3.12 python3.11 python3.10 python3; do
+    if found_exec=$(check_python_version "$cmd"); then
+        PYTHON_EXEC=$found_exec
+        break
+    fi
+done
+
+if [ -n "$PYTHON_EXEC" ]; then
+    PYTHON_VERSION=$($PYTHON_EXEC --version 2>&1 | awk '{print $2}')
+    print_success "Found suitable Python: $PYTHON_EXEC ($PYTHON_VERSION)"
 else
-    print_error "Python3 not found. Please install Python 3.10+"
+    print_error "No suitable Python 3.10+ found."
     exit 1
 fi
 
@@ -111,15 +128,15 @@ if [ -d "venv" ]; then
     if [[ $REPLY =~ ^[Yy]$ ]]; then
         print_step "Removing existing venv..."
         rm -rf venv
-        print_step "Creating new virtual environment..."
-        python3 -m venv venv
+        print_step "Creating new virtual environment using $PYTHON_EXEC..."
+        $PYTHON_EXEC -m venv venv
         print_success "Virtual environment created"
     else
         print_step "Using existing venv..."
     fi
 else
-    print_step "Creating virtual environment..."
-    python3 -m venv venv
+    print_step "Creating virtual environment using $PYTHON_EXEC..."
+    $PYTHON_EXEC -m venv venv
     print_success "Virtual environment created"
 fi
 

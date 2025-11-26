@@ -31,6 +31,10 @@ class GeminiClient:
             model_name=self.generation_model,
             budget_limit=budget_limit
         )
+        self.embedding_monitor = get_monitor(
+            model_name=self.embedding_model,
+            budget_limit=budget_limit
+        )
     
     def generate_content(
         self, 
@@ -130,7 +134,7 @@ class GeminiClient:
                 
                 if track_cost:
                     approx_tokens = len(text) // 4
-                    self.monitor.record_call(
+                    self.embedding_monitor.record_call(
                         model=model,
                         input_tokens=approx_tokens,
                         output_tokens=768,

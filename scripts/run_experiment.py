@@ -84,6 +84,8 @@ def main() -> None:
 
     if args.experiment == "pilot":
         run_pilot_handler(args)
+    elif args.experiment == "exp1":
+        run_exp1_handler(args)
     else:
         print(
             f"Experiment '{args.experiment}' is not implemented yet. "
@@ -112,6 +114,20 @@ def run_pilot_handler(args: argparse.Namespace) -> None:
         cmd.append("--dry-run")
 
     print(f"Executing pilot via {script} ...")
+    subprocess.run(cmd, check=True)
+
+
+def run_exp1_handler(args: argparse.Namespace) -> None:
+    """
+    Delegate Exp1 execution to scripts/run_experiment_1.py with shared flags.
+    """
+    script = Path(__file__).with_name("run_experiment_1.py")
+    cmd: List[str] = [sys.executable, str(script)]
+
+    if args.dry_run:
+        cmd.append("--dry-run")
+
+    print(f"Executing Experiment 1 via {script} ...")
     subprocess.run(cmd, check=True)
 
 

@@ -1,7 +1,12 @@
 from typing import List, Dict
+import pickle
+from pathlib import Path
 
 from .rag import RAGPipeline
 from rank_bm25 import BM25Okapi
+from src.utils.logging import get_logger
+
+logger = get_logger(__name__)
 
 
 class AdvancedRAGPipeline(RAGPipeline):
@@ -16,6 +21,42 @@ class AdvancedRAGPipeline(RAGPipeline):
         self.reranker = reranker
         self.padding_generator = padding_generator
 
+    def save_state(self, path_prefix: str):
+        """Save basic RAG state + BM25 index."""
+        super().save_state(path_prefix)
+        
+        if self.bm25_index:
+            try:
+                with open(f"{path_prefix}_bm25.pkl", 'wb') as f:
+                    pickle.dump(self.bm25_index, f)
+                logger.info("BM25 index saved.")
+            except Exception as e:
+                logger.error(f"Failed to save BM25 index: {e}")
+
+    def load_state(self, path_prefix: str) -> bool:
+        """Load basic RAG state + BM25 index."""
+        if not super().load_state(path_prefix):
+            return False
+            
+        try:
+            bm25_path = Path(f"{path_prefix}_bm25.pkl")
+            if bm25_path.exists():
+                with open(bm25_path, 'rb') as f:
+                    self.bm25_index = pickle.load(f)
+                logger.info("BM25 index loaded.")
+            else:
+                logger.warning("BM25 index file not found.")
+                # Rebuild if chunks exist? For now just warn.
+                if self.chunks:
+                    logger.info("Rebuilding BM25 index from chunks...")
+                    tokenized_corpus = [doc['text'].split(" ") for doc in self.chunks]
+                    self.bm25_index = BM25Okapi(tokenized_corpus)
+            
+            return True
+        except Exception as e:
+            logger.warning(f"Failed to load BM25 index: {e}")
+            return False
+
     def index_chunks(self, chunks: List[Dict] = None, **kwargs):
         """
         Builds both the vector index (FAISS) and the BM25 keyword index.
@@ -25,9 +66,11 @@ class AdvancedRAGPipeline(RAGPipeline):
         
         if not self.chunks:
             raise ValueError("No chunks to index for BM25.")
-            
+        
+        logger.info("Starting Advanced RAG indexing (BM25)...")
         tokenized_corpus = [doc['text'].split(" ") for doc in self.chunks]
         self.bm25_index = BM25Okapi(tokenized_corpus)
+        logger.info("Finished Advanced RAG indexing (BM25).")
 
     def retrieve(self, query: str, top_k: int = 10) -> List[Dict]:
         """

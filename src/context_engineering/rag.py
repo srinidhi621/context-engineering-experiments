@@ -2,8 +2,9 @@
 
 from __future__ import annotations
 
-from typing import Callable, List, Dict, Optional, Sequence
-
+from typing import Callable, List, Dict, Optional, Sequence, Any
+import json
+from pathlib import Path
 import numpy as np
 
 try:
@@ -12,7 +13,10 @@ except ImportError:  # pragma: no cover - optional dependency
     faiss = None
 
 from src.models.gemini_client import GeminiClient
+from src.utils.logging import get_logger
 
+
+logger = get_logger(__name__)
 
 EmbedManyFn = Callable[[Sequence[str]], Sequence[Sequence[float]]]
 EmbedOneFn = Callable[[str], Sequence[float]]
@@ -51,6 +55,53 @@ class RAGPipeline:
         self.embeddings: Optional[np.ndarray] = None
         self.index: Optional[faiss.IndexFlatL2] = None
    
+    def save_state(self, path_prefix: str):
+        """Save chunks, embeddings, and index to disk."""
+        logger.info(f"Saving RAG state to {path_prefix}*...")
+        # Save chunks
+        with open(f"{path_prefix}_chunks.json", 'w') as f:
+            json.dump(self.chunks, f)
+        
+        # Save embeddings
+        if self.embeddings is not None:
+            np.save(f"{path_prefix}_embeddings.npy", self.embeddings)
+        
+        # Save FAISS index
+        if self.use_faiss and self.index:
+            faiss.write_index(self.index, f"{path_prefix}_faiss.index")
+        logger.info("RAG state saved.")
+
+    def load_state(self, path_prefix: str) -> bool:
+        """Load state from disk. Returns True if successful."""
+        try:
+            logger.info(f"Attempting to load RAG state from {path_prefix}*...")
+            # Load chunks
+            chunks_path = Path(f"{path_prefix}_chunks.json")
+            if not chunks_path.exists():
+                logger.info("Chunks file not found.")
+                return False
+            
+            with open(chunks_path, 'r') as f:
+                self.chunks = json.load(f)
+                
+            # Load embeddings
+            emb_path = Path(f"{path_prefix}_embeddings.npy")
+            if emb_path.exists():
+                self.embeddings = np.load(str(emb_path))
+            else:
+                logger.warning("Embeddings file not found, but chunks loaded.")
+
+            # Load FAISS index
+            index_path = Path(f"{path_prefix}_faiss.index")
+            if self.use_faiss and index_path.exists():
+                self.index = faiss.read_index(str(index_path))
+            
+            logger.info(f"Loaded RAG state from {path_prefix}")
+            return True
+        except Exception as e:
+            logger.warning(f"Failed to load RAG state: {e}")
+            return False
+
     def chunk_documents(
         self,
         documents: List[str],
@@ -60,6 +111,7 @@ class RAGPipeline:
         """
         Break documents into overlapping chunks (word-based approximation).
         """
+        logger.info(f"Chunking {len(documents)} documents for RAG...")
         if chunk_size <= 0:
             raise ValueError("chunk_size must be positive")
         if overlap < 0:
@@ -94,6 +146,7 @@ class RAGPipeline:
                 chunk_id += 1
 
         self.chunks = chunks
+        logger.info(f"Finished chunking. Created {len(self.chunks)} chunks.")
         return chunks
    
     def index_chunks(self, chunks: Optional[List[Dict]] = None):
@@ -103,6 +156,7 @@ class RAGPipeline:
         Args:
             chunks: Chunks to index (uses self.chunks if None)
         """
+        logger.info("Starting RAG indexing...")
         if chunks:
             self.chunks = chunks
         
@@ -110,13 +164,20 @@ class RAGPipeline:
             raise ValueError("No chunks to index")
         
         chunk_texts = [c['text'] for c in self.chunks]
+        
+        logger.info(f"Generating Gemini embeddings for {len(chunk_texts)} chunks...")
         embeddings = self._embed_texts(chunk_texts)
         self.embeddings = np.array(embeddings, dtype=np.float32)
+        logger.info("Embeddings generated.")
         
         if self.use_faiss:
+            logger.info("Building FAISS index...")
             dimension = self.embeddings.shape[1]
             self.index = faiss.IndexFlatL2(dimension)
             self.index.add(self.embeddings)
+            logger.info("FAISS index built.")
+        
+        logger.info("Finished RAG indexing.")
     
     def retrieve(self, query: str, top_k: int = 5) -> List[Dict]:
         """

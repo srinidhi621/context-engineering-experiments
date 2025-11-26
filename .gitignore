@@ -109,6 +109,8 @@ GEMINI.md
 *.gemini.log
 
 # Local state and results
-results/.monitor_state.json
+results/.monitor_state*.json
 results/.rate_limit_status.json
+results/cache/
+results/test_synthetic/
 

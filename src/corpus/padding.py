@@ -1,16 +1,42 @@
 from typing import List, Dict
 import random
+import json
+import os
+from pathlib import Path
 from src.corpus.loaders import load_gutenberg_books
 from src.utils.tokenizer import count_tokens, truncate_to_tokens
 
 class PaddingGenerator:
     """Generate irrelevant padding content to reach target fill %"""
     
-    def __init__(self):
-        # Pre-load some Gutenberg books for padding
-        # Book IDs: 1342 (Pride & Prejudice), 84 (Frankenstein), 
-        #           98 (A Tale of Two Cities), 1661 (Sherlock Holmes)
-        self.padding_books = load_gutenberg_books([1342, 84, 98, 1661])
+    def __init__(self, cache_file: str = "data/raw/padding/gutenberg_corpus.json"):
+        self.cache_file = Path(cache_file)
+        
+        # Try to load from cache first
+        if self.cache_file.exists():
+            try:
+                with open(self.cache_file, 'r') as f:
+                    self.padding_books = json.load(f)
+            except Exception as e:
+                print(f"Failed to load padding cache: {e}. Redownloading.")
+                self.padding_books = []
+        else:
+            self.padding_books = []
+            
+        # If no books loaded (cache missing or empty), download them
+        if not self.padding_books:
+            # Book IDs: 1342 (Pride & Prejudice), 84 (Frankenstein), 
+            #           98 (A Tale of Two Cities), 1661 (Sherlock Holmes)
+            self.padding_books = load_gutenberg_books([1342, 84, 98, 1661])
+            
+            # Save to cache
+            try:
+                self.cache_file.parent.mkdir(parents=True, exist_ok=True)
+                with open(self.cache_file, 'w') as f:
+                    json.dump(self.padding_books, f)
+            except Exception as e:
+                print(f"Failed to save padding cache: {e}")
+
         self.padding_text = "\n\n".join([b['content'] for b in self.padding_books if b and 'content' in b])
     
     def generate_padding(self, target_tokens: int) -> str:

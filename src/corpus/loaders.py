@@ -11,7 +11,7 @@ from gutenbergpy import textget
 from dotenv import load_dotenv
 
 # Import token counting from centralized utilities
-from ..utils.tokenizer import count_tokens
+from src.utils.tokenizer import count_tokens
 
 # Load environment variables
 load_dotenv()

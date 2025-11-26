@@ -509,17 +509,31 @@ class APIMonitor:
         print("\n" + "="*70 + "\n")
 
 
-# Global instance
-_monitor = None
+# Global instance registry
+_monitors = {}
 
 
 def get_monitor(model_name: Optional[str] = None, budget_limit: float = 174.00) -> APIMonitor:
-    """Get or create global API monitor instance"""
-    global _monitor
-    if _monitor is None:
-        if model_name is None:
-            from ..config import config
-            model_name = config.model_name
-        _monitor = APIMonitor(model_name=model_name, budget_limit=budget_limit)
-    return _monitor
+    """
+    Get or create API monitor instance for a specific model.
+    Maintains separate instances (and state files) per model to track independent quotas.
+    """
+    global _monitors
+    
+    if model_name is None:
+        from ..config import config
+        model_name = config.model_name
+        
+    if model_name not in _monitors:
+        # Create unique state file for this model to ensure independent tracking
+        safe_name = model_name.replace("-", "_").replace(".", "_")
+        state_file = f"results/.monitor_state_{safe_name}.json"
+        
+        _monitors[model_name] = APIMonitor(
+            model_name=model_name,
+            state_file=state_file,
+            budget_limit=budget_limit
+        )
+        
+    return _monitors[model_name]
 
