@@ -33,7 +33,7 @@ class NeedleExperiment(BaseExperiment):
         self.strategies = ["naive", "structured", "rag", "advanced_rag"]
         self.fill_levels = [0.1, 0.3, 0.5, 0.7, 0.9]
         self.repetitions = 3
-        self.max_tokens = 1_000_000
+        self.max_tokens = 990_000
         
         # Initialize Helpers
         self.padding_generator = PaddingGenerator()
@@ -92,7 +92,7 @@ class NeedleExperiment(BaseExperiment):
                 assembler = self.assemblers[strategy]
                 for fill_pct in self.fill_levels:
                     for rep in range(self.repetitions):
-                        if limit and new_results >= limit:
+                        if limit is not None and new_results >= limit:
                             logger.info(f"Hit limit of {limit} runs. Stopping.")
                             return
 
