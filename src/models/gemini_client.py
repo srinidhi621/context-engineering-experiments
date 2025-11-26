@@ -7,6 +7,7 @@ from src.utils.monitor import get_monitor
 from src.utils.logging import get_logger
 from typing import Optional, List, Dict, Any
 import time
+import re
 
 logger = get_logger(__name__)
 
@@ -104,6 +105,12 @@ class GeminiClient:
                 logger.warning(f"API call failed with {type(e).__name__} on attempt {attempt + 1}/{retries}. Retrying in {delay}s...")
                 time.sleep(delay)
                 delay *= 2
+            except exceptions.ResourceExhausted as e:
+                match = re.search(r"retry_delay { seconds: (\d+) }", str(e))
+                retry_after = int(match.group(1)) if match else delay * (2 ** attempt)
+                logger.warning(f"API call failed with ResourceExhausted on attempt {attempt + 1}/{retries}. Retrying in {retry_after}s...")
+                time.sleep(retry_after)
+                delay *= 2 # Still exponentially backoff for next attempt if this doesn't fix it
             except Exception as e:
                 raise RuntimeError(f"Failed to generate content after non-retryable error: {str(e)}")
         
