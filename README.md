@@ -9,23 +9,23 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 - The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `3600000` for a 3.6 M guardrail).
 - If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it.
 
-## ⚠️ CURRENT STATUS: PILOT COMPLETE – READINESS SPRINT UNDERWAY
+## ⚠️ CURRENT STATUS: READINESS SPRINT COMPLETE – EXPERIMENT 1 READY
 
 **✅ What's Complete:**
-- ✅ Pilot phase (18-call dry run) validated the end-to-end pipeline.
-- ✅ Experiment 1 data assets (700k Hugging Face corpus, Gutenberg padding, 50-question set).
-- ✅ Context assemblers (Naive, Structured, Basic RAG, Advanced RAG) plus corpora loaders, tokenizer utilities, and Gemini client.
+- ✅ **Pilot Phase:** Validated end-to-end pipeline.
+- ✅ **Data Assets:** 700k token corpus (Hugging Face), 2M token padding corpus (Gutenberg), 50-question set.
+- ✅ **Infrastructure:** Unified monitoring, separate embedding/generation rate limits, robust caching for RAG indexes.
+- ✅ **Analysis Stack:** Metrics (F1, Exact Match), LLM-as-a-Judge, and automated reporting scripts.
+- ✅ **Verification:** Synthetic runs and live smoke tests passed.
 
-**🛠️ Immediate Focus: Readiness Sprint**
-- Separate monitoring for embeddings vs generations so RPD guardrails stop blocking runs.
-- Cache embeddings/vector indexes and reuse local padding to avoid re-downloads.
-- Align configuration/runners (default to `gemini-2.0-flash-exp`, checkpoint runs, pause/resume on rate limits).
-- Finish evaluation stack and reporting scripts.
-- Expand packaging/tests to cover the experiment code paths.
+**🚀 Next Step:** Launch Experiment 1 (3,000 API calls).
 
-**🚫 Until These Are Done:** Experiment 1 remains blocked; Experiment 2 and downstream analysis wait on Exp 1 results.
+**Requirements:**
+- **Python 3.10+** (Project uses **3.13.3** in venv).
+- **Dependencies:** `google-generativeai >= 0.3.0` (requires Python 3.9+).
+- **Activation:** Always run `source venv/bin/activate` before executing scripts.
 
-**Bottom Line:** Infrastructure foundation is solid, but we’re closing the remaining readiness gaps before launching the 3,000-call Experiment 1 run. Scope remains Pilot → Exp 1 → Exp 2 → Frontier analysis, across ~10–12 weeks.
+---
 
 ## 🎯 Data Strategy: Hugging Face + Gutenberg
 

@@ -14,7 +14,7 @@
 ## 📊 Current Status
 
 **Infrastructure:** ✅ **Complete & Production-Ready**
-- Python 3.13.3 environment configured
+- Python 3.13.3 environment configured (required for google-generativeai >= 0.3.0)
 - Model: `gemini-2.0-flash-exp` (15 RPM, 1M TPM, 1500 RPD, $0.00 on free tier)
 - Unified monitoring: `src/utils/monitor.py` with persistent state
 - Budget: $174 enforced automatically
