@@ -33,7 +33,7 @@ class NeedleExperiment(BaseExperiment):
         self.strategies = ["naive", "structured", "rag", "advanced_rag"]
         self.fill_levels = [0.1, 0.3, 0.5, 0.7, 0.9]
         self.repetitions = 3
-        self.max_tokens = 990_000
+        self.max_tokens = 950_000
         
         # Initialize Helpers
         self.padding_generator = PaddingGenerator()
