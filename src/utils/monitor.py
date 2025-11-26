@@ -51,6 +51,13 @@ class ModelLimits:
                 input_cost_per_1m=0.00,  # Free tier
                 output_cost_per_1m=0.00   # Free tier
             ),
+            'models/gemini-2.0-flash': cls(
+                rpm=15,
+                tpm=1_000_000,
+                rpd=1_500,
+                input_cost_per_1m=0.00,  # Free tier
+                output_cost_per_1m=0.00   # Free tier
+            ),
             'gemini-2.5-flash': cls(
                 rpm=10,
                 tpm=250_000,
