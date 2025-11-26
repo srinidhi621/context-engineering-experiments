@@ -15,7 +15,7 @@
 
 **Infrastructure:** ✅ **Complete & Production-Ready**
 - Python 3.13.3 environment configured (required for google-generativeai >= 0.3.0)
-- Model: `gemini-2.0-flash-exp` (15 RPM, 1M TPM, 1500 RPD, $0.00 on free tier)
+- Model: `models/gemini-2.0-flash` (Stable 2.0 Flash with confirmed 1M TPM limit)
 - Unified monitoring: `src/utils/monitor.py` with persistent state
 - Budget: $174 enforced automatically
 - All integration tests passing
@@ -46,6 +46,7 @@
 | 2025-11-26 | 16:06 | **Setup Run** | ✅ Success | Cached chunks & embeddings (0 API calls) |
 | 2025-11-26 | 16:56 | **Full Dry Run** | ✅ Success | Verified 3,000 run combinations & status logic |
 | 2025-11-26 | 17:09 | **Mini Live Run** | ✅ Success | 2 real API calls + analysis pipeline verification |
+| 2025-11-26 | ~18:25 | **TPM Limit Troubleshooting & Model Switch** | ✅ Resolved | Identified `gemini-2.0-flash-exp` had a 250k TPM limit. Switched to `models/gemini-2.0-flash` with confirmed 1M TPM. |
 
 ### ✅ Readiness Sprint (Completed Nov 26, 2025)
 
@@ -391,9 +392,10 @@ python scripts/monitor_costs.py
 python scripts/generate_cost_report.py
 
 # Run experiments (when ready)
+# IMPORTANT: Use --per-minute-token-limit 1000000 for models/gemini-2.0-flash
 python scripts/run_pilot.py              # Start with this!
-python scripts/run_experiment_1.py       # After pilot succeeds
-python scripts/run_experiment_2.py       # After Exp 1 succeeds
+python scripts/run_experiment_1.py --per-minute-token-limit 1000000       # After pilot succeeds
+python scripts/run_experiment_2.py --per-minute-token-limit 1000000       # After Exp 1 succeeds
 
 # Generate analysis
 python scripts/analyze_results.py
