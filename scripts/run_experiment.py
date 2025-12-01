@@ -76,6 +76,11 @@ def parse_args() -> argparse.Namespace:
         default=None,
         help="Limit number of successful runs (for testing).",
     )
+    parser.add_argument(
+        "--runs-file",
+        default=None,
+        help="Path to JSON file containing run keys to execute (Experiment 1).",
+    )
     return parser.parse_args()
 
 
@@ -134,6 +139,8 @@ def run_exp1_handler(args: argparse.Namespace) -> None:
     cmd.extend(["--per-minute-token-limit", str(args.per_minute_token_limit)])
     if args.limit is not None:
         cmd.extend(["--limit", str(args.limit)])
+    if args.runs_file:
+        cmd.extend(["--runs-file", args.runs_file])
     if args.dry_run:
         cmd.append("--dry-run")
 

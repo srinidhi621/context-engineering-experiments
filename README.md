@@ -6,10 +6,10 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 
 ### ⚖️ Token Limits & Throttling
 
-- The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `3600000` for a 3.6 M guardrail).
-- If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it.
+- The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `1000000` for gemini-2.0-flash long-context runs).
+- If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it. **Known issue:** the current estimator (`len(prompt)/3.5`) overcounts 0.9-fill prompts; we are replacing it with `src.utils.tokenizer.count_tokens` so reruns can safely reach the 1 M window.
 
-## ⚠️ CURRENT STATUS: READINESS SPRINT COMPLETE – EXPERIMENT 1 READY
+## ⚠️ CURRENT STATUS: EXPERIMENT 1 RERUN + ANALYSIS IN PROGRESS
 
 **✅ What's Complete:**
 - ✅ **Pilot Phase:** Validated end-to-end pipeline.
@@ -18,7 +18,18 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 - ✅ **Analysis Stack:** Metrics (F1, Exact Match), LLM-as-a-Judge, and automated reporting scripts.
 - ✅ **Verification:** Synthetic runs and live smoke tests passed.
 
-**🚀 Next Step:** Launch Experiment 1 (3,000 API calls).
+**⚠️ What Needs Attention Before Experiment 2:**
+- **Run coverage:** The Nov 30 full run attempted all 3,000 configs but only 2,736 run keys landed in `results/raw/exp1_status.json`. `results/raw/exp1_pending_runs.json` lists the 264 configs that still need to be executed (15 token-limit skips + 77 ResourceExhausted retries + 172 never reattempted after resume).
+- **Duped results:** `results/raw/exp1_results.jsonl` now contains 16,856 rows (from multiple restarts). Before analysis we have to consolidate one record per run key into `results/raw/exp1_results_clean.jsonl`.
+- **Rerun tooling:** `NeedleExperiment` currently lacks a way to target only the pending run keys or to persist failure reasons; this is part of the Dec 1 remediation sprint.
+- **Analysis:** Full-matrix scoring + visualization has not been executed on the consolidated dataset yet.
+
+**🚀 Immediate Plan (Dec 1–3):**
+1. Ship the rerun tooling (prompt-token estimator fix, `--runs-file` flag, failure tracking).
+2. Execute the backlog via `python scripts/run_experiment.py --experiment exp1 --per-minute-token-limit 1000000 --runs-file results/raw/exp1_pending_runs.json`.
+3. Deduplicate, analyze, and visualize the final Exp 1 dataset.
+4. Update README/PLAN with findings, then unlock Experiment 2.
+5. Regenerate the pending/failure lists at any time via `python scripts/audit_exp1_status.py`.
 
 **Requirements:**
 - **Python 3.10+** (Project uses **3.13.3** in venv).

@@ -63,6 +63,7 @@ class GeminiClient:
         )
         
         delay = initial_delay
+        last_error: Optional[Exception] = None
         for attempt in range(retries):
             try:
                 start_time = time.time()
@@ -102,19 +103,24 @@ class GeminiClient:
                     'model': model
                 }
             except (exceptions.DeadlineExceeded, exceptions.ServiceUnavailable) as e:
+                last_error = e
                 logger.warning(f"API call failed with {type(e).__name__} on attempt {attempt + 1}/{retries}. Retrying in {delay}s...")
                 time.sleep(delay)
                 delay *= 2
             except exceptions.ResourceExhausted as e:
+                last_error = e
                 match = re.search(r"retry_delay { seconds: (\d+) }", str(e))
                 retry_after = int(match.group(1)) if match else delay * (2 ** attempt)
                 logger.warning(f"API call failed with ResourceExhausted on attempt {attempt + 1}/{retries}. Retrying in {retry_after}s...")
                 time.sleep(retry_after)
                 delay *= 2 # Still exponentially backoff for next attempt if this doesn't fix it
             except Exception as e:
+                last_error = e
                 raise RuntimeError(f"Failed to generate content after non-retryable error: {str(e)}")
         
-        raise RuntimeError(f"Failed to generate content after {retries} attempts.")
+        raise RuntimeError(
+            f"Failed to generate content after {retries} attempts. Last error: {last_error}"
+        )
     
     def embed_text(
         self, 
@@ -129,6 +135,7 @@ class GeminiClient:
         """
         model = model or self.embedding_model
         delay = initial_delay
+        last_error: Optional[Exception] = None
 
         for attempt in range(retries):
             try:
@@ -152,17 +159,30 @@ class GeminiClient:
                 return response['embedding']
             
             except Exception as e:
-                # Check for specific, retryable gRPC error codes if possible, 
-                # but DeadlineExceeded is a good one to catch.
-                if "DeadlineExceeded" in str(e) or "504" in str(e):
-                    logger.warning(f"API call failed with DeadlineExceeded on attempt {attempt + 1}/{retries}. Retrying in {delay}s...")
+                last_error = e
+                message = str(e)
+                if "DeadlineExceeded" in message or "504" in message:
+                    logger.warning(
+                        "Embedding call failed with DeadlineExceeded on attempt %d/%d. Retrying in %ds...",
+                        attempt + 1,
+                        retries,
+                        delay,
+                    )
                     time.sleep(delay)
-                    delay *= 2  # Exponential backoff
+                    delay *= 2
+                elif "ResourceExhausted" in message or "429" in message:
+                    logger.warning(
+                        "Embedding call hit ResourceExhausted on attempt %d/%d. Sleeping %ds...",
+                        attempt + 1,
+                        retries,
+                        delay,
+                    )
+                    time.sleep(delay)
+                    delay *= 2
                 else:
-                    # For other errors, fail immediately
-                    raise RuntimeError(f"Failed to generate embedding: {str(e)}")
+                    raise RuntimeError(f"Failed to generate embedding: {message}")
 
-        raise RuntimeError(f"Failed to generate embedding after {retries} attempts.")
+        raise RuntimeError(f"Failed to generate embedding after {retries} attempts. Last error: {last_error}")
     
     def batch_embed_text(
         self,
@@ -193,4 +213,3 @@ class GeminiClient:
     def print_status(self):
         """Print formatted monitoring status"""
         self.monitor.print_status()
-

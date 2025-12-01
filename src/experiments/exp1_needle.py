@@ -1,41 +1,45 @@
-"""Experiment 1: Needle in Multiple Haystacks.
-"""
-import time
-import json
-from pathlib import Path
-from typing import Dict, List
+"""Experiment 1: Needle in Multiple Haystacks."""
+from __future__ import annotations
 
-from src.experiments.base_experiment import BaseExperiment
-from src.context_engineering.naive import NaiveContextAssembler
-from src.context_engineering.structured import StructuredContextAssembler
-from src.context_engineering.rag import RAGPipeline
+import json
+import time
+from pathlib import Path
+from typing import Dict, List, Optional, Set
+
+from src.config import config
 from src.context_engineering.advanced_rag import AdvancedRAGPipeline
+from src.context_engineering.naive import NaiveContextAssembler
+from src.context_engineering.rag import RAGPipeline
+from src.context_engineering.structured import StructuredContextAssembler
 from src.corpus.padding import PaddingGenerator
+from src.experiments.base_experiment import BaseExperiment
 from src.utils.logging import get_logger
 from src.utils.throttle import PerMinuteTokenThrottle, TokenLimitExceeded
+from src.utils.tokenizer import count_tokens
 
 logger = get_logger(__name__)
+
 
 class NeedleExperiment(BaseExperiment):
     """
     Run Experiment 1: Test retrieval accuracy across context strategies and fill levels.
     """
-    
-    def __init__(self):
+
+    def __init__(self) -> None:
         super().__init__(name="exp1")
-        
-        # Load resources
-        with open("data/questions/exp1_questions.json") as f:
-            self.questions = json.load(f)
-        with open("data/raw/exp1/hf_model_cards.json") as f:
-            self.corpus = json.load(f)
-            
+
+        with open("data/questions/exp1_questions.json") as q_handle:
+            self.questions = json.load(q_handle)
+        with open("data/raw/exp1/hf_model_cards.json") as c_handle:
+            self.corpus = json.load(c_handle)
+
         self.strategies = ["naive", "structured", "rag", "advanced_rag"]
         self.fill_levels = [0.1, 0.3, 0.5, 0.7, 0.9]
         self.repetitions = 3
-        self.max_tokens = 900_000
-        
-        # Initialize Helpers
+        self.max_tokens = int(config.context_limit * 0.99)
+        self.prompt_token_margin = 2_000
+        self.max_run_attempts = 5
+
         self.padding_generator = PaddingGenerator()
         self._init_assemblers()
 
@@ -77,16 +81,25 @@ class NeedleExperiment(BaseExperiment):
     def _make_run_key(self, q_id, strat, fill, rep) -> str:
         return f"{q_id}_{strat}_{fill}_{rep}"
 
-    def run(self, dry_run: bool = False, limit: int = None, per_minute_token_limit: int = 240000):
+    def run(
+        self,
+        dry_run: bool = False,
+        limit: Optional[int] = None,
+        per_minute_token_limit: int = 240000,
+        target_run_keys: Optional[Set[str]] = None,
+    ) -> None:
         throttle = PerMinuteTokenThrottle(per_minute_token_limit)
         total_runs = len(self.questions) * len(self.strategies) * len(self.fill_levels) * self.repetitions
+        selected_run_keys = set(target_run_keys) if target_run_keys else None
+        planned_runs = len(selected_run_keys) if selected_run_keys else total_runs
         self.status.total_runs = total_runs
-        
-        logger.info(f"Starting Experiment 1: {total_runs} runs planned.")
-        
+
+        logger.info(f"Starting Experiment 1: {planned_runs} runs planned.")
+
         new_results = 0
-        run_counter = 0
-        
+        attempted_runs = 0
+        done_targets = set()
+
         for question in self.questions:
             for strategy in self.strategies:
                 assembler = self.assemblers[strategy]
@@ -97,13 +110,21 @@ class NeedleExperiment(BaseExperiment):
                             return
 
                         run_key = self._make_run_key(question['question_id'], strategy, fill_pct, rep)
-                        run_counter += 1
-                        
-                        if self.is_completed(run_key):
+
+                        if selected_run_keys and run_key not in selected_run_keys:
                             continue
-                            
-                        logger.info(f"Run {run_counter}/{total_runs}: {run_key}")
-                        
+
+                        if self.is_completed(run_key):
+                            if selected_run_keys:
+                                done_targets.add(run_key)
+                                if done_targets == selected_run_keys:
+                                    logger.info("All requested run keys already completed. Exiting.")
+                                    return
+                            continue
+
+                        attempted_runs += 1
+                        logger.info(f"Run {attempted_runs}/{planned_runs}: {run_key}")
+
                         # 1. Assemble Context
                         try:
                             if strategy in ["rag", "advanced_rag"]:
@@ -112,13 +133,22 @@ class NeedleExperiment(BaseExperiment):
                             else:
                                 target_tokens = int(self.max_tokens * fill_pct)
                                 context = assembler.assemble(self.corpus, target_tokens)
-                        except Exception as e:
-                            logger.error(f"Context assembly failed for {run_key}: {e}")
-                            self.status.failed_runs += 1
+                        except Exception as exc:  # pragma: no cover - defensive
+                            logger.error("Context assembly failed for %s: %s", run_key, exc)
+                            self.record_failure(run_key, "context_assembly")
+                            if selected_run_keys and run_key in selected_run_keys:
+                                done_targets.add(run_key)
+                                if done_targets == selected_run_keys:
+                                    logger.info("Processed all requested run keys. Exiting.")
+                                    return
                             continue
 
-                        prompt = f"Answer the following question based on the provided documentation.\n\nQuestion: {question['question']}\n\nDocumentation:\n{context}\n\nAnswer:"
-                        
+                        prompt = (
+                            "Answer the following question based on the provided documentation.\n\n"
+                            f"Question: {question['question']}\n\n"
+                            f"Documentation:\n{context}\n\nAnswer:"
+                        )
+
                         if dry_run:
                             logger.info(f"[DRY RUN] Would execute {run_key}")
                             # Simulate success for dry run logic
@@ -131,50 +161,79 @@ class NeedleExperiment(BaseExperiment):
                                 "dry_run": True
                             }, run_key)
                             new_results += 1
+                            if selected_run_keys and run_key in selected_run_keys:
+                                done_targets.add(run_key)
+                                if done_targets == selected_run_keys:
+                                    logger.info("Processed all requested run keys. Exiting.")
+                                    return
                             continue
 
-                        # 2. API Call
-                        try:
-                            est_tokens = int(len(prompt) / 3.5)
-                            waited = throttle.wait_for_budget(est_tokens)
-                            if waited > 0:
-                                logger.info(f"Throttled for {waited:.1f}s")
-                                
-                            start_time = time.time()
-                            response = self.client.generate_content(
-                                prompt, 
-                                temperature=0.0,
-                                experiment_id="exp1",
-                                session_id=run_key
-                            )
-                            latency = time.time() - start_time
-                            throttle.record(response['tokens_input'])
-                            
-                            # 3. Record Result
-                            result = {
-                                "question_id": question['question_id'], 
-                                "strategy": strategy, 
-                                "fill_pct": fill_pct, 
-                                "repetition": rep,
-                                "response": response['text'], 
-                                "tokens_input": response['tokens_input'],
-                                "tokens_output": response['tokens_output'], 
-                                "latency": latency,
-                                "cost": response['cost'], 
-                                "timestamp": time.strftime("%Y-%m-%d %H:%M:%S")
-                            }
-                            self.record_result(result, run_key)
-                            new_results += 1
-                            logger.info(f"Success: {response['tokens_input']} tokens")
-                            
-                        except TokenLimitExceeded as e:
-                            logger.warning(f"Token limit exceeded: {e}")
-                            time.sleep(10)
-                        except Exception as e:
-                            logger.error(f"API Failed for {run_key}: {e}")
-                            self.status.failed_runs += 1
-                            # Hard stop on rate limits
-                            if "429" in str(e) or "quota" in str(e).lower():
-                                logger.critical("Rate limit hit. Stopping experiment.")
+                        run_attempt = 0
+                        while True:
+                            run_attempt += 1
+                            try:
+                                prompt_tokens = count_tokens(prompt) + self.prompt_token_margin
+                                waited = throttle.wait_for_budget(prompt_tokens)
+                                if waited > 0:
+                                    logger.info(f"Throttled for {waited:.1f}s")
+
+                                start_time = time.time()
+                                response = self.client.generate_content(
+                                    prompt,
+                                    temperature=0.0,
+                                    experiment_id="exp1",
+                                    session_id=run_key,
+                                )
+                                latency = time.time() - start_time
+                                throttle.record(response['tokens_input'])
+
+                                result = {
+                                    "question_id": question['question_id'],
+                                    "strategy": strategy,
+                                    "fill_pct": fill_pct,
+                                    "repetition": rep,
+                                    "response": response['text'],
+                                    "tokens_input": response['tokens_input'],
+                                    "tokens_output": response['tokens_output'],
+                                    "latency": latency,
+                                    "cost": response['cost'],
+                                    "timestamp": time.strftime("%Y-%m-%d %H:%M:%S"),
+                                }
+                                self.record_result(result, run_key)
+                                new_results += 1
+                                logger.info(f"Success: {response['tokens_input']} tokens")
+                                break
+
+                            except TokenLimitExceeded as exc:
+                                logger.warning(f"Token limit exceeded ({run_key}): {exc}")
+                                self.record_failure(run_key, "token_limit_estimate")
+                                time.sleep(10)
+                                break
+                            except Exception as exc:  # pylint: disable=broad-except
+                                err_msg = str(exc)
+                                if any(term in err_msg for term in ("ResourceExhausted", "429", "quota")):
+                                    if run_attempt < self.max_run_attempts:
+                                        wait_time = min(300, 60 * run_attempt)
+                                        logger.warning(
+                                            "ResourceExhausted for %s (attempt %d/%d). Sleeping %.1fs before retry.",
+                                            run_key,
+                                            run_attempt,
+                                            self.max_run_attempts,
+                                            wait_time,
+                                        )
+                                        time.sleep(wait_time)
+                                        continue
+                                    logger.error("ResourceExhausted persisted for %s: %s", run_key, err_msg)
+                                    self.record_failure(run_key, "resource_exhausted")
+                                    break
+
+                                logger.error("API Failed for %s: %s", run_key, err_msg)
+                                self.record_failure(run_key, "api_error")
+                                time.sleep(5)
+                                break
+
+                        if selected_run_keys and run_key in selected_run_keys:
+                            done_targets.add(run_key)
+                            if done_targets == selected_run_keys:
+                                logger.info("Processed all requested run keys. Exiting.")
                                 return
-                            time.sleep(5)

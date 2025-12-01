@@ -6,33 +6,31 @@
 **Budget:** $0 (Free Tier - gemini-2.0-flash-exp)  
 **Team Size:** 1  
 
-**Last Updated:** November 26, 2025  
-**Status:** ✅ Readiness Sprint Complete – 🚀 Experiment 1 Ready to Launch
+**Last Updated:** December 1, 2025  
+**Status:** ⚠️ Experiment 1 remediation in progress – 2,736/3,000 configs recorded (264 pending reruns)
 
 ---
 
 ## 📊 Current Status
 
-**Infrastructure:** ✅ **Complete & Production-Ready**
-- Python 3.13.3 environment configured (required for google-generativeai >= 0.3.0)
-- Model: `models/gemini-2.0-flash` (Stable 2.0 Flash with confirmed 1M TPM limit)
-- Unified monitoring: `src/utils/monitor.py` with persistent state
-- Budget: $174 enforced automatically
-- All integration tests passing
-- ✅ **Corpus loaders implemented:** Hugging Face Hub + Gutenberg (460+ lines)
-- ✅ **Tokenizer utilities complete:** counting, chunking, truncation
+**Infrastructure:** ✅ **Operational**
+- Python 3.13.3 environment configured (required for google-generativeai >= 0.3.0).
+- Model: `models/gemini-2.0-flash` (stable 1M-token context confirmed).
+- Unified monitoring + budget guardrail from `src/utils/monitor.py` persists usage under `results/.monitor_state.json`.
+- Corpus loaders/tokenizers are implemented and cached (`results/cache/*`).
 
 **Pilot Phase:** ✅ **COMPLETE**
-- ✅ Phase 1A: Infrastructure setup
-- ✅ Phase 1B: Data collection
-- ✅ Phase 1C: Context assemblers
-- ✅ Phase 1D: Minimal runner execution
-- ✅ Phase 1E: Go/No-Go Decision (Decision: GO)
+- ✅ Phase 1A–1E covering infra, data, assemblers, runner, and go/no-go decision.
 
-**Experiments:**
-- Experiment 1: Needle in Multiple Haystacks – 🚀 **Ready to Launch**
-- Experiment 2: Context Pollution – **Queued** (begin only after Exp 1 results)
-- Experiment 5: Cost-Latency Frontier – **Queued** (analysis after Exp 1–2)
+**Experiment 1 (Needle in Multiple Haystacks):** ⚠️ **Partial**
+- Final run on Nov 30 logged 3,000 planned configs but only **2,736 run keys landed in `results/raw/exp1_status.json`** (missing 264, see `results/raw/exp1_pending_runs.json`).
+- `results/raw/exp1_results.jsonl` contains historical duplicates (16,856 rows → 2,990 unique run keys); we must deduplicate before scoring.
+- Failures break down as: 15 token-limit skips (throttle overestimation) + 77 `ResourceExhausted` retries that exhausted 3 attempts + 172 configs never re-attempted after resuming.
+- ✅ Data assets (questions/corpora) unchanged.
+
+**Experiment 2 (Context Pollution):** ⏸ **Blocked behind Exp 1 completion + analysis.**
+
+**Experiment 5 (Cost-Latency Frontier):** ⏸ Dependent on Exp 1–2 metrics.
 
 **Time Spent:** ~32 hours on infrastructure, pilot & readiness  
 **Remaining:** ~9-11 weeks for experiments + analysis
@@ -47,18 +45,39 @@
 | 2025-11-26 | 16:56 | **Full Dry Run** | ✅ Success | Verified 3,000 run combinations & status logic |
 | 2025-11-26 | 17:09 | **Mini Live Run** | ✅ Success | 2 real API calls + analysis pipeline verification |
 | 2025-11-26 | ~18:25 | **TPM Limit Troubleshooting & Model Switch** | ✅ Resolved | Identified `gemini-2.0-flash-exp` had a 250k TPM limit. Switched to `models/gemini-2.0-flash` with confirmed 1M TPM. |
+| 2025-11-27–29 | Multi | **Incremental partial runs** | ⚠️ Mixed | Created historical entries in `results/raw/exp1_results.jsonl` but status file resets caused duplicates. |
+| 2025-11-30 | 12:05–20:52 | **Full run attempt** | ⚠️ Partial | Hit `ResourceExhausted` churn + 0.9-fill throttle skips; stopped with 264 configs pending. |
+| 2025-12-01 | 00:10 | **Post-mortem audit** | ⚠️ Pending | `results/raw/exp1_pending_runs.json` + `exp1_failure_breakdown.json` generated for rerun planning. |
 
-### ✅ Readiness Sprint (Completed Nov 26, 2025)
+### ⚠️ Experiment 1 Remediation Sprint (Dec 1–3, 2025)
 
-All blocking issues for Experiment 1 have been resolved:
+Goal: land the remaining 264 run keys, stabilize rerun tooling, and unlock analysis.
 
-1.  ✅ **Rate Limits Fixed:** Separated `text-embedding-004` and `gemini-2.0-flash-exp` monitors.
-2.  ✅ **Persistence Added:** RAG chunks, embeddings, and FAISS/BM25 indexes are now cached to `results/cache/` to prevent re-computation.
-3.  ✅ **Data Collected:** 700k+ tokens of model cards collected to `data/raw/exp1/`.
-4.  ✅ **Analysis Stack Built:** Implemented `metrics.py`, `judges.py` (LLM-as-a-Judge), and `analyze_results.py`.
-5.  ✅ **End-to-End Verification:**
-    *   Synthetic run proved the analysis pipeline works.
-    *   Live smoke test (limit=2) proved the API integration works.
+1. **Truth rebuild + audit (Dec 1 AM)**
+   - ✅ Snapshot final log + archives (`exp1_run_2025-11-30*.tar.gz`).
+   - ✅ Generate `results/raw/exp1_failure_breakdown.json` (log-derived) and `results/raw/exp1_pending_runs.json` (expected – status).
+   - [x] Build a reusable audit helper (`scripts/audit_exp1_status.py`) to regenerate the pending list and detect duplicates before every rerun/analysis.
+2. **Token-limit + estimator fix (Dec 1 PM)**
+   - [ ] Replace the `len(prompt)/3.5` heuristic in `NeedleExperiment.run` with `src.utils.tokenizer.count_tokens` so the throttle sees the real prompt token count and stops rejecting legitimate 0.9-fill prompts.
+   - [ ] Add a 5k-token safety margin at ≥0.9 fill so padding + instructions stay <1,000,000 tokens even after instruction prologue.
+3. **Runner resilience (Dec 1 PM)**
+   - [ ] Extend `ExperimentStatus` with `failed_keys` & reason tracking so we can rerun only the missing configs without diffing raw logs.
+   - [ ] Merge `completed_keys` from both `results/raw/exp1_status.json` and `results/raw/exp1_results.jsonl` on load to avoid duplicate reruns after a resume.
+   - [ ] Add a `--runs-file <path>` option (JSON list of run keys) to `scripts/run_experiment_1.py` so we can target the 264 pending configs without touching the other 2,736.
+   - [ ] Teach the runner to back off longer after repeated `ResourceExhausted` errors instead of giving up after 3 tries—e.g., exponential sleep + automatic retry of the same run key until the monitor says the TPM window is free.
+4. **Rerun campaign (Dec 2)**
+   - [ ] Input: `results/raw/exp1_pending_runs.json`.
+   - [ ] Command (expected once tooling exists): `python scripts/run_experiment.py --experiment exp1 --per-minute-token-limit 1000000 --runs-file results/raw/exp1_pending_runs.json`.
+   - [ ] Success criteria: `results/raw/exp1_status.json` shows 3,000 completed runs, pending list regenerates empty, and `experiment1.log` ends without fatal errors.
+5. **Analysis + visualization (Dec 2–3)**
+   - [ ] Deduplicate `results/raw/exp1_results.jsonl` by newest timestamp per run key and save canonical copy under `results/raw/exp1_results_clean.jsonl`.
+   - [ ] Run `python scripts/analyze_results.py --input results/raw/exp1_results_clean.jsonl --questions data/questions/exp1_questions.json --output-dir results/analysis/exp1_final --mock-judge`.
+   - [ ] Generate plots via `python scripts/generate_visualizations.py --input results/analysis/exp1_final/summary_metrics.csv --output-dir results/visualizations/exp1_final`.
+   - [ ] Document findings in `results/analysis/exp1_final/analysis_report.md` and summarize in README/PLAN.
+6. **Publish + gate for Experiment 2 (Dec 3)**
+   - [ ] Update README + PLAN with Exp 1 metrics, failure counts, rerun steps.
+   - [ ] Cut a tagged archive of logs/results.
+   - [ ] Confirm AGENTS.md contains the rerun procedure + analysis hand-off checklist.
 
 ---
 
@@ -140,26 +159,26 @@ The pilot phase was completed successfully, validating the entire experimental p
 
 ### Phase Breakdown
 
-1. **Data readiness (complete):** Corpora and question set already collected (see acceptance checklist).
-2. **Readiness sprint (Week 0–1):** Finish the blocking tasks described above (rate-limit separation, caching, runner resiliency, scoring stack, packaging/tests).
-3. **Experiment run (Week 1–2):** Build/reuse embedding cache, run 3,000 calls with checkpointing and quota-aware throttling, append to `results/raw/exp1_results.jsonl`.
-4. **Analysis & publication (Week 2–3):** Score outputs, generate metrics/visualizations, write `results/analysis/exp1_summary.md`, and update README/PLAN before starting Exp 2.
+1. Data readiness ✅ (corpus + padding + questions in place).
+2. Readiness sprint ✅ (monitor separation, caching, CLI, scoring tooling, packaging/tests).
+3. Experiment run ⚠️ **Partial Nov 30** (3,000 configs attempted; 2,736 recorded successes, 264 pending reruns per `results/raw/exp1_pending_runs.json`). RAG caches rebuilt with 990 k caps; final logs archived (`exp1_run_2025-11-30*.tar.gz`).
+4. Analysis & publication ⏸ (blocked on rerun + dedup cleanup).
 
 ### Acceptance Checklist
 
-- [x] **GitHub corpus available:** `data/raw/exp1/github_corpus.json` (>600k tokens) exists.
-- [x] **Padding corpus available:** `data/raw/padding/gutenberg_corpus.json` (>1.5M tokens) exists.
-- [x] **Questions validated:** `python scripts/validate_question_set.py data/questions/exp1_questions.json --require-experiment exp1` exits 0 with ≥50 entries.
-- [ ] **Embedding cache built once:** first run emits `results/cache/exp1_index.*`; reruns reuse cache without consuming embedding RPD quota.
-- [ ] **Runner completion:** `python scripts/run_experiment.py --experiment exp1` yields 3,000 lines in `results/raw/exp1_results.jsonl` and records checkpoints (`results/exp1_status.json` or similar).
-- [ ] **Automated scoring:** `python scripts/analyze_results.py --input results/raw/exp1_results.jsonl --output-dir results/analysis/exp1` produces metrics CSV + markdown summary; visualizations generated via `scripts/generate_visualizations.py`.
-- [ ] **Documentation:** README + PLAN updated with Exp 1 findings, rate-limit notes, and learnings before Experiment 2 begins.
+- [x] GitHub corpus available.
+- [x] Padding corpus available.
+- [x] Question set validated (≥50).
+- [x] Embedding caches rebuilt with 990 k max (Nov 27) and reused per restart.
+- [ ] Runner completion (3,000 run keys recorded in `results/raw/exp1_status.json`; rerun backlog = 264).
+- [ ] Automated scoring/visualizations for the full dataset (progress snapshot exists; rerun post-archival for official results).
+- [ ] Documentation updates with Exp 1 findings (once scoring/viz done).
 
 ---
 
 ## 🧪 EXPERIMENT 2: Context Pollution (Weeks 3–6)
 
-**Status:** 🚫 Do not start until Exp 1 analysis + documentation complete
+**Status:** 🚫 Do not start until Exp 1 run + analysis complete
 
 **Duration:** 1-2 weeks  
 **Goal:** Test robustness to irrelevant information  
