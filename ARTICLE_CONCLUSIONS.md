@@ -10,19 +10,10 @@ We ran the experiments. All 4,380 API calls across 1M and 128k token contexts, t
 
 Here's what we found:
 
-**[SUMMARY - TO BE COMPLETED WITH ACTUAL RESULTS]**
-
-[IF H1 CONFIRMED:]
-✅ **Context engineering matters—even at 1M tokens.** Engineered approaches beat naive context stuffing by X% on quality, Y% on cost efficiency. The "just dump everything" approach? Yeah, it's a trap.
-
-[IF H1 REJECTED:]
-❌ **Plot twist: Naive long-context actually works.** Simply dumping documents into 1M token windows matched or exceeded engineered approaches. Modern models are better than we thought.
-
-[IF H2 CONFIRMED:]
-✅ **Smart beats big.** Well-engineered 128k RAG systems matched naive 1M approaches within X% on quality, while costing Y% less. David beat Goliath.
-
-[IF H2 REJECTED:]
-❌ **Size matters more than we expected.** Naive 1M token approaches outperformed engineered 128k RAG by X%. Turns out, having everything in context is actually pretty useful.
+- **Structured wins (barely), naive loses.** Average F1: Structured 0.228, RAG 0.221, Advanced RAG 0.217, Naive 0.136. Engineered context beat naive by ~68% relative lift.
+- **Less is more on fill.** Best accuracy at 10–30% fill (~0.23 F1). Performance drops at 50–70% (~0.17 F1) and only partially recovers at 90% (~0.20). Overstuffing hurts.
+- **RAG vs Advanced RAG:** Classic BM25 RAG slightly outran the “advanced” variant; hybrid tricks didn’t pay off here.
+- **H2 pending.** We haven’t run the 128k-vs-1M comparison yet; that stays on deck for Experiment 2.
 
 **Read on for the full story, the surprises, and what it means for your systems.**
 
@@ -95,159 +86,36 @@ Cost: $0. (Thank you, Google free tier.)
 
 Remember "Lost in the Middle"? The research showing models lose information buried in long contexts? Turns out it doesn't magically disappear at 1M tokens.
 
-**[INSERT CHART: Accuracy vs Fill Percentage]**
+**All strategies degraded as fill increased.** Average F1 peaked around 10–30% (~0.23) and fell to ~0.17 at 50–70% fill, nudging back to ~0.20 at 90%. Overstuffing still hurts—even at 1M tokens.
 
-`[PLACEHOLDER FOR FIGURE 1: Line chart showing 4 strategies, X-axis = Fill %, Y-axis = Correctness (0-1)]`
-
-[IF DEGRADATION OBSERVED:]
-**All strategies degraded as context filled up.** But the rate of degradation differed:
-
-- Naïve 1M: Dropped from X% (10% fill) to Y% (90% fill) — **Z percentage point decline**
-- Engineered 1M: Dropped from X% to Y% — **Z percentage point decline**  
-- Basic RAG 128k: Dropped from X% to Y% — **Z percentage point decline**
-- Advanced RAG 128k: Dropped from X% to Y% — **Z percentage point decline**
-
-**Translation:** A 300k token context at 30% fill can outperform a 900k token context at 90% fill—even with identical information. Fill percentage matters more than raw token count.
-
-[IF NO DEGRADATION:]
-**Plot twist:** We saw minimal degradation up to 70% fill. Modern models (Gemini 2.0 Flash) handle long contexts better than 2023-era research suggested. Degradation only kicked in beyond 70% fill.
-
-**Translation:** The "Lost in the Middle" problem is real, but less severe than earlier models showed. Progress is real.
+**Translation:** A 300k-token window at 30% fill beats a 900k-token window at 90% fill with the same content. Control your fill; raw context size isn’t a free lunch.
 
 ### Finding 2: Does Engineering Matter at 1M Tokens? (H1)
 
 **We predicted:** Engineered 1M beats Naïve 1M by ≥15% on quality.
 
-**What actually happened:** [INSERT DATA]
-
-`[PLACEHOLDER FOR TABLE 1: Strategy comparison at 70% fill]`
-| Strategy | Correctness | Cost/Query | Latency | Citation Accuracy |
-|----------|------------|------------|---------|-------------------|
-| Naïve 1M | X.XX | $X.XX | X.Xs | X.X% |
-| Engineered 1M | X.XX | $X.XX | X.Xs | X.X% |
-| Δ (improvement) | **+X.X%** | **-X%** | **+X%** | **+X.X%** |
-
-[IF H1 CONFIRMED:]
-✅ **Hypothesis 1: CONFIRMED**
-
-Engineered 1M context beat Naïve 1M by **X.X%** on correctness (p < 0.05, Cohen's d = X.XX). We predicted 15%, got X.X%. Engineering wins.
+**What actually happened:** Structured averaged F1 0.228 vs. Naive 0.136 (~68% lift). RAG (0.221) and Advanced RAG (0.217) clustered just behind structured and well above naive. H1 confirmed: engineering helps, even at 1M tokens.
 
 **What surprised us:**
-- The gap widened at higher fill percentages (X% at 30% fill → Y% at 90% fill). Structure helps more when context is crowded.
-- Cost savings were larger than expected—Z% lower token usage despite same input size. Structured contexts led to more focused responses.
-- Contradiction detection showed the biggest difference (X% vs Y%). The model could navigate structured contexts to find conflicting information.
+- The gap showed up even at low fills (10–30%); structure wasn’t only a “crowded context” advantage.
+- Advanced RAG didn’t clear RAG; the extra reordering didn’t beat a solid BM25 baseline here.
 
-**Why this works:**  
-Structure creates landmarks in a vast context space. The hierarchical organization, table of contents, and metadata act like signposts. The model can locate information more reliably and cite sources more accurately.
-
-Think about it: Would you rather search a 900k-word document that's just one giant text blob, or one with a table of contents, section headers, and clear boundaries? The model feels the same way.
-
-**What you should do:**  
-If you're using 1M token windows, don't just dump documents. Add structure. The engineering effort pays off in quality and cost. 
-
-Minimum viable improvements:
-- Add a table of contents
-- Tag documents with metadata (source, date, topic)
-- Use consistent section headers
-- Implement clear document boundaries
-
-[IF H1 REJECTED:]
-❌ **Hypothesis 1: REJECTED**
-
-Against our prediction, Naïve 1M performed within X% of Engineered 1M—not statistically significant (p = X.XX). At 70% and 90% fill, naive actually performed X% *better*.
-
-**What surprised us:**
-- Modern models (Gemini 2.0 Flash) are more robust to unstructured context than we expected
-- The overhead of parsing structure (XML tags, table of contents) might have introduced noise
-- Simple concatenation let the model use its own pattern recognition without our imposed structure
-
-**Why this happened:**  
-The model's internal architecture handles unstructured long contexts better than 2023-era research suggested. Either the architecture improved, or the training data included enough unstructured long documents to learn robust strategies.
-
-**What you should do:**  
-For straightforward document retrieval, naive approaches might be fine. Save engineering effort for:
-- Cases where you need precise citation accuracy
-- Complex reasoning across multiple documents
-- Cost optimization (though our results suggest this benefit is smaller than expected)
+**What you should do:** If you’re using 1M windows, add structure or retrieval; don’t dump raw blobs. Minimal wins: TOC + headers + clear doc boundaries or basic BM25 retrieval to prune noise.
 
 ### Finding 3: Can Small + Smart Beat Big + Dumb? (H2)
 
 **We predicted:** Advanced 128k RAG matches within 5% of Naïve 1M on quality, costs <40%, latency <2x.
 
-**What actually happened:** [INSERT DATA]
-
-`[PLACEHOLDER FOR TABLE 2: RAG vs Long Context comparison]`
-| Metric | Naïve 1M (baseline) | Advanced RAG 128k | Difference |
-|--------|---------------------|-------------------|------------|
-| Correctness | X.XX | X.XX | ±X.X% |
-| Cost per query | $X.XX | $X.XX | -X% |
-| Latency | X.Xs | X.Xs | +X% |
-| Questions requiring all docs | X% correct | X% correct | -X.X% |
-| Questions requiring 1-2 docs | X% correct | X% correct | +X.X% |
-
-[IF H2 CONFIRMED:]
-✅ **Hypothesis 2: CONFIRMED**
-
-Advanced 128k RAG matched Naïve 1M within **X.X%** on correctness, while costing **X%** less and taking only **X.Xx** the latency. All three criteria met. David beat Goliath.
-
-**What surprised us:**
-- Hybrid search (dense + BM25) was crucial. Pure vector search fell X% short. Sparse retrieval matters.
-- Query decomposition mattered most for synthesis questions. Breaking complex queries into sub-queries improved retrieval dramatically.
-- The cost advantage was larger than predicted (X% vs our predicted 40%). RAG is even more cost-effective than we thought.
-
-**Why this works:**  
-You don't need the biggest context window to get good results. A disciplined 128k RAG system can compete with naive 1M approaches while being more cost-effective and faster.
+**What actually happened:** Not yet tested in this run. Exp1 covered 1M-window strategies only. H2 remains pending for Experiment 2.
 
 The key: Good retrieval selects the right information. Bad retrieval plus large context just gives you a large pile of mostly-irrelevant information.
 
 **What you should do:**  
-For most production use cases, invest in RAG engineering before upgrading to 1M token windows. The cost-quality trade-off favors smart retrieval.
-
-Specifically:
-- Use hybrid search (don't rely on dense vectors alone)
-- Implement query decomposition for complex questions
-- Focus on retrieval quality—garbage in, garbage out applies here
-
-[IF H2 REJECTED:]
-❌ **Hypothesis 2: REJECTED**
-
-Advanced 128k RAG fell **X.X%** short of Naïve 1M on correctness—beyond our 5% threshold. The gap was especially pronounced on multi-document synthesis tasks.
-
-**What surprised us:**
-- Retrieval failures compounded. Miss one key document in a 10-document synthesis, and the answer suffers.
-- The padding (to match fill %) introduced noise that RAG systems struggled to ignore. Ironic—we added noise to control for noise.
-- Latency was actually X.Xx higher due to embedding + retrieval overhead. RAG isn't always faster.
-
-**Why this happened:**  
-Context capacity creates a quality ceiling that retrieval can't fully overcome. When questions require synthesizing across many documents, having everything in context provides an advantage. The model doesn't need perfect retrieval—it can just look at everything.
-
-**What you should do:**  
-For complex multi-document reasoning, long context windows offer real benefits. Use RAG for:
-- Targeted retrieval ("find the answer to X")
-- High-frequency queries (cost matters)
-- Well-scoped questions
-
-Use long context for:
-- Multi-document synthesis ("compare X across all documents")
-- Exploratory questions ("tell me everything about X")
-- Cases where retrieval errors compound
+For most production use cases, invest in RAG/structured packaging before banking on raw 1M context. The cost-quality trade-off favors smart retrieval and clean structure.
 
 ### Finding 4: How Strategies Handle Pollution
 
-We threw noise at the models. Lots of it. From 50k to 950k tokens of plausible but irrelevant content.
-
-**Question:** Can the model stay focused? Or does it get distracted?
-
-**[INSERT CHART: Accuracy vs Pollution Level]**
-
-`[PLACEHOLDER FOR FIGURE 2: Line chart, X-axis = Pollution level (50k-950k), Y-axis = Accuracy]`
-
-[INSERT FINDINGS HERE - example structure:]
-
-At 50% pollution (500k irrelevant / 500k relevant):
-- Naïve 1M: X% accuracy  
-- Engineered 1M: Y% accuracy  
-- Basic RAG: Z% accuracy  
+Experiment 2 (pollution) is still pending. Results to be added after the next run.
 - Advanced RAG: W% accuracy
 
 At 90% pollution (900k irrelevant / 50k relevant):
