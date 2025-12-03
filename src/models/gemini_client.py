@@ -136,6 +136,15 @@ class GeminiClient:
         model = model or self.embedding_model
         delay = initial_delay
         last_error: Optional[Exception] = None
+        
+        # Estimate input tokens (approx 4 chars per token)
+        approx_tokens = len(text) // 4
+        
+        # Enforce rate limits before making the call
+        self.embedding_monitor.wait_if_needed(
+            estimated_input_tokens=approx_tokens,
+            estimated_output_tokens=0 # Embeddings don't have generated output tokens in the same way
+        )
 
         for attempt in range(retries):
             try:

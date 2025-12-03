@@ -75,8 +75,8 @@ class ModelLimits:
             'text-embedding-004': cls(
                 rpm=1500,
                 tpm=10_000_000,
-                rpd=100_000,
-                input_cost_per_1m=0.00,  # Free tier
+                rpd=1_500,  # CRITICAL: Keep at 1,500 to stay in Free Tier. Exceeding this triggers Paid Tier billing for ALL models.
+                input_cost_per_1m=0.00,
                 output_cost_per_1m=0.00
             )
         }
