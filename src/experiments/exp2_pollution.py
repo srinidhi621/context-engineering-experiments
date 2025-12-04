@@ -199,9 +199,16 @@ class PollutionExperiment(BaseExperiment):
                                     assembler = self.rag
                                 else:
                                     assembler = self.adv_rag
-                                    
+
                                 retrieved = assembler.retrieve(question['question'], top_k=10)
-                                context = "\n\n".join(retrieved)
+                                # retrieved may be a list of strings or dicts with 'text'
+                                retrieved_texts = []
+                                for item in retrieved:
+                                    if isinstance(item, dict):
+                                        retrieved_texts.append(item.get("text", ""))
+                                    else:
+                                        retrieved_texts.append(str(item))
+                                context = "\n\n".join(retrieved_texts)
                             else:
                                 if strategy == "naive":
                                     context = self.naive.assemble(current_corpus, self.max_tokens)
