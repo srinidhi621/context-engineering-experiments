@@ -1,0 +1,302 @@
+[
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q001",
+    "question": "Which two libraries power FastAPI's performance?",
+    "ground_truth": "FastAPI performance comes from Starlette and Pydantic.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["FastAPI Home"],
+    "evaluation_criteria": "Answer must mention both Starlette and Pydantic.",
+    "source_model": "fastapi",
+    "source_url": "https://fastapi.tiangolo.com/",
+    "keywords": ["FastAPI", "Starlette", "Pydantic"],
+    "metadata": {
+      "category": "framework_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q002",
+    "question": "What message does the simplest FastAPI example return from the root endpoint?",
+    "ground_truth": "It returns the JSON message {\"message\": \"Hello World\"}.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["FastAPI First Steps"],
+    "evaluation_criteria": "Answer must contain \"Hello World\".",
+    "source_model": "fastapi",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+    "keywords": ["FastAPI", "Hello World"],
+    "metadata": {
+      "category": "framework_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q003",
+    "question": "What command does the tutorial use to start the FastAPI development server?",
+    "ground_truth": "The tutorial runs `fastapi dev main.py`.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["FastAPI First Steps"],
+    "evaluation_criteria": "Answer must mention `fastapi dev main.py`.",
+    "source_model": "fastapi",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/first-steps/",
+    "keywords": ["FastAPI", "command", "dev server"],
+    "metadata": {
+      "category": "framework_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q004",
+    "question": "In the path parameter example, what value is passed to the function when visiting /items/foo?",
+    "ground_truth": "The value \"foo\" is passed as item_id.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["FastAPI Path Parameters"],
+    "evaluation_criteria": "Answer must state that item_id receives \"foo\".",
+    "source_model": "fastapi",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/path-params/",
+    "keywords": ["FastAPI", "path parameter"],
+    "metadata": {
+      "category": "framework_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q005",
+    "question": "Which FastAPI route path is shown for reading an item by ID?",
+    "ground_truth": "The example route is /items/{item_id}.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["FastAPI Path Parameters"],
+    "evaluation_criteria": "Answer must include /items/{item_id}.",
+    "source_model": "fastapi",
+    "source_url": "https://fastapi.tiangolo.com/tutorial/path-params/",
+    "keywords": ["FastAPI", "path", "route"],
+    "metadata": {
+      "category": "framework_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q006",
+    "question": "What version of Pydantic is shown in the documentation header?",
+    "ground_truth": "The page shows Pydantic version v2.12.5.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Pydantic Home"],
+    "evaluation_criteria": "Answer must mention v2.12.5.",
+    "source_model": "pydantic",
+    "source_url": "https://docs.pydantic.dev/latest/",
+    "keywords": ["Pydantic", "version"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q007",
+    "question": "What is Pydantic primarily used for?",
+    "ground_truth": "Pydantic is a widely used data validation library for Python.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Pydantic Home"],
+    "evaluation_criteria": "Answer must include \"data validation\".",
+    "source_model": "pydantic",
+    "source_url": "https://docs.pydantic.dev/latest/",
+    "keywords": ["Pydantic", "validation"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q008",
+    "question": "What base class do Pydantic models inherit from?",
+    "ground_truth": "Pydantic models inherit from BaseModel.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Pydantic Models"],
+    "evaluation_criteria": "Answer must mention BaseModel.",
+    "source_model": "pydantic",
+    "source_url": "https://docs.pydantic.dev/latest/concepts/models/",
+    "keywords": ["Pydantic", "BaseModel"],
+    "metadata": {
+      "category": "modeling"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q009",
+    "question": "Pydantic models are compared to which Python feature?",
+    "ground_truth": "They are compared to dataclasses.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Pydantic Models"],
+    "evaluation_criteria": "Answer must mention dataclasses.",
+    "source_model": "pydantic",
+    "source_url": "https://docs.pydantic.dev/latest/concepts/models/",
+    "keywords": ["Pydantic", "dataclasses"],
+    "metadata": {
+      "category": "modeling"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q010",
+    "question": "Which function is used to customize fields in Pydantic models?",
+    "ground_truth": "The Field() function is used to customize fields.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Pydantic Fields"],
+    "evaluation_criteria": "Answer must mention Field().",
+    "source_model": "pydantic",
+    "source_url": "https://docs.pydantic.dev/latest/concepts/fields/",
+    "keywords": ["Pydantic", "Field"],
+    "metadata": {
+      "category": "modeling"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q011",
+    "question": "What SQLAlchemy release number and date are shown on the tutorial page?",
+    "ground_truth": "The tutorial shows release 2.0.44 with release date October 10, 2025.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["SQLAlchemy Tutorial"],
+    "evaluation_criteria": "Answer must mention 2.0.44 and October 10, 2025.",
+    "source_model": "sqlalchemy",
+    "source_url": "https://docs.sqlalchemy.org/en/20/tutorial/index.html",
+    "keywords": ["SQLAlchemy", "release"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q012",
+    "question": "Which component provides database connectivity in SQLAlchemy?",
+    "ground_truth": "The Engine provides database connectivity.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["SQLAlchemy Tutorial"],
+    "evaluation_criteria": "Answer must mention the Engine.",
+    "source_model": "sqlalchemy",
+    "source_url": "https://docs.sqlalchemy.org/en/20/tutorial/index.html",
+    "keywords": ["SQLAlchemy", "Engine"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q013",
+    "question": "Name one step listed in the SQLAlchemy ORM quickstart after declaring models.",
+    "ground_truth": "Examples include Create an Engine, Emit CREATE TABLE DDL, Create Objects and Persist, Simple SELECT.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["SQLAlchemy ORM Quickstart"],
+    "evaluation_criteria": "Answer must cite a step such as \"Create an Engine\" or \"Emit CREATE TABLE DDL\".",
+    "source_model": "sqlalchemy",
+    "source_url": "https://docs.sqlalchemy.org/en/20/orm/quickstart.html",
+    "keywords": ["SQLAlchemy", "ORM", "steps"],
+    "metadata": {
+      "category": "orm_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q014",
+    "question": "What version of Celery is referenced in the First Steps guide?",
+    "ground_truth": "The guide references Celery 5.6.0.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Celery First Steps"],
+    "evaluation_criteria": "Answer must mention Celery 5.6.0.",
+    "source_model": "celery",
+    "source_url": "https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html",
+    "keywords": ["Celery", "version"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q015",
+    "question": "How does the Celery documentation describe the tool in terms of batteries?",
+    "ground_truth": "Celery is described as a task queue with batteries included.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Celery First Steps"],
+    "evaluation_criteria": "Answer must contain \"batteries included\".",
+    "source_model": "celery",
+    "source_url": "https://docs.celeryq.dev/en/stable/getting-started/first-steps-with-celery.html",
+    "keywords": ["Celery", "batteries included"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q016",
+    "question": "Which URL does the first Requests example fetch?",
+    "ground_truth": "It fetches https://api.github.com/events.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Requests Quickstart"],
+    "evaluation_criteria": "Answer must mention https://api.github.com/events.",
+    "source_model": "requests",
+    "source_url": "https://requests.readthedocs.io/en/latest/user/quickstart/",
+    "keywords": ["Requests", "example URL"],
+    "metadata": {
+      "category": "library_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q017",
+    "question": "What must be installed and up to date before using Requests according to the quickstart?",
+    "ground_truth": "Requests itself must be installed and up to date.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Requests Quickstart"],
+    "evaluation_criteria": "Answer must note that the Requests package needs to be installed and up to date.",
+    "source_model": "requests",
+    "source_url": "https://requests.readthedocs.io/en/latest/user/quickstart/",
+    "keywords": ["Requests", "installation"],
+    "metadata": {
+      "category": "library_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q018",
+    "question": "In the Requests quickstart, which Python import is shown before making a request?",
+    "ground_truth": "It imports the requests module with `import requests`.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Requests Quickstart"],
+    "evaluation_criteria": "Answer must mention `import requests`.",
+    "source_model": "requests",
+    "source_url": "https://requests.readthedocs.io/en/latest/user/quickstart/",
+    "keywords": ["Requests", "import"],
+    "metadata": {
+      "category": "library_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q019",
+    "question": "What table-related object does SQLAlchemy use to store table definitions?",
+    "ground_truth": "SQLAlchemy uses MetaData with Table objects to store table definitions.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["SQLAlchemy Metadata"],
+    "evaluation_criteria": "Answer must mention MetaData and Table objects.",
+    "source_model": "sqlalchemy",
+    "source_url": "https://docs.sqlalchemy.org/en/20/tutorial/metadata.html",
+    "keywords": ["SQLAlchemy", "MetaData", "Table"],
+    "metadata": {
+      "category": "orm_usage"
+    }
+  },
+  {
+    "experiment": "exp2",
+    "question_id": "exp2_q020",
+    "question": "What does Pydantic Logfire monitor?",
+    "ground_truth": "Pydantic Logfire monitors Pydantic applications.",
+    "difficulty": "simple_lookup",
+    "required_docs": ["Pydantic Home"],
+    "evaluation_criteria": "Answer must state that Pydantic Logfire monitors Pydantic applications.",
+    "source_model": "pydantic",
+    "source_url": "https://docs.pydantic.dev/latest/",
+    "keywords": ["Pydantic", "Logfire"],
+    "metadata": {
+      "category": "library_intro"
+    }
+  }
+]

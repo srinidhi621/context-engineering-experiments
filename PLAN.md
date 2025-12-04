@@ -6,8 +6,8 @@
 **Budget:** $0 (Free Tier - gemini-2.0-flash-exp)  
 **Team Size:** 1  
 
-**Last Updated:** December 1, 2025  
-**Status:** ⚠️ Experiment 1 remediation in progress – 2,736/3,000 configs recorded (264 pending reruns)
+**Last Updated:** December 3, 2025  
+**Status:** ✅ Experiment 1 run + analysis completed; preparing Experiment 2
 
 ---
 
@@ -22,15 +22,13 @@
 **Pilot Phase:** ✅ **COMPLETE**
 - ✅ Phase 1A–1E covering infra, data, assemblers, runner, and go/no-go decision.
 
-**Experiment 1 (Needle in Multiple Haystacks):** ⚠️ **Partial**
-- Final run on Nov 30 logged 3,000 planned configs but only **2,736 run keys landed in `results/raw/exp1_status.json`** (missing 264, see `results/raw/exp1_pending_runs.json`).
-- `results/raw/exp1_results.jsonl` contains historical duplicates (16,856 rows → 2,990 unique run keys); we must deduplicate before scoring.
-- Failures break down as: 15 token-limit skips (throttle overestimation) + 77 `ResourceExhausted` retries that exhausted 3 attempts + 172 configs never re-attempted after resuming.
-- ✅ Data assets (questions/corpora) unchanged.
+**Experiment 1 (Needle in Multiple Haystacks):** ✅ **Complete**
+- 3,000 run keys executed (pending list now empty); analysis saved under `results/analysis/exp1_rerun/`.
+- Key finding: Structured ≈ RAG > Advanced RAG >> Naive; best accuracy at 10–30% fill, degradation at higher fills.
 
-**Experiment 2 (Context Pollution):** ⏸ **Blocked behind Exp 1 completion + analysis.**
+**Experiment 2 (Context Pollution):** 🛠️ **Ready to implement** (requires code + data prep).
 
-**Experiment 5 (Cost-Latency Frontier):** ⏸ Dependent on Exp 1–2 metrics.
+**Experiment 5 (Cost-Latency Frontier):** ⏸ Dependent on Exp 2 metrics.
 
 **Time Spent:** ~32 hours on infrastructure, pilot & readiness  
 **Remaining:** ~9-11 weeks for experiments + analysis
@@ -49,35 +47,15 @@
 | 2025-11-30 | 12:05–20:52 | **Full run attempt** | ⚠️ Partial | Hit `ResourceExhausted` churn + 0.9-fill throttle skips; stopped with 264 configs pending. |
 | 2025-12-01 | 00:10 | **Post-mortem audit** | ⚠️ Pending | `results/raw/exp1_pending_runs.json` + `exp1_failure_breakdown.json` generated for rerun planning. |
 
-### ⚠️ Experiment 1 Remediation Sprint (Dec 1–3, 2025)
+### ✅ Experiment 1 Remediation Sprint (Complete)
 
 Goal: land the remaining 264 run keys, stabilize rerun tooling, and unlock analysis.
 
-1. **Truth rebuild + audit (Dec 1 AM)**
-   - ✅ Snapshot final log + archives (`exp1_run_2025-11-30*.tar.gz`).
-   - ✅ Generate `results/raw/exp1_failure_breakdown.json` (log-derived) and `results/raw/exp1_pending_runs.json` (expected – status).
-   - [x] Build a reusable audit helper (`scripts/audit_exp1_status.py`) to regenerate the pending list and detect duplicates before every rerun/analysis.
-2. **Token-limit + estimator fix (Dec 1 PM)**
-   - [ ] Replace the `len(prompt)/3.5` heuristic in `NeedleExperiment.run` with `src.utils.tokenizer.count_tokens` so the throttle sees the real prompt token count and stops rejecting legitimate 0.9-fill prompts.
-   - [ ] Add a 5k-token safety margin at ≥0.9 fill so padding + instructions stay <1,000,000 tokens even after instruction prologue.
-3. **Runner resilience (Dec 1 PM)**
-   - [ ] Extend `ExperimentStatus` with `failed_keys` & reason tracking so we can rerun only the missing configs without diffing raw logs.
-   - [ ] Merge `completed_keys` from both `results/raw/exp1_status.json` and `results/raw/exp1_results.jsonl` on load to avoid duplicate reruns after a resume.
-   - [ ] Add a `--runs-file <path>` option (JSON list of run keys) to `scripts/run_experiment_1.py` so we can target the 264 pending configs without touching the other 2,736.
-   - [ ] Teach the runner to back off longer after repeated `ResourceExhausted` errors instead of giving up after 3 tries—e.g., exponential sleep + automatic retry of the same run key until the monitor says the TPM window is free.
-4. **Rerun campaign (Dec 2)**
-   - [ ] Input: `results/raw/exp1_pending_runs.json`.
-   - [ ] Command (expected once tooling exists): `python scripts/run_experiment.py --experiment exp1 --per-minute-token-limit 1000000 --runs-file results/raw/exp1_pending_runs.json`.
-   - [ ] Success criteria: `results/raw/exp1_status.json` shows 3,000 completed runs, pending list regenerates empty, and `experiment1.log` ends without fatal errors.
-5. **Analysis + visualization (Dec 2–3)**
-   - [ ] Deduplicate `results/raw/exp1_results.jsonl` by newest timestamp per run key and save canonical copy under `results/raw/exp1_results_clean.jsonl`.
-   - [ ] Run `python scripts/analyze_results.py --input results/raw/exp1_results_clean.jsonl --questions data/questions/exp1_questions.json --output-dir results/analysis/exp1_final --mock-judge`.
-   - [ ] Generate plots via `python scripts/generate_visualizations.py --input results/analysis/exp1_final/summary_metrics.csv --output-dir results/visualizations/exp1_final`.
-   - [ ] Document findings in `results/analysis/exp1_final/analysis_report.md` and summarize in README/PLAN.
-6. **Publish + gate for Experiment 2 (Dec 3)**
-   - [ ] Update README + PLAN with Exp 1 metrics, failure counts, rerun steps.
-   - [ ] Cut a tagged archive of logs/results.
-   - [ ] Confirm AGENTS.md contains the rerun procedure + analysis hand-off checklist.
+Highlights:
+- ✅ Pending list cleared; all 3,000 run keys present in `results/raw/exp1_results.jsonl`.
+-, ✅ Analysis generated under `results/analysis/exp1_rerun/`; conclusions summarized in `ARTICLE_CONCLUSIONS.md`.
+-, ✅ Rate-limit checker now reflects real RPD by reading monitor state; monitor RPD set to free-tier limits for embeddings.
+-, ✅ Per-minute token limit bumped to 1M for 0.9-fill runs.
 
 ---
 
@@ -178,114 +156,74 @@ The pilot phase was completed successfully, validating the entire experimental p
 
 ## 🧪 EXPERIMENT 2: Context Pollution (Weeks 3–6)
 
-**Status:** 🚫 Do not start until Exp 1 run + analysis complete
+**Status:** 🛠️ Implementation phase (Exp 1 complete)
 
-**Duration:** 1-2 weeks  
-**Goal:** Test robustness to irrelevant information  
-**Domain:** GitHub Documentation + Gutenberg Books  
-**API Calls:** 1,200 (20 questions × 4 strategies × 5 pollution levels × 3 reps)  
-**Est. Cost:** $0 (free tier)
+**Duration:** ~1–2 weeks  
+**Goal:** Measure robustness to irrelevant information (pollution) across strategies.  
+**Domain:** Fresh GitHub docs (base corpus) + Gutenberg padding (pollution).  
+**Scope:** 1,200 generation calls (20 questions × 4 strategies × 5 pollution levels × 3 reps).  
+**Model/limits:** `models/gemini-2.0-flash`, 1M context, per-minute token limit 1,000,000, free-tier RPD 1,500/day.
 
-**Note:** RAG strategies also padded to match pollution levels for fair comparison.
+### Step-by-Step Plan (detailed)
 
-### Week 5: Data Collection & Question Generation (5 days)
+1) **Prereqs & gating (0.5 day)**
+   - Confirm Exp 1 artifacts are archived and conclusions logged (done).
+   - Verify monitor state is clean for today (`python scripts/check_rate_limits.py`).
+   - Ensure venv active (`source venv/bin/activate`) and `pip install -e .` succeeds.
 
-**Day 1: Collect Base Corpus (50k tokens of relevant GitHub docs)**
+2) **Data prep (1–2 days)**
+   - **Base corpus (relevant):** Collect 3–5 repos not used in Exp 1 (e.g., FastAPI, Pydantic, SQLAlchemy, Celery, Requests). Target ~50k tokens total; save to `data/raw/exp2/base_corpus.json`.
+     - Command: author `scripts/collect_exp2_corpus.py` (or reuse `collect_*` pattern) to fetch and tokenize; log token counts.
+     - Verify: `python - <<'PY' ...` to assert ≥50k tokens; file exists.
+   - **Pollution corpus (irrelevant):** Reuse `data/raw/padding/gutenberg_corpus.json`; no new collection. If missing, copy from Exp 1 assets.
+   - **Questions:** Expand `data/questions/exp2_questions.template.json` into `data/questions/exp2_questions.json` with 20 Qs (15 lookup, 5 synthesis) answerable only from base corpus; ensure answers aren’t in Gutenberg.
+     - Validate: `python scripts/validate_question_set.py data/questions/exp2_questions.json --require-experiment exp2`.
+     - Manual spot check: confirm required docs appear in base corpus, not in pollution corpus.
 
-Use 3-5 repositories not used in Experiment 1:
-- Example: FastAPI, Pydantic, SQLAlchemy, Celery, Requests
-- Fetch recent documentation (after 2024-08-01)
-- Target: 50k tokens total
-- Save to: `data/raw/exp2/base_corpus.json`
+3) **Pollution injector utilities (0.5 day)**
+   - Implement `src/corpus/pollution.py` with `PollutionInjector`:
+     - `inject_pollution(base_docs, pollution_docs, target_pollution_tokens, strategy='append'|'interleave')`
+     - Uses `count_tokens`/`truncate_to_tokens` to enforce budgets.
+   - Tests: add `tests/test_pollution.py` to cover append/interleave, token budgeting, and idempotent behavior.
+   - Verify: `pytest tests/test_pollution.py`.
 
-**Day 2: Prepare Pollution Corpus (reuse Gutenberg)**
+4) **Experiment runner implementation (1 day)**
+   - Implement `src/experiments/exp2_pollution.py`:
+     - Strategies: reuse existing assemblers (naive, structured, rag, advanced_rag).
+     - Pollution levels: [50k, 200k, 500k, 700k, 950k] tokens of noise added to a fixed base context (~50k tokens).
+     - Generate mixed context via `PollutionInjector`, then assemble/pad to max context limit (respect 1M ceiling).
+     - Three repetitions per question/strategy/pollution level; temperature=0.0; log tokens and latency.
+     - Add `per_minute_token_limit` support (default 1,000,000) and `--limit` for smoke tests.
+   - Runner script: add `scripts/run_experiment_2.py` and wire `scripts/run_experiment.py` handler for `exp2` (accepts `--runs-file`, `--dry-run`, `--per-minute-token-limit`, `--limit`).
+   - Status tracking: mirror Exp 1 pattern (`results/raw/exp2_status.json`, `exp2_results.jsonl`, `exp2_pending_runs.json`).
+   - Verify: `python scripts/run_experiment.py --experiment exp2 --dry-run --per-minute-token-limit 1000000 --limit 2`.
 
-Use the Gutenberg corpus collected in Experiment 1:
-- Already have 2M+ tokens from `data/raw/padding/gutenberg_corpus.json`
-- Classic literature is clearly irrelevant to technical questions
-- No additional collection needed
+5) **Dry-run + smoke (0.5 day)**
+   - Dry run to list planned 1,200 configs without API calls.
+   - Smoke run with `--limit 3` to confirm RAG/structured paths work and monitor captures calls; ensure no token-limit warnings at chosen budgets.
 
-**Day 3-5: Generate 20 Questions**
+6) **Full execution (1–2 days)**
+   - Command: `python scripts/run_experiment.py --experiment exp2 --per-minute-token-limit 1000000`.
+   - Monitor: `python scripts/check_rate_limits.py` between batches; stop if RPD approaches 1,400.
+   - Success criteria: `wc -l results/raw/exp2_results.jsonl` == 1200; pending list empty.
 
-Create questions answerable ONLY from base corpus:
-- 15 simple lookups (single fact)
-- 5 synthesis (2-3 docs from base)
-- Verify answers are NOT in pollution corpus
-- Example: "What is the default timeout for FastAPI requests?" (should NOT appear in Dickens)
+7) **Analysis (0.5–1 day)**
+   - Dedup if needed; score: `python scripts/analyze_results.py --input results/raw/exp2_results.jsonl --questions data/questions/exp2_questions.json --output-dir results/analysis/exp2 --mock-judge`.
+   - Visuals: `python scripts/generate_visualizations.py --input results/analysis/exp2/summary_metrics.csv --output-dir results/visualizations/exp2`.
+   - Key outputs: accuracy vs pollution level per strategy, hallucination/false-positive rate, robustness curves.
+   - Summarize findings in `results/analysis/exp2/analysis_report.md` and update ARTICLE_CONCLUSIONS.md/README.
 
-Save to: `data/questions/exp2_questions.json`
+8) **Post-mortem + handoff (0.5 day)**
+   - Archive logs/results; update PLAN/README with completion status and next steps (Exp 5).
 
-**Acceptance Criteria:**
-- [ ] **Gate check:** `results/analysis/exp1_summary.md` exists and README/PLAN include Exp 1 outcomes.
-- [ ] **Base Corpus:** `python scripts/collect_exp2_corpus.py` runs successfully and `ls data/raw/exp2/base_corpus.json` lists the file.
-- [ ] **Padding Corpus:** `ls data/raw/padding/gutenberg_corpus.json` confirms the padding corpus from Exp1 exists.
-- [ ] **Question Set:** `python scripts/validate_question_set.py data/questions/exp2_questions.json --require-experiment exp2` exits with code 0.
-- [ ] **Question Count:** `python -c "import json; f = open('data/questions/exp2_questions.json'); data = json.load(f); assert len(data['questions']) >= 20, f'Expected 20+ questions, found {len(data[\'questions\'])}'"` exits with code 0.
-- [ ] **Manual Check:** Reviewer confirms that answers to the questions are not present in the Gutenberg padding corpus.
-
-### Week 6: Execution & Analysis (5 days)
-
-**Day 1-2: Implement Pollution Injection**
-
-File: `src/corpus/pollution.py` (NEW)
-```python
-class PollutionInjector:
-    """Inject irrelevant content at varying levels"""
-    
-    def inject_pollution(self, 
-                        base_content: str,
-                        pollution_content: str,
-                        pollution_tokens: int) -> str:
-        """
-        Mix base content with pollution.
-        
-        Args:
-            base_content: Relevant documents
-            pollution_content: Irrelevant text (Gutenberg)
-            pollution_tokens: Amount of pollution to add
-        
-        Returns:
-            Mixed content (base + pollution)
-        """
-        # Truncate pollution to target size
-        pollution = truncate_to_tokens(pollution_content, pollution_tokens)
-        
-        # Strategy: Append pollution after base
-        # (Could also interleave, but simpler for now)
-        return base_content + "\n\n" + pollution
-```
-**Acceptance Criteria:**
-- [ ] **Unit Test:** `pytest tests/test_corpus.py::test_pollution_injector` exits with code 0.
-
-**Day 3-4: Run Experiment 2 (1,200 API calls)**
-
-Pollution levels:
-- 50k tokens pollution (50% of base)
-- 200k tokens pollution (4x base)
-- 500k tokens pollution (10x base)
-- 700k tokens pollution (14x base)
-- 950k tokens pollution (19x base)
-
-Script: `scripts/run_experiment_2.py`
-
-**Acceptance Criteria:**
-- [ ] **Dry Run:** `python scripts/run_experiment_2.py --dry-run` exits with code 0 and logs that it would make 1,200 API calls.
-- [ ] **File Creation:** After a full run, `ls results/raw/exp2_results.jsonl` successfully lists the file.
-- [ ] **Result Count:** `wc -l results/raw/exp2_results.jsonl` reports 1200.
-
-**Day 5: Analyze Results**
-
-Metrics:
-- Accuracy vs pollution level (does it degrade?)
-- Hallucination rate (false positives from pollution)
-- Degradation curves per strategy
-- Which strategy most robust to noise?
-
-**Acceptance Criteria:**
-- [ ] **Analysis Script:** `python scripts/analyze_results.py --input results/raw/exp2_results.jsonl --output-dir results/analysis/exp2` exits with code 0.
-- [ ] **Summary File:** `ls results/analysis/exp2/exp2_summary.md` successfully lists the file.
-- [ ] **Visualization Script:** `python scripts/generate_visualizations.py --input results/analysis/exp2/exp2_metrics.csv --output-dir results/visualizations/exp2` exits with code 0.
-- [ ] **Plot Verification:** `ls results/visualizations/exp2/*.png | wc -l` reports a count of 2 or more.
+### Acceptance Checklist (Exp 2)
+- [ ] Base corpus present: `ls data/raw/exp2/base_corpus.json` and token count ≥50k.
+- [ ] Questions validated: `python scripts/validate_question_set.py data/questions/exp2_questions.json --require-experiment exp2` exits 0.
+- [ ] Pollution injector tests: `pytest tests/test_pollution.py` exits 0.
+- [ ] Dry-run passes: `python scripts/run_experiment.py --experiment exp2 --dry-run --per-minute-token-limit 1000000 --limit 2` exits 0.
+- [ ] Full run artifacts: `wc -l results/raw/exp2_results.jsonl` == 1200; `results/raw/exp2_status.json` shows completed=1200.
+- [ ] Analysis artifacts: `results/analysis/exp2/summary_metrics.csv`, `results/analysis/exp2/analysis_report.md`, and plots under `results/visualizations/exp2/`.
+- [ ] Conclusions propagated to ARTICLE_CONCLUSIONS.md/README.
 
 ---
 
