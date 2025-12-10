@@ -3,7 +3,7 @@ Pollution Injector for Experiment 2.
 Injects irrelevant content (Project Gutenberg text) into base content at specified token levels.
 """
 
-from typing import Optional
+from typing import List, Dict, Optional
 from src.utils.tokenizer import count_tokens, truncate_to_tokens
 
 class PollutionInjector:
@@ -47,7 +47,7 @@ class PollutionInjector:
     def create_mixed_context(
         self,
         base_content: str,
-        padding_corpus: list[dict],
+        padding_corpus: List[Dict],
         target_pollution_tokens: int
     ) -> str:
         """

@@ -89,7 +89,8 @@ class RAGPipeline:
             if emb_path.exists():
                 self.embeddings = np.load(str(emb_path))
             else:
-                logger.warning("Embeddings file not found, but chunks loaded.")
+                logger.warning("Embeddings file not found. RAG state incomplete.")
+                return False
 
             # Load FAISS index
             index_path = Path(f"{path_prefix}_faiss.index")
