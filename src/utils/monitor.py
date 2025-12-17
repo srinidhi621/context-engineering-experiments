@@ -45,16 +45,30 @@ class ModelLimits:
                 output_cost_per_1m=0.00   # Free tier
             ),
             'gemini-2.0-flash-exp': cls(
-                rpm=15,
-                tpm=1_000_000,
+                rpm=10,
+                tpm=4_000_000,
                 rpd=1_500,
                 input_cost_per_1m=0.00,  # Free tier
                 output_cost_per_1m=0.00   # Free tier
             ),
             'models/gemini-2.0-flash': cls(
-                rpm=15,
-                tpm=1_000_000,
+                rpm=10,
+                tpm=4_000_000,
                 rpd=1_500,
+                input_cost_per_1m=0.00,  # Free tier (Preview)
+                output_cost_per_1m=0.00   # Free tier (Preview)
+            ),
+             'gemini-2.0-flash-lite-preview-02-05': cls(
+                rpm=10,
+                tpm=4_000_000,
+                rpd=1_500,
+                input_cost_per_1m=0.00,  # Free tier
+                output_cost_per_1m=0.00   # Free tier
+            ),
+             'gemini-2.0-pro-exp-02-05': cls(
+                rpm=2,
+                tpm=32_000,
+                rpd=50,
                 input_cost_per_1m=0.00,  # Free tier
                 output_cost_per_1m=0.00   # Free tier
             ),
@@ -75,7 +89,7 @@ class ModelLimits:
             'text-embedding-004': cls(
                 rpm=1500,
                 tpm=10_000_000,
-                rpd=1_500,  # CRITICAL: Keep at 1,500 to stay in Free Tier. Exceeding this triggers Paid Tier billing for ALL models.
+                rpd=1_000,  # CRITICAL: Reduced to 1,000 to safely stay in Free Tier. Exceeding triggers Paid Tier.
                 input_cost_per_1m=0.00,
                 output_cost_per_1m=0.00
             )
