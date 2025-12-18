@@ -31,7 +31,7 @@ class APIConfig:
     # Free tier limits for gemini-2.0-flash-exp
     rate_limit_rpm: int = int(os.getenv("RATE_LIMIT_RPM") or 15)
     rate_limit_tpm: int = int(os.getenv("RATE_LIMIT_TPM") or 1_000_000)
-    rate_limit_rpd: int = int(os.getenv("RATE_LIMIT_RPD") or 1_500)
+    rate_limit_rpd: int = int(os.getenv("RATE_LIMIT_RPD") or 1_000)
     # Budget limit (in USD) - hard stop to prevent overages
     budget_limit: float = float(os.getenv("BUDGET_LIMIT") or 174.00)
 

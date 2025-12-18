@@ -95,22 +95,24 @@ Design a replicable experiment suite that isolates the impact of context enginee
 
 ## ✅ FREE TIER CONFIGURATION (Optimized)
 
-**Using Gemini 2.0 Flash Experimental:**
-- **RPM (Requests Per Minute):** 15
-- **TPM (Tokens Per Minute):** 1,000,000  
-- **RPD (Requests Per Day):** 1,500
+**Using Gemini 2.0 Flash (Preview):**
+- **RPM (Requests Per Minute):** 10-15
+- **TPM (Tokens Per Minute):** 4,000,000 (Flash) / 1,000,000 (Flash-Lite)
+- **RPD (Requests Per Day):**
+  - **Generation:** 1,500 requests
+  - **Embeddings:** **1,000 requests** (Strict cap to prevent account-wide Paid Tier upgrade)
 - **Cost:** $0.00 (free tier)
 
 **Impact on Experiment Suite:**
 - **Revised scope: 4,380 requests** (down from 9,000 - dropped Exp 3 & 4)
-- At 1,500 requests/day: **~3 days minimum**
+- At 1,000 requests/day (embedding bottleneck): **~4-5 days minimum**
 - TPM allows large contexts (up to 1M tokens)
-- **Realistic estimate: 4-5 days** (with retry buffer)
+- **Realistic estimate: 5-7 days** (with retry buffer)
 
 **Automatic Enforcement:**
 The unified monitor automatically enforces all limits and budget:
 - Blocks requests exceeding RPM/TPM limits (waits for reset)
-- Hard stops at RPD limit (must resume next day)
+- **Hard stops at 1,000 RPD for embeddings** (must resume next day)
 - Hard stops at budget limit ($174)
 - No manual tracking needed
 
@@ -205,29 +207,31 @@ python scripts/check_rate_limits.py
 
 ### Model Configuration ✅ OPTIMIZED FOR FREE TIER
 
-**✅ CONFIGURED: gemini-2.0-flash-exp**
+**✅ CONFIGURED: gemini-2.0-flash**
 
-This project uses **gemini-2.0-flash-exp** for optimal free tier performance:
+This project uses **gemini-2.0-flash** for optimal free tier performance:
 
 | Metric | Value | Comparison |
 |--------|-------|------------|
-| **RPM** | 15 | Standard |
-| **TPM** | 1,000,000 | Excellent for long contexts |
-| **RPD** | 1,500 | **6x better than 2.5 Flash** |
+| **RPM** | 10-15 | Standard |
+| **TPM** | 4,000,000 | Excellent for long contexts |
+| **RPD (Gen)** | 1,500 | High volume generation |
+| **RPD (Emb)** | **1,000** | **Strict safety cap** |
 | **Cost** | $0.00 | Free tier |
 
 **Timeline Impact:**
-- ✅ **9,000 requests: ~6 days minimum** (gemini-2.0-flash-exp)
+- ✅ **9,000 requests: ~9 days minimum** (due to embedding bottleneck)
 - ❌ Alternative (gemini-2.5-flash): ~36 days (250 RPD limit)
 
 **Unified Monitoring:**
 - ✅ Rate limiting (RPM, TPM, RPD enforcement)
+- ✅ **Split limits** (1500 for gen, 1000 for emb)
 - ✅ Cost tracking (by experiment, session, model, day)
 - ✅ Budget enforcement ($174 limit from project plan)
 - ✅ All in one system - no conflicts or inconsistencies
 
 **Configuration:**
-- **Primary Model:** gemini-2.0-flash-exp (production-ready, free tier)
+- **Primary Model:** gemini-2.0-flash (production, free tier)
 - **Embedding Model:** text-embedding-004 (latest, free tier)
 - **Temperature:** 0.0 (deterministic)
 - **Repetitions:** 3 runs per condition per question
