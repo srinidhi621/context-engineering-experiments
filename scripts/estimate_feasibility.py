@@ -16,7 +16,7 @@ def main():
     print("="*70)
     
     # Model to use
-    model_name = "gemini-2.0-flash-exp"  # Best free tier limits
+    model_name = "gemini-2.0-flash-lite-preview-02-05"  # Best free tier limits
     limiter = RateLimiter(model_name)
     
     # Experiment configurations
@@ -131,7 +131,7 @@ def main():
     print("  - Gemini 2.0 Flash: $0 per million tokens (input & output)")
     print("  - Wait, it's FREE even on paid tier!")
     print("  - But rate limits increase significantly:")
-    print("    • Free: 15 RPM, 1M TPM, 1,500 RPD")
+    print("    • Free: 30 RPM, 4M TPM, 1,500 RPD")
     print("    • Paid Tier 1: 1,000 RPM, 4M TPM, unlimited RPD")
     paid_estimate = total_requests / 1000  # Minutes at 1000 RPM
     print(f"  → With paid tier: ~{paid_estimate/60:.1f} hours (vs {total_days_needed:.1f} days)")

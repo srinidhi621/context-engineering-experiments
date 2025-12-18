@@ -19,7 +19,7 @@ from typing import Optional
 @dataclass
 class ExperimentConfig:
     \"\"\"Base configuration for all experiments\"\"\"
-    model_name: str = "gemini-2.0-flash-exp"
+    model_name: str = "gemini-2.0-flash-lite-preview-02-05"
     context_limit: int = 1_000_000
     temperature: float = 0.0
     repetitions: int = 3
@@ -54,7 +54,7 @@ logger = get_logger(__name__)
 class GeminiClient:
     \"\"\"Wrapper for Gemini API with rate limiting and error handling\"\"\"
     
-    def __init__(self, model_name: str = "gemini-2.0-flash-exp"):
+    def __init__(self, model_name: str = "gemini-2.0-flash-lite-preview-02-05"):
         genai.configure(api_key=api_config.google_api_key)
         self.model = genai.GenerativeModel(model_name)
         self.last_call_time = 0

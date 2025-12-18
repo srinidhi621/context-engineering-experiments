@@ -386,7 +386,7 @@ class RateLimiter:
 # Example usage
 if __name__ == "__main__":
     # Initialize rate limiter
-    limiter = RateLimiter("gemini-2.0-flash-exp")
+    limiter = RateLimiter("gemini-2.0-flash-lite-preview-02-05")
     
     # Check status
     limiter.print_status()

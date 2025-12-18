@@ -10,15 +10,15 @@ from src.utils.logging import get_logger
 
 logger = get_logger(__name__)
 
-class CorrectnessJudge:
+class LLMJudge:
     """
-    Evaluates the correctness of an answer given a question and a reference answer
-    using an LLM.
+    LLM-as-a-Judge evaluator using Gemini.
     """
     
-    def __init__(self, client: Optional[GeminiClient] = None, model_name: str = "gemini-2.0-flash-exp"):
+    def __init__(self, client: Optional[GeminiClient] = None, model_name: str = "gemini-2.0-flash-lite-preview-02-05"):
         self.client = client or GeminiClient()
         self.model_name = model_name
+        self.tokenizer = Tokenizer()
         
     def evaluate(self, question: str, prediction: str, reference: str) -> Dict:
         """

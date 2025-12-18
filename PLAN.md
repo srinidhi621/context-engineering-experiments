@@ -3,7 +3,7 @@
 **Project:** Context Engineering for LLMs - Experimental Suite  
 **Timeline:** 10-12 Weeks (Realistic)  
 **Start Date:** October 30, 2025  
-**Budget:** $0 (Free Tier - gemini-2.0-flash-exp)  
+**Budget:** $0 (Free Tier - gemini-2.0-flash-lite-preview-02-05)  
 **Team Size:** 1  
 
 **Last Updated:** December 3, 2025  

@@ -21,7 +21,7 @@ def test_client_initialization_monitors(mock_genai, mock_env_vars):
     assert client.monitor != client.embedding_monitor
     
     # Verify models
-    assert client.monitor.model_name == "gemini-2.0-flash-exp"
+    assert client.monitor.model_name == "gemini-2.0-flash-lite-preview-02-05"
     assert client.embedding_monitor.model_name == "text-embedding-004"
     
     # Verify state files are different (indirectly via internal state, or by checking private attrs if accessible)
