@@ -198,7 +198,7 @@ load_dotenv()
 @dataclass
 class ExperimentConfig:
     """Base configuration for all experiments"""
-    model_name: str = "gemini-2.0-flash-exp"
+    model_name: str = "gemini-2.0-flash-lite-preview-02-05"
     context_limit: int = 1_000_000
     temperature: float = 0.0
     repetitions: int = int(os.getenv("EXPERIMENT_REPETITIONS", "3"))

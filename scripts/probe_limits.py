@@ -9,7 +9,7 @@ def probe_limits():
     genai.configure(api_key=api_config.google_api_key)
     
     models = [
-        "models/gemini-2.0-flash",
+        "gemini-2.0-flash-lite-preview-02-05",
         "models/gemini-2.5-flash",
         "models/gemini-flash-latest",
         "models/gemini-1.5-flash"

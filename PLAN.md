@@ -15,7 +15,7 @@
 
 **Infrastructure:** ✅ **Operational**
 - Python 3.13.3 environment configured (required for google-generativeai >= 0.3.0).
-- Model: `models/gemini-2.0-flash` (stable 1M-token context confirmed).
+- Model: `gemini-2.0-flash-lite-preview-02-05` (1M context, 4M TPM free tier confirmed).
 - Unified monitoring + budget guardrail from `src/utils/monitor.py` persists usage under `results/.monitor_state.json`.
 - Corpus loaders/tokenizers are implemented and cached (`results/cache/*`).
 
@@ -42,7 +42,7 @@
 | 2025-11-26 | 16:06 | **Setup Run** | ✅ Success | Cached chunks & embeddings (0 API calls) |
 | 2025-11-26 | 16:56 | **Full Dry Run** | ✅ Success | Verified 3,000 run combinations & status logic |
 | 2025-11-26 | 17:09 | **Mini Live Run** | ✅ Success | 2 real API calls + analysis pipeline verification |
-| 2025-11-26 | ~18:25 | **TPM Limit Troubleshooting & Model Switch** | ✅ Resolved | Identified `gemini-2.0-flash-exp` had a 250k TPM limit. Switched to `models/gemini-2.0-flash` with confirmed 1M TPM. |
+| 2025-11-26 | ~18:25 | **TPM Limit Troubleshooting & Model Switch** | ✅ Resolved | Identified `gemini-2.0-flash-exp` had a 250k TPM limit. Switched to `gemini-2.0-flash-lite-preview-02-05` with confirmed 1M context, 4M TPM. |
 | 2025-11-27–29 | Multi | **Incremental partial runs** | ⚠️ Mixed | Created historical entries in `results/raw/exp1_results.jsonl` but status file resets caused duplicates. |
 | 2025-11-30 | 12:05–20:52 | **Full run attempt** | ⚠️ Partial | Hit `ResourceExhausted` churn + 0.9-fill throttle skips; stopped with 264 configs pending. |
 | 2025-12-01 | 00:10 | **Post-mortem audit** | ⚠️ Pending | `results/raw/exp1_pending_runs.json` + `exp1_failure_breakdown.json` generated for rerun planning. |
@@ -74,7 +74,7 @@ Goal: unblock Experiment 1 by fixing infrastructure gaps. All items below are 
    - *Exit criteria:* restarting Exp 1 skips embedding recomputation and performs no network calls for padding.
 
 3. **Align configuration and experiment runners**
-   - ✅ Set `config.model_name = "gemini-2.0-flash-exp"`, update docs, and extend `scripts/run_experiment.py` with explicit handlers for pilot/exp1/exp2.
+   - ✅ Set `config.model_name = "gemini-2.0-flash-lite-preview-02-05"`, update docs, and extend `scripts/run_experiment.py` with explicit handlers for pilot/exp1/exp2.
    - ✅ Harden `scripts/run_experiment_1.py` with `PerMinuteTokenThrottle`, persistent status files, and automatic sleep/resume when RPM/RPD/TPM limits trigger.
    - *Exit criteria:* `python scripts/run_experiment.py --experiment exp1 --dry-run` validates orchestration; live runs checkpoint and resume after quota resets.
 
@@ -349,7 +349,7 @@ python scripts/monitor_costs.py
 python scripts/generate_cost_report.py
 
 # Run experiments (when ready)
-# IMPORTANT: Use --per-minute-token-limit 1000000 for models/gemini-2.0-flash
+# IMPORTANT: Use --per-minute-token-limit 1000000 for gemini-2.0-flash-lite-preview-02-05
 python scripts/run_pilot.py              # Start with this!
 python scripts/run_experiment_1.py --per-minute-token-limit 1000000       # After pilot succeeds
 python scripts/run_experiment_2.py --per-minute-token-limit 1000000       # After Exp 1 succeeds
