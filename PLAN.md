@@ -162,7 +162,7 @@ The pilot phase was completed successfully, validating the entire experimental p
 **Goal:** Measure robustness to irrelevant information (pollution) across strategies.  
 **Domain:** Fresh GitHub docs (base corpus) + Gutenberg padding (pollution).  
 **Scope:** 1,200 generation calls (20 questions × 4 strategies × 5 pollution levels × 3 reps).  
-**Model/limits:** `models/gemini-2.0-flash`, 1M context, per-minute token limit 4,000,000, free-tier RPD 1,500 (Gen) / 1,000 (Emb).
+**Model/limits:** `gemini-2.0-flash-lite-preview-02-05`, 1M context, 4M TPM, free-tier RPD 1,500 (Gen) / 1,000 (Emb).
 
 ### Step-by-Step Plan (detailed)
 

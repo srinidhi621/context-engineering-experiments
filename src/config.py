@@ -10,9 +10,9 @@ load_dotenv()
 @dataclass
 class ExperimentConfig:
     """Base configuration for all experiments"""
-    # Primary model: Gemini Flash Latest (latest stable Flash model with 8x more output)
-    # 15 RPM, 1M TPM, 1500 RPD - free tier with 65K output tokens vs 8K in 2.0-flash-exp
-    model_name: str = "models/gemini-2.0-flash"
+    # Primary model: Gemini 2.0 Flash-Lite (Cost-optimized, 1M context, 1500 RPD free tier)
+    # June 2024 cutoff ensures no leakage of Sept-Dec 2024 corpus data
+    model_name: str = "gemini-2.0-flash-lite-preview-02-05"
     # Embedding model: Latest production text embedding model
     embedding_model_name: str = "text-embedding-004"
     context_limit: int = 1_000_000
@@ -28,10 +28,10 @@ class ExperimentConfig:
 class APIConfig:
     """API configuration"""
     google_api_key: str = os.getenv("GOOGLE_API_KEY") or ""
-    # Free tier limits for gemini-2.0-flash-exp
-    rate_limit_rpm: int = int(os.getenv("RATE_LIMIT_RPM") or 15)
-    rate_limit_tpm: int = int(os.getenv("RATE_LIMIT_TPM") or 1_000_000)
-    rate_limit_rpd: int = int(os.getenv("RATE_LIMIT_RPD") or 1_000)
+    # Free tier limits for gemini-2.0-flash-lite-preview-02-05
+    rate_limit_rpm: int = int(os.getenv("RATE_LIMIT_RPM") or 30)
+    rate_limit_tpm: int = int(os.getenv("RATE_LIMIT_TPM") or 4_000_000)
+    rate_limit_rpd: int = int(os.getenv("RATE_LIMIT_RPD") or 1_500)
     # Budget limit (in USD) - hard stop to prevent overages
     budget_limit: float = float(os.getenv("BUDGET_LIMIT") or 174.00)
 

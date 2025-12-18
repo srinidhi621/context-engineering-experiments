@@ -95,19 +95,20 @@ Design a replicable experiment suite that isolates the impact of context enginee
 
 ## ✅ FREE TIER CONFIGURATION (Optimized)
 
-**Using Gemini 2.0 Flash (Preview):**
-- **RPM (Requests Per Minute):** 10-15
-- **TPM (Tokens Per Minute):** 4,000,000 (Flash) / 1,000,000 (Flash-Lite)
+**Using Gemini 2.0 Flash-Lite (Preview):**
+- **Model:** `gemini-2.0-flash-lite-preview-02-05`
+- **RPM (Requests Per Minute):** 30 (2x faster than standard Flash)
+- **TPM (Tokens Per Minute):** 4,000,000
 - **RPD (Requests Per Day):**
   - **Generation:** 1,500 requests
   - **Embeddings:** **1,000 requests** (Strict cap to prevent account-wide Paid Tier upgrade)
+- **Knowledge Cutoff:** June 2024 (Validates methodology: cannot memorize Sept-Dec 2024 corpus)
 - **Cost:** $0.00 (free tier)
 
 **Impact on Experiment Suite:**
-- **Revised scope: 4,380 requests** (down from 9,000 - dropped Exp 3 & 4)
-- At 1,000 requests/day (embedding bottleneck): **~4-5 days minimum**
-- TPM allows large contexts (up to 1M tokens)
-- **Realistic estimate: 5-7 days** (with retry buffer)
+- **Revised scope: 4,380 requests**
+- At 1,500 RPD (Gen) / 1,000 RPD (Emb): **~5 days minimum**
+- **Bottleneck:** Embedding limits (1k/day) will pace the experiment, but generation capacity is ample.
 
 **Automatic Enforcement:**
 The unified monitor automatically enforces all limits and budget:
@@ -207,21 +208,22 @@ python scripts/check_rate_limits.py
 
 ### Model Configuration ✅ OPTIMIZED FOR FREE TIER
 
-**✅ CONFIGURED: gemini-2.0-flash**
+**✅ CONFIGURED: gemini-2.0-flash-lite-preview-02-05**
 
-This project uses **gemini-2.0-flash** for optimal free tier performance:
+This project uses **gemini-2.0-flash-lite** for optimal free tier performance and strict methodology validation:
 
 | Metric | Value | Comparison |
 |--------|-------|------------|
-| **RPM** | 10-15 | Standard |
+| **RPM** | 30 | **2x faster than Flash** |
 | **TPM** | 4,000,000 | Excellent for long contexts |
-| **RPD (Gen)** | 1,500 | High volume generation |
+| **RPD (Gen)** | 1,500 | Restored high volume |
 | **RPD (Emb)** | **1,000** | **Strict safety cap** |
+| **Cutoff** | June 2024 | **Safe for Sept+ Corpus** |
 | **Cost** | $0.00 | Free tier |
 
 **Timeline Impact:**
 - ✅ **9,000 requests: ~9 days minimum** (due to embedding bottleneck)
-- ❌ Alternative (gemini-2.5-flash): ~36 days (250 RPD limit)
+- ❌ Alternative (gemini-2.5-flash): ~36 days (20-250 RPD limit)
 
 **Unified Monitoring:**
 - ✅ Rate limiting (RPM, TPM, RPD enforcement)
@@ -231,7 +233,7 @@ This project uses **gemini-2.0-flash** for optimal free tier performance:
 - ✅ All in one system - no conflicts or inconsistencies
 
 **Configuration:**
-- **Primary Model:** gemini-2.0-flash (production, free tier)
+- **Primary Model:** gemini-2.0-flash-lite-preview-02-05
 - **Embedding Model:** text-embedding-004 (latest, free tier)
 - **Temperature:** 0.0 (deterministic)
 - **Repetitions:** 3 runs per condition per question
