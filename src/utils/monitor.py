@@ -89,7 +89,7 @@ class ModelLimits:
             'text-embedding-004': cls(
                 rpm=1500,
                 tpm=10_000_000,
-                rpd=1_000,  # CRITICAL: Reduced to 1,000 to safely stay in Free Tier. Exceeding triggers Paid Tier.
+                rpd=1_000,  # CRITICAL: Enforced daily cap observed in API; keep at 1,000 to avoid hard stops/billing.
                 input_cost_per_1m=0.00,
                 output_cost_per_1m=0.00
             )
@@ -557,4 +557,3 @@ def get_monitor(model_name: Optional[str] = None, budget_limit: float = 174.00) 
         )
         
     return _monitors[model_name]
-
