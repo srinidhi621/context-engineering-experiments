@@ -10,7 +10,7 @@
 - `bash scripts/setup_environment.sh` provisions the virtualenv, installs dependencies, and validates prerequisites.
 - Always activate the repo venv (`source venv/bin/activate`, Python 3.13.x) before running any script. After activation, run `pip install -e .` so local packages import cleanly as `src.*`.
 - Use `python scripts/estimate_feasibility.py` before large runs to confirm the plan fits rate/budget limits.
-- `python scripts/check_rate_limits.py` surfaces the current state tracked by the unified monitor and stored in `results/`.
+- `python scripts/check_rate_limits.py` surfaces the current state tracked by the unified monitor and stored in `results/`. Default model: `gemini-2.0-flash-lite-preview-02-05`; embeddings: `text-embedding-004` with an enforced 1,000 RPD cap.
 - Before any long-running experiment, run the pre-flight checklist (`CHECKLIST.md`) to ensure environment, dependencies, corpora, and pytest all pass.
 
 ## Coding Style & Naming Conventions
@@ -37,7 +37,7 @@
 ## Experiment Run Procedures
 - Launch experiments via `python scripts/run_experiment.py --experiment exp1 --per-minute-token-limit <limit>`. This wrapper handles CLI options, throttling, and resumes through `NeedleExperiment`.
 - Check progress in `results/raw/exp1_results.jsonl` (responses) and `results/raw/exp1_status.json` (completed/failed run keys). Long runs may span hours; throttling and 429 retries are expected.
-- Embedding/RAG caches live in `results/cache/`. If model limits change, stop the run, delete `exp1_rag*`/`exp1_adv_rag*`, and restart so caches regenerate with the new cap.
+- Embedding/RAG caches live in `results/cache/`. If model limits change, stop the run, delete caches, and rebuild. For 950k levels, use the resumable builders (`scripts/build_exp2_rag_950k_resumable.py` and `scripts/build_exp2_adv_rag_950k_resumable.py`) to checkpoint under the 1,000 RPD embedding cap.
 - During runs monitor `experiment1.log` for `ResourceExhausted` or `Token limit exceeded` messages. The client already retries 3× with backoff; log warnings are normal unless the run halts.
 
 ## Task Execution & Alignment

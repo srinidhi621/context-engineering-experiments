@@ -96,7 +96,7 @@ Design a replicable experiment suite that isolates the impact of context enginee
 ## ✅ FREE TIER CONFIGURATION (Optimized)
 
 **Using Gemini 2.0 Flash-Lite (Preview):**
-- **Model:** `gemini-2.0-flash-lite-preview-02-05`
+- **Model:** `gemini-2.0-flash-lite-preview-02-05` (1M context, 4M TPM free tier)
 - **RPM (Requests Per Minute):** 30 (2x faster than standard Flash)
 - **TPM (Tokens Per Minute):** 4,000,000
 - **RPD (Requests Per Day):**
@@ -234,7 +234,7 @@ This project uses **gemini-2.0-flash-lite** for optimal free tier performance an
 
 **Configuration:**
 - **Primary Model:** gemini-2.0-flash-lite-preview-02-05
-- **Embedding Model:** text-embedding-004 (latest, free tier)
+- **Embedding Model:** text-embedding-004 (free tier, enforced 1,000 RPD cap; use resumable builders for 950k caches)
 - **Temperature:** 0.0 (deterministic)
 - **Repetitions:** 3 runs per condition per question
 - **Budget Limit:** $174 (enforced automatically)
