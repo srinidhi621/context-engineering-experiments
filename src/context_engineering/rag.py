@@ -164,12 +164,15 @@ class RAGPipeline:
         if not self.chunks:
             raise ValueError("No chunks to index")
         
-        chunk_texts = [c['text'] for c in self.chunks]
-        
-        logger.info(f"Generating Gemini embeddings for {len(chunk_texts)} chunks...")
-        embeddings = self._embed_texts(chunk_texts)
-        self.embeddings = np.array(embeddings, dtype=np.float32)
-        logger.info("Embeddings generated.")
+        # If embeddings are already loaded (checkpointed/resumed), skip re-embedding.
+        if self.embeddings is None:
+            chunk_texts = [c['text'] for c in self.chunks]
+            logger.info(f"Generating Gemini embeddings for {len(chunk_texts)} chunks...")
+            embeddings = self._embed_texts(chunk_texts)
+            self.embeddings = np.array(embeddings, dtype=np.float32)
+            logger.info("Embeddings generated.")
+        else:
+            logger.info("Using preloaded embeddings; skipping embedding generation.")
         
         if self.use_faiss:
             logger.info("Building FAISS index...")
