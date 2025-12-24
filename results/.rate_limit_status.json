@@ -1,28 +1,52 @@
 {
-  "model": "gemini-2.0-flash-exp",
-  "limits": {
-    "rpm": 15,
-    "tpm": 1000000,
-    "rpd": 1500
+  "generation": {
+    "limits": {
+      "rpm": 15,
+      "tpm": 1000000,
+      "rpd": 1500
+    },
+    "requests_today": 240,
+    "tokens_today": 120423841,
+    "remaining_rpd": 1260,
+    "state_path": "results/.monitor_state_gemini_2_0_flash_lite_preview_02_05.json"
   },
-  "current_usage": {
-    "requests_this_minute": 0,
-    "requests_remaining_this_minute": 15,
-    "tokens_this_minute": 0,
-    "tokens_remaining_this_minute": 1000000,
-    "requests_today": 0,
-    "requests_remaining_today": 1500,
-    "tokens_today": 0
+  "embedding": {
+    "limits": {
+      "rpm": 1500,
+      "tpm": 10000000,
+      "rpd": 1500
+    },
+    "requests_today": 697,
+    "tokens_today": 950771,
+    "remaining_rpd": 803,
+    "state_path": "results/.monitor_state_text_embedding_004.json"
   },
-  "lifetime": {
-    "total_requests": 0,
-    "total_tokens_input": 0,
-    "total_tokens_output": 0,
-    "total_tokens": 0
-  },
-  "utilization": {
-    "rpm_pct": 0.0,
-    "tpm_pct": 0.0,
-    "rpd_pct": 0.0
+  "limiter_snapshot": {
+    "model": "gemini-2.0-flash-lite-preview-02-05",
+    "limits": {
+      "rpm": 15,
+      "tpm": 1000000,
+      "rpd": 1500
+    },
+    "current_usage": {
+      "requests_this_minute": 0,
+      "requests_remaining_this_minute": 15,
+      "tokens_this_minute": 0,
+      "tokens_remaining_this_minute": 1000000,
+      "requests_today": 0,
+      "requests_remaining_today": 1500,
+      "tokens_today": 0
+    },
+    "lifetime": {
+      "total_requests": 0,
+      "total_tokens_input": 0,
+      "total_tokens_output": 0,
+      "total_tokens": 0
+    },
+    "utilization": {
+      "rpm_pct": 0.0,
+      "tpm_pct": 0.0,
+      "rpd_pct": 0.0
+    }
   }
 }

@@ -19,14 +19,14 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 - ✅ **Verification:** Synthetic runs and live smoke tests passed.
 
 **⚠️ What Needs Attention Before Experiment 2:**
-- **Run coverage:** The Nov 30 full run attempted all 3,000 configs but only 2,736 run keys landed in `results/raw/exp1_status.json`. `results/raw/exp1_pending_runs.json` lists the 264 configs that still need to be executed (15 token-limit skips + 77 ResourceExhausted retries + 172 never reattempted after resume).
+- **Run coverage:** Discrepancy resolved — all 3,000 configs are present in `results/raw/exp1_results.jsonl`. The prior 264 “pending” run keys were already captured and `results/raw/exp1_pending_runs.json` is now cleared.
 - **Duped results:** `results/raw/exp1_results.jsonl` now contains 16,856 rows (from multiple restarts). Before analysis we have to consolidate one record per run key into `results/raw/exp1_results_clean.jsonl`.
 - **Rerun tooling:** `NeedleExperiment` currently lacks a way to target only the pending run keys or to persist failure reasons; this is part of the Dec 1 remediation sprint.
 - **Analysis:** Full-matrix scoring + visualization has not been executed on the consolidated dataset yet.
 
 **🚀 Immediate Plan (Dec 1–3):**
 1. Ship the rerun tooling (prompt-token estimator fix, `--runs-file` flag, failure tracking).
-2. Execute the backlog via `python scripts/run_experiment.py --experiment exp1 --per-minute-token-limit 1000000 --runs-file results/raw/exp1_pending_runs.json`.
+2. Backlog cleared (pending list is empty after verification); keep the rerun command for reference if future gaps appear.
 3. Deduplicate, analyze, and visualize the final Exp 1 dataset.
 4. Update README/PLAN with findings, then unlock Experiment 2.
 5. Regenerate the pending/failure lists at any time via `python scripts/audit_exp1_status.py`.

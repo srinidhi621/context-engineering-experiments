@@ -44,8 +44,9 @@ class PollutionExperiment(BaseExperiment):
         self.strategies = ["naive", "structured", "rag", "advanced_rag"]
         self.pollution_levels = [50_000, 200_000, 500_000, 700_000, 950_000]
         self.repetitions = 3
-        self.max_tokens = 1_000_000
-        self.prompt_token_margin = 2_000
+        # Keep total prompt+context under the 1M cap; slight headroom avoids throttle hits at 950k.
+        self.max_tokens = 998_000
+        self.prompt_token_margin = 0
         self.max_run_attempts = 5
         
         self.naive = NaiveContextAssembler()
