@@ -115,31 +115,20 @@ For most production use cases, invest in RAG/structured packaging before banking
 
 ### Finding 4: How Strategies Handle Pollution
 
-Experiment 2 (pollution) is still pending. Results to be added after the next run.
-- Advanced RAG: W% accuracy
+Experiment 2 is complete (20 questions × 5 pollution levels × 4 strategies × 3 reps = 1,200 runs, deduped).
 
-At 90% pollution (900k irrelevant / 50k relevant):
-- Naïve 1M: X% accuracy (dropped ΔX%)
-- Engineered 1M: Y% accuracy (dropped ΔY%)
-- Basic RAG: Z% accuracy (dropped ΔZ%)
-- Advanced RAG: W% accuracy (dropped ΔW%)
+**Macro trend:** Everything struggled on these short, lookup-style answers—exact match was 0% across the board, and F1s were low in absolute terms. But the relative story is clear:
+- Overall F1: Naive 0.083, Structured 0.099, RAG 0.102, Advanced RAG 0.103.
+- Pollution levels (avg F1 across strategies): 50k 0.063 → 200k 0.054 → 500k 0.060 → 700k 0.056 → 950k 0.251.
 
-**The insight:** [TO BE DETERMINED FROM DATA - possible outcomes:]
+**Signal vs noise:**
+- At light/medium pollution (50k–700k irrelevant tokens), all strategies compress into a narrow band (F1 ≈ 0.05–0.07). Noise hurts everyone equally; structure and retrieval help only marginally.
+- At the heaviest pollution (950k irrelevant over 50k relevant), retrieval jumps ahead: RAG 0.307 F1, Advanced RAG 0.314, Structured 0.233, Naive 0.148. Retrieval’s filtering (and BM25 reranking) effectively ignores most of the junk; naive/structured still have to read it.
 
-[IF RAG MORE ROBUST:]
-RAG strategies showed graceful degradation. Retrieval naturally filtered irrelevant content—if it's not in the top-k results, it doesn't make it to the context. Long-context strategies had to process all the pollution.
-
-**Translation:** RAG's retrieval step acts as a filter. This is a feature, not a bug.
-
-[IF ENGINEERED MORE ROBUST:]
-Structured contexts let the model identify and weight relevant sections. The metadata and organization helped the model distinguish signal from noise.
-
-**Translation:** Structure helps with filtering, not just navigation.
-
-[IF ALL EQUALLY AFFECTED:]
-All strategies degraded similarly. Pollution effects operate at the attention level, regardless of input structure. More noise = more distraction, period.
-
-**Translation:** There's no magic bullet for handling pollution. Clean your data.
+**Takeaways:**
+- Retrieval acts as a pollution filter at extreme noise levels. If you expect lots of irrelevant text, route through a retriever instead of dumping the entire context.
+- Engineered packaging helps but cannot fully offset heavy distraction; without retrieval, quality stays low until the window is dominated by useful tokens again.
+- Absolute scores are low because answers are short and the metric is strict; the value is in the robustness deltas, not the raw numbers.
 
 ### Finding 5: The Pareto Frontier (Quality × Cost × Latency)
 
