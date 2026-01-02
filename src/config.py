@@ -34,8 +34,9 @@ class APIConfig:
     rate_limit_rpd: int = int(os.getenv("RATE_LIMIT_RPD") or 1_500)
     # Budget limit (in USD) - hard stop to prevent overages
     budget_limit: float = float(os.getenv("BUDGET_LIMIT") or 174.00)
+    # Safety switch: when set, block outgoing Gemini calls
+    disable_calls: bool = os.getenv("GEMINI_DISABLE_CALLS", "").lower() in {"1", "true", "yes", "on"}
 
 # Global config instances
 config = ExperimentConfig()
 api_config = APIConfig()
-

@@ -24,6 +24,8 @@ class GeminiClient:
         """
         if not api_config.google_api_key:
             raise ValueError("GOOGLE_API_KEY environment variable not set")
+        if api_config.disable_calls:
+            raise RuntimeError("Gemini calls are disabled via GEMINI_DISABLE_CALLS")
         
         genai.configure(api_key=api_config.google_api_key)
         self.generation_model = config.model_name
