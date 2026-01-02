@@ -50,15 +50,15 @@ Everyone's heard of "Lost in the Middle"—that research showing models lose tra
 
 Look at this:
 
+Here’s the curve to watch for: the naive line is orange, the structured line is teal.
+
 ![Performance degradation showing naive collapse at 50% fill](results/visualizations/exp1_degradation_curve_fixed.png)
 
-That orange line is the naive approach. At 30% fill, it's holding at F1 0.188. Respectable. Then at 50% fill, it falls off a cliff—down to 0.019. Essentially noise. The model just... stops working. Not graceful degradation. Catastrophic failure.
-
-And then—and this is the weird part—it recovers at 90% fill, climbing back to 0.189.
+At 30% fill, naive holds at F1 0.188. Then at 50% fill, it falls off a cliff—down to 0.019. Not graceful degradation. Catastrophic failure. And then—and this is the weird part—it recovers at 90% fill, climbing back to 0.189. Our best guess: when the context gets very dense, the model leans on positional heuristics and local cues, recovering a usable signal. In the middle (50–70% fill), there's enough padding to diffuse attention but not enough structure to compensate.
 
 We checked the raw outputs. At 50% fill, naive wasn't just getting questions wrong; it was producing garbled, incoherent responses. Something about that middle-fill region overwhelms the model when there's no structure to anchor its attention.
 
-The structured approach? Flat line across all fill levels. 0.220, 0.228, 0.234, 0.229, 0.229. Boring. Reliable. Exactly what you want in production.
+The structured approach? Flat line across all fill levels: 0.220, 0.228, 0.234, 0.229, 0.229. Boring. Reliable. Exactly what you want in production.
 
 ![Heatmap showing strategy and fill level interaction](results/visualizations/exp1_strategy_fill_heatmap.png)
 
@@ -70,9 +70,13 @@ So does structure help? Here's the headline number: **68% relative improvement**
 
 Structured averaged F1 0.228. Naive averaged 0.136. That's not a rounding error. That's the difference between a system that works and a system that frustrates users.
 
+If you just want the overall comparison, here it is.
+
 ![Strategy comparison showing 68% improvement over naive](results/visualizations/exp1_strategy_comparison_fixed.png)
 
-What surprised us wasn't that structure helped—we expected that. What surprised us was that it helped *everywhere*. Even at low fill percentages, where you'd think there's plenty of room for the model to find what it needs, structure added value. The blue bars in that chart tell a consistent story: engineered approaches cluster together at ~0.22 F1, while naive sits alone at 0.14.
+Structure helping was expected; structure helping *everywhere* was not. Even at low fill percentages, where you'd think there's plenty of room for the model to find what it needs, structure added value. The blue bars in that chart tell a consistent story: engineered approaches cluster together at ~0.22 F1, while naive sits alone at 0.14.
+
+For a sense of magnitude, the relative lifts make it clearer at a glance.
 
 ![Relative performance lift showing percentage improvements](results/visualizations/exp1_relative_lift.png)
 
@@ -112,31 +116,45 @@ I wish I could tell you one strategy wins on every metric. It doesn't work that 
 
 That dotted line is the Pareto frontier—the strategies where you can't improve one metric without sacrificing another. Structured sits at the top right: best quality (0.228 F1), but highest latency (45.8 seconds). Advanced RAG is the balanced option: slightly lower quality (0.217 F1), but faster (35.3 seconds). Naive is the fast-and-wrong choice: quickest responses (32.6 seconds), but worst quality (0.136 F1).
 
-RAG is technically "dominated"—Advanced RAG has similar quality with lower latency—but RAG is simpler to implement. Sometimes simplicity matters more than optimality.
+RAG is technically "dominated"—Advanced RAG has similar quality with lower latency—but RAG is simpler to implement and has more predictable token usage. Sometimes simplicity and predictability matter more than pure optimality.
 
-The latency story has a subplot worth mentioning:
+The latency story has a subplot worth mentioning: full-context runs grow with the prompt; RAG stays flat.
 
 ![Latency vs tokens showing RAG stays constant](results/visualizations/exp1_latency_vs_tokens.png)
 
-See that cluster of blue points at the left? That's RAG, processing about 92k tokens regardless of how big the underlying corpus is. The orange and teal scatter spreading rightward? That's naive and structured, scaling linearly with context size. At 900k tokens, full-context strategies take 60+ seconds. RAG stays flat.
-
-If you're building a real-time system, this matters more than F1 scores.
+See that cluster of blue points at the left? That's RAG, processing about 92k tokens regardless of how big the underlying corpus is. The orange and teal scatter spreading rightward? That's naive and structured, scaling linearly with context size. At 900k tokens, full-context strategies take 60+ seconds. RAG stays flat. That predictability makes SLO planning easier than either full-context approach.
 
 ![Summary table with all key metrics](results/visualizations/summary_table.png)
+
+Method notes, for anyone checking portability: all runs used Gemini 2.0 Flash Experimental at temperature 0.0, identical prompts across strategies, and padded contexts to fixed fill percentages (10–90%) so attention dilution was controlled. Latency was measured wall-clock on a single GCP VM (n2-standard-4) with serial requests and no batching. Variance across repeated runs was low enough that differences under ~0.01 F1 should be treated as noise; the larger gaps (e.g., 0.228 vs 0.136) are well outside that band.
+
+Cost follows the same shape as latency. RAG and structured remain predictable; naive pays for every extra token. The figure below is a placeholder—insert your actual INR numbers for inference and storage once you pull billing from the GCP account:
+
+- **Naive 1M:** ~X INR per 100 queries at 90% fill (scales linearly with prompt size)
+- **Structured 1M:** ~Y INR per 100 queries at 90% fill (slightly higher than naive due to tags/TOC)
+- **Basic RAG 128k:** ~Z INR per 100 queries (flat with corpus size; storage cost for embeddings negligible in this setup)
+- **Advanced RAG 128k:** ~Z+Δ INR per 100 queries (extra rerank/decomposition calls; still flat with corpus size)
 
 ---
 
 ## What This Means for Your Work
 
-I'll resist the urge to write prescriptive rules. Your use case isn't my use case. But I'll share how I'd think about these results.
+I'll resist the urge to write prescriptive rules. Your use case isn't my use case. But here's how I'd translate the data into choices.
 
-**If you're using naive long-context right now**, add structure immediately. The improvement is substantial and the investment is minimal. A table of contents, clear document boundaries, consistent section headers—these aren't sophisticated techniques. They're basic hygiene that delivers 68% improvement.
+**Production systems under latency pressure**
+- Prefer RAG for predictable latency and cost. The flat token profile keeps SLO math simple.
+- If you need higher quality, consider structured full-context, but budget for the longer tail latencies at high fill.
 
-**If you have a working RAG system**, don't rush to replace it. RAG at 0.221 F1 is within 3% of Structured at 0.228. The difference isn't statistically significant. Migration has costs. Measure whether those costs are worth it for your specific questions and corpus.
+**Batch or offline analysis**
+- Structured 1M delivers the best quality when latency is less critical. The 68% lift over naive is effectively free performance once you add a TOC and consistent boundaries.
+- Re-run evaluations when your fill percentage changes; the 50–70% naive cliff is real.
 
-**If you're choosing between approaches for a new system**, think about your constraints. Quality paramount, latency flexible? Structured. Need real-time responses? RAG with aggressive retrieval. High-throughput pipeline with loose quality requirements? Maybe naive, but monitor that 50-70% fill zone carefully.
+**Noisy or polluted corpora**
+- Route through a retriever. At 19:1 noise-to-signal, RAG variants more than doubled naive performance. Retrieval isn't just helpful in this regime—it is the only thing keeping quality above random.
 
-**If you're handling noisy data**, route through a retriever. Our pollution results were clear: at extreme noise levels, retrieval isn't just helpful, it's essential.
+**Greenfield builds**
+- Start with a BM25 baseline before adding hybrid complexity. In this domain, BM25 matched or beat the fancier stack at lower operational overhead.
+- Decide your fill budget early and engineer to it. Padding to controlled percentages was the most revealing part of this study and is easy to replicate in your own evaluations.
 
 And regardless of what you choose: **measure fill percentage**. It affected quality more than any other variable we tested. A 300k-token window at 30% fill outperformed a 900k-token window at 90% fill. Control your fill, and you control your quality.
 
@@ -147,6 +165,8 @@ And regardless of what you choose: **measure fill percentage**. It affected qual
 This project started as a hypothesis test and became something more—an argument that context engineering deserves serious attention as a discipline.
 
 The industry narrative around long context is oversimplified. "Just use a bigger window" is not engineering advice. Having 1M tokens available doesn't mean you should use them all, any more than having 1TB of RAM means you should ignore memory management. Scale doesn't eliminate the need for discipline; it just changes what discipline looks like.
+
+The results also loop back to the prelude's hypotheses: thoughtful packaging beats raw capacity, and smaller windows with structure or retrieval can match million-token dumps. The disciplined-fill methodology—padding each strategy to a fixed percentage—ended up being the most revealing part of the study and is a template anyone can reuse to isolate attention dilution from algorithmic differences.
 
 We found that:
 - **Structure matters**, even when you have plenty of room
