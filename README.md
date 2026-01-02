@@ -9,27 +9,40 @@ For contributor practices and workflow expectations, see [Repository Guidelines]
 - The pilot runner enforces a rolling per-minute input token cap to mirror Gemini quotas. The default fallback is 240 k tokens/min (free tier). Set `PER_MINUTE_TOKEN_LIMIT` in `.env` (or pass `--per-minute-token-limit`) to match your actual quota when using the paid tier (e.g., `1000000` for gemini-2.0-flash long-context runs).
 - If a prompt exceeds the configured ceiling, the script logs a skip instead of letting the API return 429. This protects both free and paid tiers from accidental bursts, while still allowing 1 M-token contexts when the quota supports it. **Known issue:** the current estimator (`len(prompt)/3.5`) overcounts 0.9-fill prompts; we are replacing it with `src.utils.tokenizer.count_tokens` so reruns can safely reach the 1 M window.
 
-## ⚠️ CURRENT STATUS: EXPERIMENT 1 RERUN + ANALYSIS IN PROGRESS
+## ✅ CURRENT STATUS: EXPERIMENTS COMPLETE — VISUALIZATION REBUILD IN PROGRESS
 
 **✅ What's Complete:**
 - ✅ **Pilot Phase:** Validated end-to-end pipeline.
 - ✅ **Data Assets:** 700k token corpus (Hugging Face), 2M token padding corpus (Gutenberg), 50-question set.
 - ✅ **Infrastructure:** Unified monitoring, separate embedding/generation rate limits, robust caching for RAG indexes.
-- ✅ **Analysis Stack:** Metrics (F1, Exact Match), LLM-as-a-Judge, and automated reporting scripts.
-- ✅ **Verification:** Synthetic runs and live smoke tests passed.
+- ✅ **Experiment 1 (Needle in Multiple Haystacks):** 3,000 runs complete.
+- ✅ **Experiment 2 (Context Pollution):** 1,200 runs complete.
+- ✅ **Analysis:** Metrics computed for both experiments.
 
-**⚠️ What Needs Attention Before Experiment 2:**
-- **Run coverage:** Discrepancy resolved — all 3,000 configs are present in `results/raw/exp1_results.jsonl`. The prior 264 “pending” run keys were already captured and `results/raw/exp1_pending_runs.json` is now cleared.
-- **Duped results:** `results/raw/exp1_results.jsonl` now contains 16,856 rows (from multiple restarts). Before analysis we have to consolidate one record per run key into `results/raw/exp1_results_clean.jsonl`.
-- **Rerun tooling:** `NeedleExperiment` currently lacks a way to target only the pending run keys or to persist failure reasons; this is part of the Dec 1 remediation sprint.
-- **Analysis:** Full-matrix scoring + visualization has not been executed on the consolidated dataset yet.
+**📊 Key Findings:**
 
-**🚀 Immediate Plan (Dec 1–3):**
-1. Ship the rerun tooling (prompt-token estimator fix, `--runs-file` flag, failure tracking).
-2. Backlog cleared (pending list is empty after verification); keep the rerun command for reference if future gaps appear.
-3. Deduplicate, analyze, and visualize the final Exp 1 dataset.
-4. Update README/PLAN with findings, then unlock Experiment 2.
-5. Regenerate the pending/failure lists at any time via `python scripts/audit_exp1_status.py`.
+| Metric | Experiment 1 | Experiment 2 |
+|--------|--------------|--------------|
+| **Best Strategy** | Structured (0.228 F1) | Advanced RAG (0.314 F1 at 950k pollution) |
+| **Worst Strategy** | Naive (0.136 F1) | Naive (0.148 F1 at 950k pollution) |
+| **Engineering Lift** | +68% vs naive | +112% vs naive at extreme pollution |
+| **H1 Confirmed?** | ✅ Yes | — |
+
+**Key Insights:**
+- **H1 Confirmed:** Structured context beats naive by 68% (0.228 vs 0.136 F1)
+- **Fill % matters:** Best accuracy at 10–30% fill; naive collapses at 50% fill (0.019 F1)
+- **Retrieval = Pollution Filter:** At 950k noise tokens, RAG jumps to 0.31 F1 while naive stays at 0.15
+
+**🛠️ What Needs Attention:**
+- **Visualization rebuild:** Current charts have y-axis scaling issues (0–1.0 when data is 0–0.3)
+- **Charts to delete:** `pollution_vs_em.png` (all zeros), original `latency_distribution.png`
+- See `ANALYSIS_CONCLUSIONS.md` for detailed rebuild specifications
+
+**📄 Key Documentation:**
+- `ARTICLE_CONCLUSIONS.md` — Full findings write-up for publication
+- `ANALYSIS_CONCLUSIONS.md` — Detailed visualization rebuild specifications
+- `ARTICLE_PRELUDE.md` — Introduction/motivation article
+
 
 **Requirements:**
 - **Python 3.10+** (Project uses **3.13.3** in venv).
@@ -871,8 +884,8 @@ For questions about this research:
 
 ---
 
-**Last Updated:** November 3, 2025  
-**Version:** 1.2 (Phase 1A Complete)  
-**Status:** Phase 1A Complete - Ready for Phase 1B  
-**Estimated Completion:** 10-12 weeks from start  
-**Changes:** Phase 1A infrastructure complete (corpus loaders, tokenizer utils)
+**Last Updated:** January 2, 2026  
+**Version:** 3.0 (Experiments 1 & 2 Complete)  
+**Status:** Experiments Complete - Visualization Rebuild in Progress  
+**Key Results:** H1 Confirmed (+68% lift), Retrieval beats naive at extreme pollution  
+**Next Steps:** Rebuild visualizations per `ANALYSIS_CONCLUSIONS.md`, then publish

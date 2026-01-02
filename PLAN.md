@@ -6,8 +6,8 @@
 **Budget:** $0 (Free Tier - gemini-2.0-flash-lite-preview-02-05)  
 **Team Size:** 1  
 
-**Last Updated:** December 3, 2025  
-**Status:** ✅ Experiment 1 run + analysis completed; preparing Experiment 2
+**Last Updated:** January 2, 2026  
+**Status:** ✅ Experiments 1 & 2 complete; visualization rebuild in progress
 
 ---
 
@@ -24,16 +24,35 @@
 
 **Experiment 1 (Needle in Multiple Haystacks):** ✅ **Complete**
 - 3,000 run keys executed (pending list now empty); analysis saved under `results/analysis/exp1_rerun/`.
-- Key finding: Structured ≈ RAG > Advanced RAG >> Naive; best accuracy at 10–30% fill, degradation at higher fills.
+- **Key findings:**
+  - Structured (0.228 F1) > RAG (0.221) > Advanced RAG (0.217) >> Naive (0.136)
+  - **+68% relative lift** from naive to structured — H1 confirmed
+  - Best accuracy at 10–30% fill; naive collapses at 50% fill (0.019 F1)
 
-**Experiment 2 (Context Pollution):** 🛠️ **Ready to implement** (requires code + data prep).
+**Experiment 2 (Context Pollution):** ✅ **Complete**
+- 1,200 run keys executed across 5 pollution levels (50k–950k tokens).
+- **Key findings:**
+  - At 50k–700k pollution: all strategies cluster at F1 ≈ 0.05–0.07
+  - At 950k pollution: RAG (0.307 F1) and Advanced RAG (0.314) jump ahead; Naive stays at 0.148
+  - Retrieval acts as a pollution filter at extreme noise levels
 
-**Experiment 5 (Cost-Latency Frontier):** ⏸ Dependent on Exp 2 metrics.
+**Visualization Rebuild:** 🛠️ **In Progress**
+- Current charts have y-axis scaling issues (0–1.0 when data is 0–0.3)
+- See `ANALYSIS_CONCLUSIONS.md` for detailed rebuild specifications
+- Charts to delete: `pollution_vs_em.png` (all zeros), original `latency_distribution.png`
+- New charts needed: heatmap, relative lift, latency vs tokens scatter, Pareto frontier
 
-**Time Spent:** ~32 hours on infrastructure, pilot & readiness  
-**Remaining:** ~9-11 weeks for experiments + analysis
+**Experiment 5 (Cost-Latency Frontier):** ⏸ Ready for implementation (analysis-only using Exp 1-2 data).
+
+**Time Spent:** ~10 weeks on infrastructure, experiments & analysis  
+**Remaining:** ~2 weeks for visualization rebuild, final report, and publication
 
 **Repository:** https://github.com/srinidhi621/context-engineering-experiments
+
+**Key Documentation:**
+- `ARTICLE_CONCLUSIONS.md` — Full findings write-up for publication
+- `ANALYSIS_CONCLUSIONS.md` — Detailed visualization rebuild specifications
+- `ARTICLE_PRELUDE.md` — Introduction/motivation article
 
 ## 📝 Execution Log
 
@@ -46,6 +65,8 @@
 | 2025-11-27–29 | Multi | **Incremental partial runs** | ⚠️ Mixed | Created historical entries in `results/raw/exp1_results.jsonl` but status file resets caused duplicates. |
 | 2025-11-30 | 12:05–20:52 | **Full run attempt** | ⚠️ Partial | Hit `ResourceExhausted` churn + 0.9-fill throttle skips; stopped with 264 configs pending. |
 | 2025-12-01 | 00:10 | **Post-mortem audit** | ⚠️ Pending | `results/raw/exp1_pending_runs.json` + `exp1_failure_breakdown.json` generated for rerun planning. |
+| 2025-12-15 | Multi | **Experiment 2 Full Run** | ✅ Complete | 1,200 runs across 5 pollution levels (50k–950k). RAG/Advanced RAG show strong pollution filtering at 950k. |
+| 2026-01-02 | -- | **Visualization Audit** | 🛠️ In Progress | Identified y-axis scaling issues. Created `ANALYSIS_CONCLUSIONS.md` with detailed rebuild specs. |
 
 ### ✅ Experiment 1 Remediation Sprint (Complete)
 
@@ -148,8 +169,8 @@ The pilot phase was completed successfully, validating the entire experimental p
 - [x] Padding corpus available.
 - [x] Question set validated (≥50).
 - [x] Embedding caches rebuilt with 990 k max (Nov 27) and reused per restart.
-- [ ] Runner completion (3,000 run keys recorded in `results/raw/exp1_status.json`; rerun backlog = 264).
-- [ ] Automated scoring/visualizations for the full dataset (progress snapshot exists; rerun post-archival for official results).
+- [x] Runner completion (3,000 run keys in results/raw/exp1_results.jsonl).
+- [x] Automated scoring: results/analysis/exp1_rerun/summary_metrics.csv generated.
 - [ ] Documentation updates with Exp 1 findings (once scoring/viz done).
 
 ---
@@ -163,6 +184,12 @@ The pilot phase was completed successfully, validating the entire experimental p
 **Domain:** Fresh GitHub docs (base corpus) + Gutenberg padding (pollution).  
 **Scope:** 1,200 generation calls (20 questions × 4 strategies × 5 pollution levels × 3 reps).  
 **Model/limits:** `gemini-2.0-flash-lite-preview-02-05`, 1M context, 4M TPM, free-tier RPD 1,500 (Gen) / 1,000 (Emb).
+
+**Key Findings:**
+- At 50k–700k pollution: all strategies cluster at F1 ≈ 0.05–0.07 (noise hurts everyone equally)
+- At 950k pollution: RAG (0.307 F1) and Advanced RAG (0.314) jump ahead; Naive stays at 0.148
+- Retrieval acts as a pollution filter at extreme noise levels
+- Results in `results/analysis/exp2/summary_metrics.csv`
 
 ### Step-by-Step Plan (detailed)
 
@@ -217,13 +244,14 @@ The pilot phase was completed successfully, validating the entire experimental p
    - Archive logs/results; update PLAN/README with completion status and next steps (Exp 5).
 
 ### Acceptance Checklist (Exp 2)
-- [ ] Base corpus present: `ls data/raw/exp2/base_corpus.json` and token count ≥50k.
-- [ ] Questions validated: `python scripts/validate_question_set.py data/questions/exp2_questions.json --require-experiment exp2` exits 0.
-- [ ] Pollution injector tests: `pytest tests/test_pollution.py` exits 0.
-- [ ] Dry-run passes: `python scripts/run_experiment.py --experiment exp2 --dry-run --per-minute-token-limit 1000000 --limit 2` exits 0.
-- [ ] Full run artifacts: `wc -l results/raw/exp2_results.jsonl` == 1200; `results/raw/exp2_status.json` shows completed=1200.
-- [ ] Analysis artifacts: `results/analysis/exp2/summary_metrics.csv`, `results/analysis/exp2/analysis_report.md`, and plots under `results/visualizations/exp2/`.
-- [ ] Conclusions propagated to ARTICLE_CONCLUSIONS.md/README.
+- [x] Base corpus present: `data/raw/exp2/base_corpus.json` (~50k tokens).
+- [x] Questions validated: 20 questions in `data/questions/exp2_questions.json`.
+- [x] Pollution injector tests pass.
+- [x] Dry-run passes.
+- [x] Full run artifacts: 1,200 rows in `results/raw/exp2_results.jsonl`.
+- [x] Analysis artifacts: `results/analysis/exp2/summary_metrics.csv` + `scored_results.csv`.
+- [x] Conclusions propagated to `ARTICLE_CONCLUSIONS.md`.
+- [ ] Visualization rebuild (y-axis scaling issues) — see `ANALYSIS_CONCLUSIONS.md`.
 
 ---
 
@@ -372,6 +400,6 @@ python scripts/generate_visualizations.py
 
 ---
 
-**Last Updated:** November 3, 2025  
-**Version:** 2.1 (Phase 1A Complete)  
-**Status:** Phase 1A Complete - Ready for Phase 1B (Data Collection)
+**Last Updated:** January 2, 2026  
+**Version:** 3.0 (Experiments 1 & 2 Complete)  
+**Status:** Experiments Complete - Visualization Rebuild in Progress
